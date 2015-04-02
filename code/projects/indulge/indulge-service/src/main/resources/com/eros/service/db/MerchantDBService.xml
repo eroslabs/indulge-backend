@@ -259,9 +259,9 @@
 	<insert id="registerMerchant" parameterType="com.eros.core.model.Merchant"
 		useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO
-		merchant(name,email,passphrase,phone,unit_no,city,state,created_date)
+		merchant(name,email,passphrase,phone,unit_no,city,state,gender_support,cc_accepted,created_date)
 		VALUES
-		(#{name},#{email},#{passPhrase},#{phone},#{unitNumber},#{city},#{state},CURRENT_TIMESTAMP)
+		(#{name},#{email},#{passPhrase},#{phone},#{unitNumber},#{city},#{state},#{genderSupport},#{ccAccepted},CURRENT_TIMESTAMP)
 	</insert>
 	<insert id="saveServices" >
 		INSERT INTO
@@ -278,7 +278,7 @@
 		VALUES
 		<foreach item="element" index="index" collection="phones"
 			open="(" separator="),(" close=")">
-			#{element.merchantaId},
+			#{element.merchantId},
 			#{element.phone}, #{element.type}
 		</foreach>
 	</insert>

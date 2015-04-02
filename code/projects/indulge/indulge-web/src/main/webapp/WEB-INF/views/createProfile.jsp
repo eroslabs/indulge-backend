@@ -67,7 +67,23 @@
 				    <div class="col-sm-7">
 				      <input id="state" class="form-control" type="text" name="state">
 				    </div>
-				  </div>  
+				  </div>
+				  <div class="form-group">
+				    <label class="col-sm-3 control-label">Credit Card Accepted*</label>
+				    <div class="col-sm-7">
+				      <input id="ccAccepted" class="form-control" type="checkbox" name="ccAccepted"/>
+				    </div>
+				  </div> 
+				  <div class="form-group">
+				    <label class="col-sm-3 control-label">Gender  Support*</label>
+				    <div class="col-sm-7">
+				      <select name="genderSupport">
+							<option value="2" > Unisex  </option> 
+							<option value="1" > Female</option>
+							<option value="0" > Male</option>
+						</select>
+				    </div>
+				  </div>   
 				 <div class="form-group">
 				    <div class="col-sm-4">
 				     <input id="agreement" class="form-control" type="checkbox" name="agreement" required>  

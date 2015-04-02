@@ -40,6 +40,7 @@ public class Merchant extends BaseModel {
     private Float rating;
     private Boolean homeService;
 	private String phone;
+	private Integer genderSupport;
 	private Boolean separateRateCard;
 	private Integer serviceRadius;
     private Boolean profileComplete;
@@ -410,5 +411,17 @@ public class Merchant extends BaseModel {
 		this.services = services;
 	}
 
-    
+	/**
+	 * @return the genderSupport
+	 */
+	public Integer getGenderSupport() {
+		return genderSupport;
+	}
+	/**
+	 * @param genderSupport the genderSupport to set
+	 */
+	public void setGenderSupport(Integer genderSupport) {
+		this.genderSupport = genderSupport;
+	}
+	
     }
