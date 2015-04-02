@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>eros</groupId>
+	<artifactId>eros-indulge-build</artifactId>
+	<packaging>pom</packaging>
+	<version>0.0.1</version>
+	<name>Eros Indulge Application</name>
+	<url>http://www.eros.co</url>
+	<description>Eros Indulge Project</description>
+	<properties>
+			<app.name>indulge</app.name>
+			<version.eros.indulge>0.0.1</version.eros.indulge>
+	</properties>
+	<parent>
+			<artifactId>eros-build</artifactId>
+			<groupId>eros</groupId>
+			<version>0.0.1</version>
+			<relativePath>../eros-build/pom.xml</relativePath>
+	</parent>
+	<modules>
+		<module>indulge-service</module>
+		<module>indulge-api</module>
+		<module>indulge-web</module>
+				
+	</modules>
+	
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>dev</value>
+				</property>
+			</activation>
+			
+		<build>
+      			<resources>
+     			   <resource>
+     			      <directory>src/main/resources</directory>    			      
+    			      <filtering>true</filtering>   			      
+  		  	   </resource> 		   		  
+   			   </resources>
+    		</build>	
+    		<properties>
+				<struts.devMode>true</struts.devMode>
+				<app.mode>dev</app.mode>
+				<log.level>DEBUG</log.level>
+				<env.prop>c:\indulge\*.properties</env.prop>
+		</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<activation>
+				<property>
+					<name>env</name>
+					<value>prod</value>
+				</property>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<resources>
+				   <resource>
+				      <directory>src/main/resources</directory>    			      
+				      <filtering>true</filtering>   			      
+				   </resource> 		   		  
+				   </resources>
+    			</build>
+			<properties>
+				<app.mode>prod</app.mode>
+				<struts.devMode>false</struts.devMode>
+				<log.level>WARN</log.level>
+				<env.prop>/opt/indulge/*.properties</env.prop>
+			</properties>
+			
+		</profile>
+	</profiles>
+
+	
+		
+</project>

@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.eros.service.db.MerchantDBService">
+
+	<resultMap id="reviews" type="com.eros.core.model.UserReview">
+		<result property="id" column="id" jdbcType="INTEGER" />
+		<result property="user" column="name" jdbcType="VARCHAR" />
+		<result property="rating" column="rating" jdbcType="VARCHAR" />
+		<result property="text" column="review_text" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="dealRequest" type="com.eros.core.model.DealRequest">
+		<result property="id" column="id" jdbcType="INTEGER" />
+		<result property="userName" column="user_name" jdbcType="VARCHAR" />
+		<result property="userId" column="user_id" jdbcType="VARCHAR" />
+		<result property="merchantId" column="merchant_id" jdbcType="VARCHAR" />
+		<result property="createdDate" column="created_date" jdbcType="TIMESTAMP" />
+		<collection property="services" column="id" javaType="ArrayList"
+			ofType="com.eros.core.model.DealServiceRequest" resultMap="dealRequestServices" />
+	</resultMap>
+
+	<resultMap id="deals" type="com.eros.core.model.MerchantDeal">
+		<result property="id" column="id" jdbcType="INTEGER" />
+		<result property="merchantId" column="merchant_id" jdbcType="INTEGER" />
+		<result property="description" column="description" jdbcType="VARCHAR" />
+		<result property="validFrom" column="valid_from" jdbcType="TIMESTAMP" />
+		<result property="validTill" column="valid_till" jdbcType="TIMESTAMP" />
+		<result property="percentOff" column="percent_off" jdbcType="INTEGER" />
+		<result property="flatOff" column="flat_off" jdbcType="INTEGER" />
+		<result property="days" column="id" jdbcType="VARCHAR" />
+		<result property="redemption" column="id" jdbcType="INTEGER" />
+		<result property="confirmed" column="id" jdbcType="INTEGER" />
+		<result property="recurring" column="id" jdbcType="BOOLEAN" />
+		<collection property="services" column="id" javaType="ArrayList"
+			ofType="com.eros.core.model.DealService"
+			select="com.eros.service.db.MerchantDBService.selectMerchantDealServices"
+			resultMap="dealServices" />
+	</resultMap>
+
+
+	<resultMap id="merchant" type="com.eros.core.model.Merchant">
+		<result property="id" column="id" jdbcType="INTEGER" />
+		<result property="name" column="name" jdbcType="VARCHAR" />
+		<result property="email" column="email" jdbcType="VARCHAR" />
+		<result property="passPhrase" column="pass_phrase" jdbcType="VARCHAR" />
+		<result property="city" column="city" jdbcType="VARCHAR" />
+		<result property="lat" column="lat" jdbcType="DECIMAL" />
+		<result property="lng" column="lng" jdbcType="DECIMAL" />
+		<result property="image" column="image" jdbcType="VARCHAR" />
+		<result property="ccAccepted" column="cc_accepted" jdbcType="BOOLEAN" />
+		<result property="homeService" column="home_service" jdbcType="BOOLEAN" />
+		<result property="separateRateCard" column="separate_rate_card" jdbcType="BOOLEAN" />
+		<result property="serviceRadius" column="service_radius" jdbcType="INTEGER" />
+		<result property="unitNumber" column="unit_no" jdbcType="VARCHAR" />
+		<result property="floor" column="floor" jdbcType="VARCHAR" />
+		<result property="building" column="building" jdbcType="VARCHAR" />
+		<result property="street" column="street" jdbcType="VARCHAR" />
+		<result property="landmark" column="landmark" jdbcType="VARCHAR" />
+		<result property="state" column="state" jdbcType="VARCHAR" />
+		<result property="pincode" column="pincode" jdbcType="VARCHAR" />
+		<result property="country" column="country" jdbcType="VARCHAR" />
+		<result property="software" column="software" jdbcType="VARCHAR" />
+		<result property="phone" column="phone" jdbcType="VARCHAR" />
+		<result property="status" column="status" jdbcType="BOOLEAN" />
+		<result property="rating" column="review_rating" jdbcType="FLOAT" />
+		<result property="profileComplete" column="profile_complete"
+			jdbcType="BOOLEAN" />
+		<result property="createdDate" column="created_date" jdbcType="TIMESTAMP" />
+		<result property="updatedDate" column="updated_date" jdbcType="TIMESTAMP" />
+		<association property="schedule" column="id"
+			javaType="com.eros.core.model.MerchantSchedule" select="fetchSchedule">
+			<id property="id" column="id" />
+			<result property="openingTime" column="opening_time" />
+			<result property="closingTime" column="closing_time" />
+			<result property="weekSchedule" column="ss" />
+			<result property="status" column="status" />
+		</association>
+		<collection property="phones" column="id"
+			ofType="com.eros.core.model.MerchantPhone" select="com.eros.service.db.MerchantDBService.selectMerchantPhones">
+			<id property="id" column="id" />
+			<result property="phone" column="phone_number" />
+			<result property="type" column="type" />
+			<result property="status" column="status" />
+		</collection>
+		<collection property="images" column="id"
+			ofType="com.eros.core.model.MerchantImage" select="com.eros.service.db.MerchantDBService.selectMerchantImages">
+			<id property="id" column="id" />
+			<result property="image" column="image" />
+			<result property="status" column="status" />
+		</collection>
+		<collection property="services" column="id" javaType="ArrayList"
+			ofType="com.eros.core.model.MerchantService" select="com.eros.service.db.MerchantDBService.selectMerchantServices"
+			resultMap="services" />
+	</resultMap>
+
+	<resultMap id="merchantServices" type="com.eros.core.model.MerchantService">
+		<id property="id" column="id" />
+		<result property="description" column="description" />
+		<result property="price" column="price" />
+		<result property="status" column="status" />
+		<result property="serviceId" column="service_id"/>
+		<result property="image" column="image"/>
+		<result property="name" column="name"/>
+	</resultMap>
+
+	<resultMap id="dealRequestServices" type="com.eros.core.model.DealServiceRequest">
+		<id property="id" column="request_service_id" />
+		<result property="name" column="service_name" />
+		<result property="image" column="image" />
+		<result property="serviceId" column="service_id" />
+	</resultMap>
+
+	<resultMap id="serviceCatgory" type="com.eros.core.model.ServiceCategory">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="description" column="description" />
+		<result property="image" column="image" />
+		<collection property="services" column="id" javaType="ArrayList"
+			ofType="com.eros.core.model.Service" resultMap="services" />
+	</resultMap>
+
+	<resultMap id="services" type="com.eros.core.model.Service">
+		<id property="id" column="service_id" />
+		<result property="name" column="service_name" />
+		<result property="description" column="service_description" />
+		<result property="image" column="image" />
+	</resultMap>
+
+	<resultMap id="dealServices" type="com.eros.core.model.DealService">
+		<id property="id" column="id" />
+		<result property="dealId" column="deal_id" />
+		<result property="serviceId" column="service_id" />
+		<result property="image" column="image" />
+		<result property="name" column="service_name" />
+	</resultMap>
+
+	<select id="fetchMerchantReviews" parameterType="Hashmap"
+		resultMap="reviews">
+		select u.name name, r.rating, r.review_text from
+		user_reviews r left join
+		user u on r.user_id= u.id where
+		r.merchant_id=#{id} limit #{start}
+		,#{rows}
+	</select>
+
+	<select id="fetchMerchantDeals" parameterType="Hashmap"
+		resultMap="deals">
+		select * from merchant_deal where merchant_id=#{id} order by
+		created_date desc limit #{start} ,#{rows}
+	</select>
+
+	<select id="fetchDealRequests" parameterType="Integer"
+		resultMap="dealRequest">
+		SELECT r.id AS id, u.id AS user_id,r.merchant_id, u.name AS
+		user_name,r.created_date,m.id AS request_service_id,
+		s.id AS service_id,s.name AS service_name,s.image FROM deal_request r LEFT
+		JOIN
+		deal_service_request m ON m.request_id=r.id LEFT JOIN service s ON m.service_id=s.id
+		LEFT JOIN USER u ON r.user_id= u.id WHERE merchant_id=#{id} order by
+		created_date desc limit 20
+	</select>
+	<select id="fetchSchedule" resultType="com.eros.core.model.MerchantSchedule">
+		select id,opening_time as
+		openingTime,closing_time as closingTime,days as
+		weekSchedule,status
+		from merchant_schedule where merchant_id = #{id}
+		order by created_date
+		desc limit 1
+	</select>
+
+	<select id="selectMerchantServices" resultType="com.eros.core.model.MerchantService"
+		resultMap="merchantServices">
+		select m.id as
+		id,m.description,m.price,m.status,m.service_id,s.id as service_id, s.name as name,
+		s.image as image,s.description as service_description,s.status as
+		service_status from merchant_service m left join service s on
+		m.service_id=s.id where merchant_id = #{id}
+	</select>
+
+	<select id="selectMerchantDealServices" resultType="com.eros.core.model.DealService"
+		resultMap="dealServices">
+		select d.id,d.deal_id ,d.service_id,s.image, s.name as
+		service_name from
+		merchant_deal_service d left join service s on
+		d.service_id=s.id where
+		deal_id = #{id}
+	</select>
+
+	<select id="fetchAllServiceCategories" resultMap="serviceCatgory">
+		select m.id as
+		id,m.description,m.name,m.image,s.id as service_id, s.name as
+		service_name, s.image as image,s.description as
+		service_description,s.status as service_status from service s left
+		join service_category m on m.id=s.id
+
+	</select>
+
+	<select id="selectService" resultType="com.eros.core.model.Service">
+		select * from service
+		where id = #{id}
+	</select>
+
+	<select id="selectMerchantImages" resultType="com.eros.core.model.MerchantImage">
+		select * from
+		merchant_photo where merchant_id = #{id}
+	</select>
+
+	<select id="selectMerchantPhones" resultType="com.eros.core.model.MerchantPhone">
+		select
+		id,phone_number as phone,type,status from merchant_phone where
+		merchant_id = #{id}
+	</select>
+
+	<select id="fetchMerchant" parameterType="String" resultMap="merchant">
+		SELECT
+		*
+		FROM
+		merchant
+		WHERE
+		email = '${value}' ;
+	</select>
+
+	<select id="fetchTotalMerchantReviews" parameterType="Integer"
+		resultType="Integer">
+		select count(*) from user_reviews where
+		merchant_id=#{value}
+	</select>
+
+	<insert id="saveDeal" parameterType="com.eros.core.model.MerchantDeal"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+		merchant_deal(merchant_id,description,valid_from,valid_till,flat_off,percent_off,weekdays_schedule,recurring,created_date)
+		VALUES
+		(#{merchantId},#{description},#{validFrom},#{validTill},#{flatOff},#{percentOff},#{days},#{recurring},CURRENT_TIMESTAMP)
+	</insert>
+
+	<insert id="saveDealServices">
+		INSERT INTO
+		merchant_deal_service(deal_id,service_id,created_date)
+		VALUES
+		<foreach item="element" index="index" collection="list" open="("
+			separator="),(" close=")">
+			#{element.dealId}, #{element.serviceId},
+			CURRENT_TIMESTAMP
+		</foreach>
+	</insert>
+	<insert id="saveMerchantMenu">
+		INSERT INTO
+		digital_menu_image(merchant_id,image,created_date)
+		VALUES
+		<foreach item="element" index="index" collection="list" open="("
+			separator="),(" close=")">
+			#{element.merchantId}, #{element.image},
+			CURRENT_TIMESTAMP
+		</foreach>
+	</insert>
+	<insert id="registerMerchant" parameterType="com.eros.core.model.Merchant"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+		merchant(name,email,passphrase,phone,unit_no,city,state,created_date)
+		VALUES
+		(#{name},#{email},#{passPhrase},#{phone},#{unitNumber},#{city},#{state},CURRENT_TIMESTAMP)
+	</insert>
+	<insert id="saveServices" >
+		INSERT INTO
+		merchant_service(merchant_id,service_id,price,created_date)
+		VALUES
+		<foreach item="element" index="index" collection="list" open="("
+			separator="),(" close=")">
+			#{element.merchantId}, #{element.serviceId},#{element.price},
+			CURRENT_TIMESTAMP
+		</foreach>
+	</insert>
+	<insert id="saveContact" parameterType="com.eros.core.model.Merchant">
+		INSERT INTO merchant_phone (merchant_id, phone_number, type)
+		VALUES
+		<foreach item="element" index="index" collection="phones"
+			open="(" separator="),(" close=")">
+			#{element.merchantaId},
+			#{element.phone}, #{element.type}
+		</foreach>
+	</insert>
+
+	<insert id="saveSchedule" parameterType="com.eros.core.model.Merchant">
+		INSERT INTO
+		merchant_Schedule (merchant_id, opening_time, closing_time,days)
+		VALUES
+		(#{schedule.merchantId},#{schedule.openingTime},#{schedule.closingTime},#{schedule.weekSchedule}
+		)
+
+	</insert>
+	<insert id="savePhoto" parameterType="com.eros.core.model.MerchantImage">
+		INSERT INTO merchant_photo
+		(merchant_id, image)
+		VALUES #{merchantId}, #{image}
+	</insert>
+
+	<update id="saveSoftware" parameterType="com.eros.core.model.Merchant">
+		update merchant set
+		software= #{software}
+		where id=#{id}
+	</update>
+
+	<update id="saveLocation" parameterType="com.eros.core.model.Merchant">
+		update merchant set name= #{name}
+		<if test="lat != null">
+			, lat = #{lat}
+		</if>
+		<if test="lng != null">
+			, lng = #{lng}
+		</if>
+		<if test="image != null">
+			, image = #{image}
+		</if>
+		where id=#{id}
+	</update>
+
+	<update id="completeProfile" parameterType="com.eros.core.model.Merchant">
+		update merchant set
+		profile_complete=1 where id=#{id}
+	</update>
+	<update id="updateServiceMeta" parameterType="com.eros.core.model.Merchant">
+		update merchant set
+		home_service=#{homeService}, separate_rate_card = ${separateRateCard},service_radius=${serviceRadius},cc_accepted=${ccAccepted} where id=#{id}
+	</update>
+	<update id="saveAddress" parameterType="com.eros.core.model.Merchant">
+		update merchant set city= #{city}
+		<if test="unitNumber != null">
+			, unit_no = #{unitNumber}
+		</if>
+		<if test="building != null">
+			, building = #{building}
+		</if>
+		<if test="floor != null">
+			, floor = #{floor}
+		</if>
+		<if test="pincode != null">
+			, pincode = #{pincode}
+		</if>
+		<if test="country != null">
+			, country = #{country}
+		</if>
+		<if test="street != null">
+			, street = #{street}
+		</if>
+		<if test="landmark != null">
+			, landmark = #{landmark}
+		</if>
+		where id=#{id}
+	</update>
+	<delete id="cleanContacts" parameterType="com.eros.core.model.Merchant">
+	delete from merchant_phone where merchant_id=#{id}
+	</delete>
+</mapper>
