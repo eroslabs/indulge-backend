@@ -7,7 +7,9 @@
 	<resultMap id="reviews" type="com.eros.core.model.UserReview">
 		<result property="id" column="id" jdbcType="INTEGER" />
 		<result property="user" column="name" jdbcType="VARCHAR" />
-		<result property="rating" column="rating" jdbcType="VARCHAR" />
+		<result property="rating" column="rating" jdbcType="FLOAT" />
+		<result property="serviceRating" column="service_rating" jdbcType="FLOAT" />
+		<result property="cleanlinessRating" column="cleanliness_rating" jdbcType="FLOAT" />
 		<result property="text" column="review_text" jdbcType="VARCHAR" />
 	</resultMap>
 
@@ -138,7 +140,7 @@
 
 	<select id="fetchMerchantReviews" parameterType="Hashmap"
 		resultMap="reviews">
-		select u.name name, r.rating, r.review_text from
+		select u.name name, r.rating,r.service_rating,r.cleanliness_rating, r.review_text from
 		user_reviews r left join
 		user u on r.user_id= u.id where
 		r.merchant_id=#{id} limit #{start}

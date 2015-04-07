@@ -19,7 +19,7 @@ import com.eros.core.model.ServiceCategory;
 public interface MerchantCustomService {
 
 	public Merchant getMerchantByEmail(String Email);
-	public Merchant registerMerchant(Merchant merchant);
+	public Merchant registerMerchant(Merchant merchant) throws Exception;
 	/**
 	 * @param merchant
 	 */

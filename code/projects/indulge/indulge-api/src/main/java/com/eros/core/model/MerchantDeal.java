@@ -30,6 +30,7 @@ public class MerchantDeal extends BaseModel{
 	private Integer confirmed;
 	private Boolean recurring;
 	private List<DealService> services;
+	private Boolean status;
 	
 	/**
 	 * @return the services
@@ -174,6 +175,18 @@ public class MerchantDeal extends BaseModel{
 	 */
 	public void setRecurring(Boolean recurring) {
 		this.recurring = recurring;
+	}
+	/**
+	 * @return the status
+	 */
+	public Boolean getStatus() {
+		return status;
+	}
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(Boolean status) {
+		this.status = status;
 	}
 	
 	

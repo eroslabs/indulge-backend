@@ -58,8 +58,8 @@ public class MerchantServiceImpl implements MerchantCustomService {
 		}
 		return null;
 	}
-
-	public Merchant registerMerchant(Merchant merchant) {
+	@Override
+	public Merchant registerMerchant(Merchant merchant) throws Exception{
 		if (merchant == null) {
 			return null;
 		}
@@ -69,6 +69,9 @@ public class MerchantServiceImpl implements MerchantCustomService {
 			return savedMerchant;
 		} catch (Exception e) {
 			LOG.error("Error in saving basic profile : ", e);
+			if(e instanceof org.springframework.dao.DuplicateKeyException){
+				throw new Exception("Merchant with this mail id already exist",e);
+			}
 		}
 		return null;
 	}

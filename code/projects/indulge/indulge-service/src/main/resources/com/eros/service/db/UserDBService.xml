@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.eros.service.db.UserDBService">
+<resultMap id="userreview" type="com.eros.core.model.UserReview">
+		<result property="id" column="id" jdbcType="INTEGER" />
+		<result property="userId" column="user_id" jdbcType="INTEGER" />
+		<result property="merchantId" column="merchant_id" jdbcType="INTEGER" />
+		<result property="user" column="name" jdbcType="VARCHAR" />
+		<result property="rating" column="rating" jdbcType="FLOAT" />
+		<result property="serviceRating" column="service_rating" jdbcType="FLOAT" />
+		<result property="cleanlinessRating" column="cleanliness_rating" jdbcType="FLOAT" />
+		<result property="text" column="review_text" jdbcType="VARCHAR" />
+	</resultMap>
+
+<select id="fetchPassForLogin" resultType="String" >
+	select passphrase from user where mail=#{value}
+</select>	
+<insert id="saveUser" parameterType="com.eros.core.model.UserReview"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+		user(user_id,merchant_id,name,rating,service_rating,cleanliness_rating,review_text,image_path,created_date)
+		VALUES
+		(#{userId},#{merchantId},#{user},#{rating},#{serviceRating},#{cleanlinessRating},#{imagePath},#{text},CURRENT_TIMESTAMP)
+	</insert>
+<insert id="saveReview" parameterType="com.eros.core.model.user.User"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+		user(name,dob,gender,mobile,passphrase,mail,facebook_id,profile_photo,status,ref_code,created_date)
+		VALUES
+		(#{name},#{dob},#{gender},#{mobile},#{passphrase},#{mail},#{facebook},#{profilePhoto},#{refCode},CURRENT_TIMESTAMP)
+	</insert>
+<select id="fetchUser" parameterType="String" resultType="com.eros.core.model.user.User">
+		select id,name,dob,gender,mobile,passphrase,mail,image_path as imagePath,facebook_id facebook,profile_photo profilePhoto,status,ref_code refCode from user where mail=#{mail}
+	</select>	
+	<update id="markLoggedStatus" parameterType="Hashmap">
+		update user set logged_status = #{status} where mail=#{mail}
+	</update>
+<select id="redeemDeal" parameterType="Hashmap" statementType="CALLABLE">
+		{CALL RedeemCoupon(#{userId, mode=IN, jdbcType=INTEGER},#{dealId, mode=IN, jdbcType=INTEGER},#{couponCode, mode=OUT, jdbcType=VARCHAR})}
+	</select>
+	<select id="confirmDeal" parameterType="Hashmap" statementType="CALLABLE">
+		{CALL ConfirmDeal(#{userId, mode=IN, jdbcType=INTEGER},#{dealId, mode=IN, jdbcType=INTEGER},#{confirmStatus, mode=OUT, jdbcType=BOOLEAN})}
+	</select>
+	<select id="updateRating" parameterType="Hashmap" statementType="CALLABLE">
+		{CALL UpdateMerchantRating(#{merchantId, mode=IN, jdbcType=INTEGER})}
+	</select>	
+	<insert id="saveForgotRequest" parameterType="Hashmap" useGeneratedKeys="true" keyProperty="id">
+	insert into forgot_request (email,type,created_date) 
+	values 
+	(#{email},#{type},CURRENT_TIMESTAMP)
+	
+	</insert>
+	
+	<update id="updatePassword" parameterType="Hashmap">
+	
+	update user set passphrase=#{passphrase} where mail = (select email from forgot_request where email=#{email} and id=#{requestId} and created_date BETWEEN DATE_SUB(NOW(), INTERVAL 2 DAY) AND NOW() limit 1) 
+	</update>
+	<update id="updateUser" parameterType="com.eros.core.model.user.User">
+		update user set updated_date = NOW()
+		<if test="name != null">
+		,name=#{name}
+		</if>
+		<if test="dob != null">
+		,dob=#{dob},
+		</if>
+		<if test="dob != null">
+		,passphrase=#{passphrase},
+		</if>
+		<if test="format != null">
+		gender=#{gender}
+		</if>
+		<if test="format != null">
+		,mobile=#{mobile}
+		</if>
+		<if test="format != null">
+		,image_path=#{imagePath} 
+		</if>
+		where mail=#{mail}
+	</update>
+	
+	</mapper>

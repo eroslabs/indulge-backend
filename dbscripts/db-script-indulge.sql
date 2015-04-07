@@ -29,8 +29,6 @@ CREATE TABLE `admin_config` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*Data for the table `admin_config` */
-
 /*Table structure for table `deal_redemption` */
 
 DROP TABLE IF EXISTS `deal_redemption`;
@@ -44,9 +42,7 @@ CREATE TABLE `deal_redemption` (
   `created_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-/*Data for the table `deal_redemption` */
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
 /*Table structure for table `deal_request` */
 
@@ -61,10 +57,6 @@ CREATE TABLE `deal_request` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
-/*Data for the table `deal_request` */
-
-insert  into `deal_request`(`id`,`user_id`,`merchant_id`,`created_date`,`updated_date`) values (3,1,6,'2015-04-15 11:40:50','2015-04-01 11:40:56');
-
 /*Table structure for table `deal_service_request` */
 
 DROP TABLE IF EXISTS `deal_service_request`;
@@ -77,10 +69,6 @@ CREATE TABLE `deal_service_request` (
   `updated_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
-
-/*Data for the table `deal_service_request` */
-
-insert  into `deal_service_request`(`id`,`request_id`,`service_id`,`created_date`,`updated_date`) values (3,3,2,'2015-04-14 11:41:28','2015-04-01 11:41:21'),(4,3,3,'2015-04-15 11:41:34','2015-04-01 11:41:28');
 
 /*Table structure for table `digital_menu_image` */
 
@@ -97,9 +85,18 @@ CREATE TABLE `digital_menu_image` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 
-/*Data for the table `digital_menu_image` */
+/*Table structure for table `forgot_request` */
 
-insert  into `digital_menu_image`(`id`,`merchant_id`,`image`,`type`,`status`,`created_date`,`updated_date`) values (4,6,'6\\th.jpg','\'SERVICE\'',0,'2015-04-02 12:01:43','2015-04-02 12:01:43'),(5,6,'6\\ab.jpg','\'SERVICE\'',0,'2015-04-02 12:01:43','2015-04-02 12:01:43');
+DROP TABLE IF EXISTS `forgot_request`;
+
+CREATE TABLE `forgot_request` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `email` varchar(50) NOT NULL COMMENT 'identifier for user',
+  `type` tinyint(1) DEFAULT NULL COMMENT '1=user , 2=merchant',
+  `created_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 /*Table structure for table `merchant` */
 
@@ -116,6 +113,7 @@ CREATE TABLE `merchant` (
   `image` varchar(200) DEFAULT NULL,
   `separate_rate_card` tinyint(1) DEFAULT '0',
   `service_radius` int(2) DEFAULT '0',
+  `gender_support` tinyint(1) DEFAULT '2',
   `cc_accepted` tinyint(1) DEFAULT '1',
   `unit_no` varchar(100) DEFAULT NULL,
   `floor` varchar(100) DEFAULT NULL,
@@ -129,16 +127,13 @@ CREATE TABLE `merchant` (
   `phone` varchar(10) DEFAULT NULL,
   `status` tinyint(1) DEFAULT '1',
   `software` varchar(100) DEFAULT NULL,
-  `review_rating` float(1,1) DEFAULT '0.0',
+  `review_rating` float(4,1) DEFAULT '0.0',
   `profile_complete` tinyint(1) DEFAULT '0',
   `created_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
-
-/*Data for the table `merchant` */
-
-insert  into `merchant`(`id`,`email`,`passphrase`,`name`,`city`,`lat`,`lng`,`image`,`separate_rate_card`,`service_radius`,`cc_accepted`,`unit_no`,`floor`,`building`,`street`,`landmark`,`state`,`pincode`,`home_service`,`country`,`phone`,`status`,`software`,`review_rating`,`profile_complete`,`created_date`,`updated_date`) values (6,'vikas31121978@gmail.com','123456','abc','asd','28.90','23.40','6\\ab.jpg',1,10,1,'a block','asdasdsad','sad','sdsa','das','Delhi','201012',1,'INDIA','9811435036',1,'sdasda',0.0,0,'2015-03-30 18:21:38','2015-04-02 12:13:34'),(7,'vikas31@gmail.com','123456','abc','delhi','28.90','23.40','7\\578292_10150684360970807_1075386497_n.jpg',0,0,1,'a block',NULL,NULL,NULL,NULL,'Delhi',NULL,0,'INDIA','9811435036',1,NULL,0.0,0,'2015-03-31 16:58:30','2015-03-31 16:59:20');
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniqueemailindx` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 /*Table structure for table `merchant_coupon` */
 
@@ -153,9 +148,7 @@ CREATE TABLE `merchant_coupon` (
   `created_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-/*Data for the table `merchant_coupon` */
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 /*Table structure for table `merchant_deal` */
 
@@ -179,10 +172,6 @@ CREATE TABLE `merchant_deal` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
-/*Data for the table `merchant_deal` */
-
-insert  into `merchant_deal`(`id`,`merchant_id`,`description`,`status`,`valid_from`,`valid_till`,`flat_off`,`percent_off`,`weekdays_schedule`,`recurring`,`redemption`,`confirmed`,`created_date`,`updated_date`) values (1,6,'sadsadasdsa',1,'2014-12-11 00:00:00','2014-12-11 00:00:00',20,10,'1100111',NULL,0,0,'2015-03-31 14:12:18','2015-03-31 14:12:18'),(2,6,'sadsadasdsa',1,'2014-12-11 00:00:00','2014-12-11 00:00:00',20,10,'1100111',NULL,0,0,'2015-03-31 14:17:37','2015-03-31 14:17:37'),(3,6,'sadsadasdsa',1,'2014-12-11 00:00:00','2014-12-11 00:00:00',20,10,'1100111',NULL,0,0,'2015-03-31 14:40:55','2015-03-31 14:40:55');
-
 /*Table structure for table `merchant_deal_service` */
 
 DROP TABLE IF EXISTS `merchant_deal_service`;
@@ -196,10 +185,6 @@ CREATE TABLE `merchant_deal_service` (
   `updated_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
-
-/*Data for the table `merchant_deal_service` */
-
-insert  into `merchant_deal_service`(`id`,`deal_id`,`service_id`,`service_name`,`created_date`,`updated_date`) values (1,1,1,NULL,'2015-03-31 14:41:21','2015-03-31 14:41:21'),(2,1,2,NULL,'2015-03-31 14:41:21','2015-03-31 14:41:21');
 
 /*Table structure for table `merchant_phone` */
 
@@ -216,10 +201,6 @@ CREATE TABLE `merchant_phone` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 
-/*Data for the table `merchant_phone` */
-
-insert  into `merchant_phone`(`id`,`merchant_id`,`phone_number`,`type`,`status`,`created_date`,`updated_date`) values (1,1,'9811435036','H',1,'2015-03-26 22:30:09','2015-03-26 22:31:46'),(2,2,'9811435036','O',1,'0000-00-00 00:00:00','2015-03-30 15:22:46'),(3,2,'9811435036','O',1,'0000-00-00 00:00:00','2015-03-30 15:22:46'),(4,2,'2132133212','O',1,'0000-00-00 00:00:00','2015-03-30 15:22:46'),(5,2,'9811435036','O',1,'0000-00-00 00:00:00','2015-03-30 15:29:49'),(6,2,'9811435036','O',1,'0000-00-00 00:00:00','2015-03-30 15:29:49'),(7,6,'9811435036','O',1,'0000-00-00 00:00:00','2015-03-30 15:50:33');
-
 /*Table structure for table `merchant_photo` */
 
 DROP TABLE IF EXISTS `merchant_photo`;
@@ -233,10 +214,6 @@ CREATE TABLE `merchant_photo` (
   `updated_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-
-/*Data for the table `merchant_photo` */
-
-insert  into `merchant_photo`(`id`,`merchant_id`,`image`,`status`,`created_date`,`updated_date`) values (1,1,'a',1,'2015-03-26 19:33:36','2015-03-26 19:33:36'),(2,1,'b',0,'2015-03-26 19:33:36','2015-03-26 19:33:43'),(3,2,'c',1,'2015-03-26 19:33:36','2015-03-26 19:33:59');
 
 /*Table structure for table `merchant_schedule` */
 
@@ -254,10 +231,6 @@ CREATE TABLE `merchant_schedule` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
-/*Data for the table `merchant_schedule` */
-
-insert  into `merchant_schedule`(`id`,`merchant_id`,`opening_time`,`closing_time`,`days`,`status`,`created_date`,`updated_date`) values (3,2,'08:30','20:30','1100110',1,'0000-00-00 00:00:00','2015-03-30 14:43:47'),(4,2,'08:30','20:30','1100110',1,'0000-00-00 00:00:00','2015-03-30 14:45:14'),(5,4,'08:30','20:30','1100110',1,'0000-00-00 00:00:00','2015-03-30 15:54:54'),(6,5,'08:30','20:30','1100110',1,'0000-00-00 00:00:00','2015-03-30 18:09:34'),(7,6,'08:30','20:30','1100110',1,'0000-00-00 00:00:00','2015-03-30 18:22:38'),(8,6,'08:30','20:30','1100110',1,'0000-00-00 00:00:00','2015-04-02 12:14:13');
-
 /*Table structure for table `merchant_service` */
 
 DROP TABLE IF EXISTS `merchant_service`;
@@ -267,16 +240,12 @@ CREATE TABLE `merchant_service` (
   `merchant_id` bigint(20) NOT NULL,
   `service_id` int(6) NOT NULL,
   `description` varchar(800) DEFAULT NULL,
-  `price` float(4,2) DEFAULT NULL,
+  `price` float(8,2) DEFAULT NULL,
   `status` tinyint(1) DEFAULT '1' COMMENT '0=inactive 1=active',
   `created_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
-
-/*Data for the table `merchant_service` */
-
-insert  into `merchant_service`(`id`,`merchant_id`,`service_id`,`description`,`price`,`status`,`created_date`,`updated_date`) values (1,1,1,'mass',99.99,1,'2015-03-26 22:30:09','2015-03-26 22:29:30'),(2,1,1,NULL,2.00,1,'2015-04-01 19:28:12','2015-04-01 19:28:12'),(3,6,1,NULL,NULL,1,'2015-04-01 21:53:18','2015-04-01 21:53:18'),(4,6,1,NULL,10.00,1,'2015-04-01 21:56:40','2015-04-01 21:56:40'),(5,6,1,NULL,10.00,1,'2015-04-01 21:57:47','2015-04-01 21:57:47'),(6,6,1,NULL,20.00,1,'2015-04-02 10:59:04','2015-04-02 10:59:04');
 
 /*Table structure for table `password_request` */
 
@@ -291,8 +260,6 @@ CREATE TABLE `password_request` (
   `modified_date` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-/*Data for the table `password_request` */
 
 /*Table structure for table `service` */
 
@@ -310,10 +277,6 @@ CREATE TABLE `service` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
-/*Data for the table `service` */
-
-insert  into `service`(`id`,`name`,`description`,`service_category_id`,`status`,`image`,`created_date`,`updated_date`) values (1,'massage','full body',1,1,'vikas','2015-03-26 22:30:09','2015-03-26 22:31:07'),(2,'cutting','dd',2,1,'ff','0000-00-00 00:00:00','2015-03-31 11:42:22'),(3,'hair spa','kjhjk',2,1,'gg','0000-00-00 00:00:00','2015-03-31 11:42:38'),(4,'foot spa','sd',3,1,'dd','0000-00-00 00:00:00','2015-03-31 11:43:21');
-
 /*Table structure for table `service_category` */
 
 DROP TABLE IF EXISTS `service_category`;
@@ -329,16 +292,13 @@ CREATE TABLE `service_category` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
-/*Data for the table `service_category` */
-
-insert  into `service_category`(`id`,`name`,`description`,`status`,`image`,`created_date`,`updated_date`) values (1,'massage','abs',1,'cd','2015-03-26 22:30:09','2015-03-26 22:30:54'),(2,'hair','hair',1,'sdsd','0000-00-00 00:00:00','2015-03-31 11:41:51'),(3,'legs','leg',1,'sd','0000-00-00 00:00:00','2015-03-31 11:52:55');
-
 /*Table structure for table `user` */
 
 DROP TABLE IF EXISTS `user`;
 
 CREATE TABLE `user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `mail` varchar(50) DEFAULT NULL,
   `name` varchar(50) DEFAULT NULL,
   `dob` date DEFAULT NULL COMMENT 'Date Of Birth',
   `gender` char(1) DEFAULT NULL,
@@ -346,16 +306,14 @@ CREATE TABLE `user` (
   `passphrase` varchar(20) DEFAULT NULL,
   `facebook_id` varchar(50) DEFAULT NULL,
   `profile_photo` varchar(50) DEFAULT NULL,
-  `status` smallint(1) DEFAULT NULL COMMENT 'active=1, inactive=0',
+  `status` tinyint(1) DEFAULT '1' COMMENT 'active=1, inactive=0',
+  `logged_status` tinyint(1) DEFAULT '0',
   `ref_code` varchar(10) DEFAULT NULL,
+  `image_path` varchar(50) DEFAULT NULL,
   `created_date` timestamp NULL DEFAULT '0000-00-00 00:00:00',
   `updated_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
-/*Data for the table `user` */
-
-insert  into `user`(`id`,`name`,`dob`,`gender`,`mobile`,`passphrase`,`facebook_id`,`profile_photo`,`status`,`ref_code`,`created_date`,`updated_date`) values (1,'vix','2015-03-16','n','sad','dsa','sd','sad',1,NULL,'0000-00-00 00:00:00','2015-03-30 17:10:03');
 
 /*Table structure for table `user_reviews` */
 
@@ -364,18 +322,69 @@ DROP TABLE IF EXISTS `user_reviews`;
 CREATE TABLE `user_reviews` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) NOT NULL COMMENT 'identifier for user',
+  `name` varchar(50) DEFAULT NULL,
   `merchant_id` bigint(20) NOT NULL COMMENT 'identifier for merchant',
   `review_text` varchar(1000) DEFAULT NULL,
   `service` varchar(100) DEFAULT NULL COMMENT 'text to define service',
-  `rating` int(1) DEFAULT NULL,
+  `service_rating` float(4,1) DEFAULT NULL,
+  `cleanliness_rating` float(4,1) DEFAULT NULL,
+  `rating` float(4,1) DEFAULT NULL,
   `created_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
-/*Data for the table `user_reviews` */
+/* Procedure structure for procedure `ConfirmCoupon` */
 
-insert  into `user_reviews`(`id`,`user_id`,`merchant_id`,`review_text`,`service`,`rating`,`created_date`,`updated_date`) values (1,1,6,'asd',NULL,1,'0000-00-00 00:00:00','2015-03-30 17:09:04'),(2,1,6,'sdf',NULL,2,'0000-00-00 00:00:00','2015-03-30 17:16:33');
+/*!50003 DROP PROCEDURE IF EXISTS  `ConfirmCoupon` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `ConfirmCoupon`(IN userId BIGINT(20),IN dealId BIGINT(20),OUT confirmStatus BOOLEAN)
+BEGIN
+DECLARE rowcount int(2);
+update merchant_deal set confirmed=confirmed+1 where id=dealId ;
+select ROW_COUNT() into rowcount; 
+IF(rowcount >0) THEN
+ SET confirmStatus = true;
+else
+ Set confirmStatus = false;
+END IF; 
+END */$$
+DELIMITER ;
+
+/* Procedure structure for procedure `RedeemCoupon` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `RedeemCoupon` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `RedeemCoupon`(IN userId BIGINT(20),IN dealId BIGINT(20),OUT couponCode VARCHAR(20))
+BEGIN
+DECLARE couponId BIGINT(20);
+SELECT c.coupon_code ,c.id INTO couponCode,couponId  FROM merchant_coupon c LEFT JOIN merchant_deal d  ON d.id=c.deal_id 
+WHERE c.status = 1 AND d.id=dealId AND d.status=1;
+IF(couponId IS NOT NULL) THEN
+UPDATE `merchant_deal` SET `redemption` = `redemption` +1 WHERE id=dealId;
+UPDATE `merchant_coupon` SET `status` = 3 WHERE id=couponId;
+INSERT INTO `deal_redemption` (deal_id,user_id,is_redeemed,created_date) VALUES(dealId,userId,1,CURRENT_TIMESTAMP);
+END IF; 
+END */$$
+DELIMITER ;
+
+/* Procedure structure for procedure `UpdateMerchantRating` */
+
+/*!50003 DROP PROCEDURE IF EXISTS  `UpdateMerchantRating` */;
+
+DELIMITER $$
+
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `UpdateMerchantRating`(IN merchantId BIGINT(20))
+BEGIN
+DECLARE averageRating float(2);
+select AVG(rating) into averageRating from user_reviews where merchant_id=merchantId;
+update merchant set review_rating=averageRating where id=merchantId ;
+END */$$
+DELIMITER ;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
