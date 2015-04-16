@@ -1,9 +1,13 @@
 
 package com.eros.core.model;
+
+import org.springframework.data.elasticsearch.annotations.Document;
+
 /**
  * indulge-api
  * author vikas created on Mar 26, 2015
  */
+
 public class MerchantPhone extends BaseModel{
 	
 	private static final long serialVersionUID = 1L;

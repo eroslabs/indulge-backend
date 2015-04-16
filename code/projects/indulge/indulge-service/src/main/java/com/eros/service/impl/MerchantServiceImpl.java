@@ -202,6 +202,7 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	@Override
 	public Boolean saveSchedule(Merchant contextMerchant) {
 		try{
+			merchantDBService.cleanSchedule(contextMerchant);
 			merchantDBService.saveSchedule(contextMerchant);
 			return true;
 		}catch (Exception e) {
@@ -313,6 +314,19 @@ public class MerchantServiceImpl implements MerchantCustomService {
 			params.put("start", start);
 			params.put("rows", rows);
 			List<MerchantDeal> merchantDeals = merchantDBService.fetchMerchantDeals(params);
+			return merchantDeals;
+		}catch (Exception e) {
+			LOG.error("Error in fetching deals services: ", e);
+		}
+		return null;
+	}
+	
+	@Override
+	public List<MerchantDeal> fetchDealWithMerchant(Integer id) {
+		try{
+			HashMap<String, Object> params = new HashMap<String, Object>(3);
+			params.put("id", id);
+			List<MerchantDeal> merchantDeals = merchantDBService.fetchDealWithMerchant(id);
 			return merchantDeals;
 		}catch (Exception e) {
 			LOG.error("Error in fetching deals services: ", e);

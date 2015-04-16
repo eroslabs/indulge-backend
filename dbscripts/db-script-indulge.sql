@@ -42,7 +42,7 @@ CREATE TABLE `deal_redemption` (
   `created_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
 /*Table structure for table `deal_request` */
 
@@ -148,7 +148,7 @@ CREATE TABLE `merchant_coupon` (
   `created_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 /*Table structure for table `merchant_deal` */
 
@@ -313,7 +313,7 @@ CREATE TABLE `user` (
   `created_date` timestamp NULL DEFAULT '0000-00-00 00:00:00',
   `updated_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 /*Table structure for table `user_reviews` */
 
@@ -334,13 +334,13 @@ CREATE TABLE `user_reviews` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
-/* Procedure structure for procedure `ConfirmCoupon` */
+/* Procedure structure for procedure `ConfirmDeal` */
 
-/*!50003 DROP PROCEDURE IF EXISTS  `ConfirmCoupon` */;
+/*!50003 DROP PROCEDURE IF EXISTS  `ConfirmDeal` */;
 
 DELIMITER $$
 
-/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `ConfirmCoupon`(IN userId BIGINT(20),IN dealId BIGINT(20),OUT confirmStatus BOOLEAN)
+/*!50003 CREATE DEFINER=`root`@`localhost` PROCEDURE `ConfirmDeal`(IN userId BIGINT(20),IN dealId BIGINT(20),OUT confirmStatus BOOLEAN)
 BEGIN
 DECLARE rowcount int(2);
 update merchant_deal set confirmed=confirmed+1 where id=dealId ;

@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,11 +16,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.eros.core.model.Merchant;
+import com.eros.core.model.MerchantDeal;
+import com.eros.core.model.MerchantService;
 import com.eros.core.model.UserReview;
 import com.eros.core.model.user.User;
+import com.eros.service.MerchantCustomService;
+import com.eros.service.SearchService;
 import com.eros.service.UserService;
 import com.eros.service.db.MerchantDBService;
 import com.eros.service.db.UserDBService;
+import com.eros.service.elasticsearch.MerchantRepository;
 
 /**
  * 
@@ -39,6 +46,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	protected UserDBService userDBService;
+	
+	@Autowired
+	protected MerchantCustomService merchantService;
 	
 	@Value("${user.base.path}")
 	private String USER_BASE_PATH;
@@ -260,6 +270,7 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	
 	
 
 	}

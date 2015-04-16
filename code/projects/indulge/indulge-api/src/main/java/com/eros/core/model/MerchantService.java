@@ -21,20 +21,8 @@ public class MerchantService extends BaseModel{
     private String image;
     private String name;
     private Integer merchantId;
-    private List<DigitalMenuImage> menuImages;
     
-	/**
-	 * @return the menuImages
-	 */
-	public List<DigitalMenuImage> getMenuImages() {
-		return menuImages;
-	}
-	/**
-	 * @param menuImages the menuImages to set
-	 */
-	public void setMenuImages(List<DigitalMenuImage> menuImages) {
-		this.menuImages = menuImages;
-	}
+	
 	/**
 	 * @return the merchantId
 	 */

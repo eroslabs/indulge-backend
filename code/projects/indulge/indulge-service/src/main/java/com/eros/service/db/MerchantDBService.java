@@ -90,5 +90,14 @@ public interface MerchantDBService {
 	 * @param merchant
 	 */
 	public void cleanContacts(Merchant merchant);
+	/**
+	 * @param contextMerchant
+	 */
+	public void cleanSchedule(Merchant contextMerchant);
+	/**
+	 * @param id
+	 * @return
+	 */
+	public List<MerchantDeal> fetchDealWithMerchant(Integer id);
 	
 }

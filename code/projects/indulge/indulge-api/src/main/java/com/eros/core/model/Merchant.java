@@ -1,15 +1,20 @@
 package com.eros.core.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.util.AutoPopulatingList;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldIndex;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.GeoPointField;
+import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
 /**
  * 
  * @author vikas
  *
  */
+@Document(indexName = "indulge",type = "merchant" , shards = 1, replicas = 0, refreshInterval = "-1")
 public class Merchant extends BaseModel {
 	
 	
@@ -18,13 +23,17 @@ public class Merchant extends BaseModel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private Integer merchantId;
 	private Integer id;
     private String name;
     private String email; 	 	
     private String passPhrase; 	
     private String city;	
-    private Float lat;	
-    private Float lng; 	 	
+    @Field(type = FieldType.Boolean, index = FieldIndex.not_analyzed,store=true)
+    private Double lat;	
+    @Field(type = FieldType.Boolean, index = FieldIndex.not_analyzed,store=true)
+    private Double lng;
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed,store=true)
     private String image;
     private Boolean ccAccepted;	
     private String unitNumber; 	
@@ -35,21 +44,46 @@ public class Merchant extends BaseModel {
     private String state;	 	
     private String pincode;	
     private String country; 	
+    @Field(type = FieldType.Boolean, index = FieldIndex.not_analyzed,store=true)
     private Boolean status;
     private String software;
     private Float rating;
     private Boolean homeService;
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed,store=true)
 	private String phone;
 	private Integer genderSupport;
 	private Boolean separateRateCard;
+	@Field(type = FieldType.Integer, index = FieldIndex.not_analyzed,store=true)
 	private Integer serviceRadius;
+	@Field(type = FieldType.Boolean, index = FieldIndex.not_analyzed,store=true)
     private Boolean profileComplete;
+    @GeoPointField
+    private GeoPoint geo;
     private List<MerchantPhone> phones;
     private List<MerchantImage> images;
-    private MerchantSchedule schedule;
+	private MerchantSchedule schedule;
     private List<MerchantService> services  ;
     private List<DigitalMenuImage> menus;
     
+    /**
+   	 * @return the merchantId
+   	 */
+   	public Integer getMerchantId() {
+   		if(merchantId == null){
+   			this.merchantId = id;
+   		}
+   		return merchantId;
+   	}
+   	/**
+   	 * @param merchantId the merchantId to set
+   	 */
+   	public void setMerchantId(Integer merchantId) {
+   		if(id !=null){
+   			this.merchantId = id;
+   		}else{
+   		this.merchantId = merchantId;
+   		}
+   	}
     /**
 	 * @return the separateRateCard
 	 */
@@ -149,7 +183,7 @@ public class Merchant extends BaseModel {
 	/**
 	 * @return the lat
 	 */
-	public Float getLat() {
+	public Double getLat() {
 		return lat;
 	}
 	/**
@@ -167,19 +201,19 @@ public class Merchant extends BaseModel {
 	/**
 	 * @param lat the lat to set
 	 */
-	public void setLat(Float lat) {
+	public void setLat(Double lat) {
 		this.lat = lat;
 	}
 	/**
 	 * @return the lng
 	 */
-	public Float getLng() {
+	public Double getLng() {
 		return lng;
 	}
 	/**
 	 * @param lng the lng to set
 	 */
-	public void setLng(Float lng) {
+	public void setLng(Double lng) {
 		this.lng = lng;
 	}
 	/**
@@ -193,6 +227,24 @@ public class Merchant extends BaseModel {
 	 */
 	public void setCcAccepted(Boolean ccAccepted) {
 		this.ccAccepted = ccAccepted;
+	}
+	/**
+	 * @return the geo
+	 */
+	public GeoPoint getGeo() {
+		GeoPoint point = new GeoPoint(lat,lng);
+		this.setGeo(point);
+		return geo;
+	}
+	/**
+	 * @param geo the geo to set
+	 */
+	public void setGeo(GeoPoint geo) {
+		if(geo != null){
+			this.setLat(geo.getLat());
+			this.setLng(geo.getLon());
+		}
+		this.geo = geo;
 	}
 	/**
 	 * @return the unitNumber

@@ -88,5 +88,10 @@ public interface MerchantCustomService {
 	 * @return
 	 */
 	public Boolean saveDigitalMenus(Merchant contextMerchant) throws Exception;
-	
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public List<MerchantDeal> fetchDealWithMerchant(Integer id);
 }

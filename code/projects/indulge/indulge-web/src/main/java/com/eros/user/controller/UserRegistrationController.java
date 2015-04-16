@@ -33,6 +33,12 @@ public class UserRegistrationController {
 	@Resource(name = "userService")
 	protected UserService userService;
 	
+	/**
+	 * 
+	 * @param requestMap
+	 * including "user" Key with {@link User} Object as mandatory field 
+	 * @return Map including status (true/false) , error ( message) , user ( User)
+	 */
 	@RequestMapping(method = RequestMethod.POST)
 	public @ResponseBody Map register(@RequestBody Map requestMap) {
 		User user =(User)requestMap.get("user");
@@ -63,7 +69,11 @@ public class UserRegistrationController {
 		return map;
  
 	}
-	
+	/**
+	 * 
+	 * @param email
+	 * @return
+	 */
 	@RequestMapping(value="/triggerForgot",method = RequestMethod.GET)
 	public @ResponseBody Map forgotPasword(@RequestParam("userEmail") String email) {
 		Boolean error = false;
@@ -89,7 +99,13 @@ public class UserRegistrationController {
 		return map;
  
 	}
-	
+	/**
+	 * 
+	 * @param email
+	 * @param requestId
+	 * @param passphrase
+	 * @return
+	 */
 	@RequestMapping(value="/changePassword",method = RequestMethod.GET)
 	public @ResponseBody Map forgotPasword(@RequestParam("userEmail") String email,@RequestParam("requestId") String requestId,@RequestParam("passphrase") String passphrase) {
 		Boolean error = false;

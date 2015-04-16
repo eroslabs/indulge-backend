@@ -35,10 +35,10 @@
   <form class="form-signin" name='form' action='${pageContext.servletContext.contextPath }/j_spring_security_check' method='POST'>
     <h2 class="form-signin-heading">Seller Panel Log In</h2>
     <label class="sr-only">Email address</label>
-    <input type="email" autofocus="" required="" placeholder="Email address" class="form-control" name='j_username' value='' >
+    <input type="email" autofocus="" required="" placeholder="Email address" class="form-control" name='username' value='' >
     <div class="lh10">&nbsp;</div>
     <label class="sr-only">Password</label>
-    <input type="password" required="" placeholder="Password" class="form-control" name='j_password'>
+    <input type="password" required="" placeholder="Password" class="form-control" name='password'>
     <div class="lh10">&nbsp;</div> 
     <button type="submit" class="btn btn-lg btn-primary btn-block" name="submit">Sign in</button>
   </form>

@@ -17,6 +17,16 @@
 	<dependencies>
 	<dependency>
 			<groupId>eros</groupId>
+			<artifactId>eros-notification</artifactId>
+			<version>0.0.1</version>
+			<exclusions>
+			<exclusion>
+		      <groupId>org.springframework</groupId>
+                      <artifactId>spring-asm</artifactId>
+		  </exclusion></exclusions>
+		</dependency>
+	<dependency>
+			<groupId>eros</groupId>
 			<artifactId>indulge-api</artifactId>
 			<version>0.0.1</version>
 		</dependency>
@@ -75,7 +85,7 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
-			<version>1.7.1</version>
+			<version>2.3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.mail</groupId>
@@ -97,6 +107,26 @@
 		    <artifactId>wstx-asl</artifactId>
 		    <version>3.2.7</version>
 		</dependency>
-		
+		<dependency>
+		    <groupId>org.springframework.data</groupId>
+		    <artifactId>spring-data-elasticsearch</artifactId>
+		    <version>1.2.0.RELEASE</version>
+                <exclusions>
+		   <exclusion>
+		      <groupId>org.springframework</groupId>
+                      <artifactId>spring-asm</artifactId>
+		  </exclusion>
+		</exclusions>
+		</dependency>
+		<dependency>
+    <groupId>org.json</groupId>
+    <artifactId>json</artifactId>
+    <version>20090211</version>
+</dependency>
+<dependency>
+    <groupId>com.googlecode.json-simple</groupId>
+    <artifactId>json-simple</artifactId>
+    <version>1.1.1</version>
+</dependency>
 	</dependencies>
 </project>

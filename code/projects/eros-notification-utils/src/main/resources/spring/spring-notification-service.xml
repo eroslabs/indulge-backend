@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/aop 
+						http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+						http://www.springframework.org/schema/context 
+						http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/tx 
+						http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+						http://www.springframework.org/schema/util
+        				http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+	<bean id="fmConfig" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean"> 
+    <property name="templateLoaderPath" value="/WEB-INF/templates"></property> 
+	</bean>
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+	        <property name="host" value="smtp.gmail.com"/>
+	        <property name="port" value="25"/>
+	        <property name="username" value="vikas@eroslabs.co"/>
+	        <property name="password" value="v1k@sj@1n"/>
+	        <property name="javaMailProperties">
+	            <props>
+	                <prop key="mail.transport.protocol">smtp</prop>
+	                <prop key="mail.smtp.auth">true</prop>
+	                <prop key="mail.smtp.starttls.enable">true</prop>
+	                <prop key="mail.debug">true</prop>
+	            </props>
+	        </property>
+	    </bean>
+     
+	
+
+</beans>

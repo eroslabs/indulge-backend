@@ -23,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.eros.constants.WebConstants;
+import com.eros.core.BaseController;
 import com.eros.core.model.DealRequest;
 import com.eros.core.model.DealService;
 import com.eros.core.model.DigitalMenuImage;
@@ -43,7 +44,7 @@ import com.eros.service.MerchantCustomService;
  */
 @Controller
 @RequestMapping(value = "/merchant")
-public class MerchantController {
+public class MerchantController extends BaseController{
 
 	protected static Log MERCHANT_LOGGER = LogFactory
 			.getLog(MerchantController.class);

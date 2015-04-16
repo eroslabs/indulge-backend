@@ -2,21 +2,28 @@
 <beans:beans xmlns="http://www.springframework.org/schema/security"
 	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
            http://www.springframework.org/schema/security
-           http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+           http://www.springframework.org/schema/security/spring-security-4.0.xsd">
 
 
 	<!-- <http pattern="/css/**" security="none" /> <http pattern="/css/**" 
 		security="none" /> 
 	<http pattern="/admin/login" security="none" />-->
-
-	<http auto-config="true">
-		<anonymous enabled="true" granted-authority="ROLE_ANONYMOUS"/>
-		<form-login login-page='/merchant/login' always-use-default-target="true" default-target-url="/merchant/home" />
-		<intercept-url pattern="/merchant/login" access="ROLE_ANONYMOUS,ROLE_ADMIN,ROLE_STAFF" />
-		<intercept-url pattern="/merchant/*" access="ROLE_ADMIN,ROLE_STAFF" />
-		<logout logout-success-url="/merchant/login" />
+<http pattern="/assets/**" security="none" />
+<http pattern="/css/**" security="none" />
+<http pattern="/images/**" security="none" />
+<http pattern="/js/**" security="none" />
+	<http disable-url-rewriting="false" >
+	<headers disabled="true"/>
+		<csrf disabled="true"/>
+		<!-- <http pattern="/user/**" create-session="stateless"> -->
+		<form-login login-processing-url="/j_spring_security_check" login-page='/merchant/login' always-use-default-target="true" default-target-url="/merchant/home" />
+		<intercept-url pattern="/j_spring_security_check" access="permitAll"/>
+		<intercept-url pattern="/j_spring_security_logout" access="permitAll"/>
+		<intercept-url pattern="/merchant/login" access="permitAll" />
+		<intercept-url pattern="/merchant/*" access="hasRole('ROLE_ADMIN')" />
+		<logout logout-success-url="/merchant/login" logout-url="/j_spring_security_logout"/>
 		<remember-me />
 	</http>
 

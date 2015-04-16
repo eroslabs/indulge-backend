@@ -40,7 +40,10 @@
 	      <sec:authorize var="loggedIn" access="isAuthenticated()" />
 		  <c:if test="${not empty loggedIn and  loggedIn}">
 		      	Hi, <sec:authentication property="name"/>&nbsp;&nbsp;&nbsp;
-		      		<a style="margin-right:20px;" href="${pageContext.servletContext.contextPath }/j_spring_security_logout">Logout</a>&nbsp;&nbsp;&nbsp;
+		      		<form class="form-signin" name='form' action='${pageContext.servletContext.contextPath }/j_spring_security_logout' method='POST'>
+    
+    <button type="submit" class="btn btn-lg btn-primary btn-block" name="Logout">Logout</button>
+  </form>&nbsp;&nbsp;&nbsp;
 	      </c:if>
 		 </div>
 		 <a href="${pageContext.servletContext.contextPath }/merchant/home">home</a>&nbsp;&nbsp;|&nbsp;&nbsp;

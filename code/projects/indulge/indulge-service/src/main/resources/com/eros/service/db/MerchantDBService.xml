@@ -31,14 +31,30 @@
 		<result property="validTill" column="valid_till" jdbcType="TIMESTAMP" />
 		<result property="percentOff" column="percent_off" jdbcType="INTEGER" />
 		<result property="flatOff" column="flat_off" jdbcType="INTEGER" />
-		<result property="days" column="id" jdbcType="VARCHAR" />
-		<result property="redemption" column="id" jdbcType="INTEGER" />
-		<result property="confirmed" column="id" jdbcType="INTEGER" />
-		<result property="recurring" column="id" jdbcType="BOOLEAN" />
+		<result property="days" column="weekdays_schedule" jdbcType="VARCHAR" />
+		<result property="redemption" column="redemption" jdbcType="INTEGER" />
+		<result property="confirmed" column="confirmed" jdbcType="INTEGER" />
+		<result property="recurring" column="recurring" jdbcType="BOOLEAN" />
+		<result property="name" column="name" jdbcType="VARCHAR" />
+		<result property="city" column="city" jdbcType="VARCHAR" />
+		<result property="pincode" column="pincode" jdbcType="VARCHAR" />
+		<result property="building" column="building" jdbcType="VARCHAR" />
+		<result property="landmark" column="landmark" jdbcType="VARCHAR" />
+		<result property="rating" column="review_rating" jdbcType="DECIMAL" />
+		<result property="lat" column="lat" jdbcType="DECIMAL" />	
+	    <result property="lng" column="lng" jdbcType="DECIMAL" />
+	    <result property="country" column="country" jdbcType="VARCHAR" /> 	
+	    <result property="homeService" column="home_service" jdbcType="BOOLEAN" />
+	    <result property="phone" column="phone" jdbcType="VARCHAR" />
+		<result property="genderSupport" column="gender_support" jdbcType="BOOLEAN" />
+		<result property="serviceRadius" column="service_radius" jdbcType="INTEGER" />
+		<result property="createdDate" column="created_date" jdbcType="TIMESTAMP" />
+		<result property="updatedDate" column="updated_date" jdbcType="TIMESTAMP" />
 		<collection property="services" column="id" javaType="ArrayList"
 			ofType="com.eros.core.model.DealService"
 			select="com.eros.service.db.MerchantDBService.selectMerchantDealServices"
 			resultMap="dealServices" />
+		
 	</resultMap>
 
 
@@ -46,7 +62,6 @@
 		<result property="id" column="id" jdbcType="INTEGER" />
 		<result property="name" column="name" jdbcType="VARCHAR" />
 		<result property="email" column="email" jdbcType="VARCHAR" />
-		<result property="passPhrase" column="pass_phrase" jdbcType="VARCHAR" />
 		<result property="city" column="city" jdbcType="VARCHAR" />
 		<result property="lat" column="lat" jdbcType="DECIMAL" />
 		<result property="lng" column="lng" jdbcType="DECIMAL" />
@@ -151,6 +166,13 @@
 		resultMap="deals">
 		select * from merchant_deal where merchant_id=#{id} order by
 		created_date desc limit #{start} ,#{rows}
+	</select>
+	
+	<select id="fetchDealWithMerchant" parameterType="Integer"
+		resultMap="deals">
+		select d.id,d.merchant_id,d.description,d.valid_from,d.valid_till,d.percent_off,d.flat_off,d.weekdays_schedule,d.redemption,d.confirmed,
+		d.recurring,m.name,m.city,m.pincode,m.building,m.landmark,m.review_rating,m.lat,m.lng,m.country,m.home_service,m.phone,m.gender_support
+		,m.service_radius,d.created_date,d.updated_date from merchant_deal d left join merchant m on d.merchant_id=m.id where d.merchant_id=#{value} and d.status = 1 and d.valid_till > CURRENT_TIMESTAMP
 	</select>
 
 	<select id="fetchDealRequests" parameterType="Integer"
@@ -354,5 +376,8 @@
 	</update>
 	<delete id="cleanContacts" parameterType="com.eros.core.model.Merchant">
 	delete from merchant_phone where merchant_id=#{id}
+	</delete>
+	<delete id="cleanSchedule" parameterType="com.eros.core.model.Merchant">
+	delete from merchant_schedule where merchant_id=#{id}
 	</delete>
 </mapper>
