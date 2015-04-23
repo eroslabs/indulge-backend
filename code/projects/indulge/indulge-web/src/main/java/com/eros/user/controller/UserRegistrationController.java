@@ -30,7 +30,7 @@ public class UserRegistrationController {
 	protected static Log LOGGER = LogFactory
 			.getLog(UserRegistrationController.class);
 	
-	@Resource(name = "userService")
+	@Resource(name = "userServiceImpl")
 	protected UserService userService;
 	
 	/**

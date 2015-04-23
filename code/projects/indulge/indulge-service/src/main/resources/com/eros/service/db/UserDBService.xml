@@ -24,6 +24,13 @@
 		VALUES
 		(#{userId},#{merchantId},#{user},#{rating},#{serviceRating},#{cleanlinessRating},#{imagePath},#{text},CURRENT_TIMESTAMP)
 	</insert>
+<insert id="saveReportedError" parameterType="com.eros.core.model.ReportedError"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+		user(user_id,merchant_id,wrong_phone,wrong_address,closed_closed,wrong_pricing,details,created_date)
+		VALUES
+		(#{userId},#{merchantId},#{wrongPhone},#{wrongAddress},#{closedClosed},#{wrongPricing},#{details},#{CURRENT_TIMESTAMP})
+	</insert>
 <insert id="saveReview" parameterType="com.eros.core.model.user.User"
 		useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO
@@ -38,7 +45,7 @@
 		update user set logged_status = #{status} where mail=#{mail}
 	</update>
 <select id="redeemDeal" parameterType="Hashmap" statementType="CALLABLE">
-		{CALL RedeemCoupon(#{userId, mode=IN, jdbcType=INTEGER},#{dealId, mode=IN, jdbcType=INTEGER},#{couponCode, mode=OUT, jdbcType=VARCHAR})}
+		{CALL RedeemCoupon(#{userId, mode=IN, jdbcType=INTEGER},#{dealId, mode=IN, jdbcType=INTEGER},#{couponCode, mode=IN, jdbcType=VARCHAR})}
 	</select>
 	<select id="confirmDeal" parameterType="Hashmap" statementType="CALLABLE">
 		{CALL ConfirmDeal(#{userId, mode=IN, jdbcType=INTEGER},#{dealId, mode=IN, jdbcType=INTEGER},#{confirmStatus, mode=OUT, jdbcType=BOOLEAN})}

@@ -11,9 +11,10 @@
     <title>Indulge Vendor Admin Panel</title>
 
     <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
-    <link href="${pageContext.servletContext.contextPath }/css/custom.css" rel="stylesheet" >
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,500,200,600,700' rel='stylesheet' type='text/css'>
-    
+    <link href="${pageContext.servletContext.contextPath }/css/merchant.css" rel="stylesheet" />
+    <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="${pageContext.servletContext.contextPath }/js/jquery-1.11.1.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
@@ -28,7 +29,23 @@
     <![endif]-->
   </head>
 <body>
-<div >
+	<div class="container" id="header">
+		<div class="row row15">
+			<div class="col-sm-3 header-columns">How it Works</div>
+			<div class="col-sm-3 header-columns">Benefits</div>
+			<div class="col-sm-2 header-columns">Pricing</div>
+			<div class="col-sm-8 header-image">
+				<center>
+				<a  href="${pageContext.servletContext.contextPath }/merchant/home">
+	            <img src="${pageContext.servletContext.contextPath }/images/logo.png" style="height:50px" class="img-responsive" alt="Indulge" /></a></center>
+	        </div>
+			<div class="col-sm-2 header-columns">FAQ's</div>
+			<div class="col-sm-3 header-columns">Login</div>
+			<div class="col-sm-3 header-columns">Join Us</div>
+		</div>
+	</div>
+	<!--
+	<div >
 	      <div style="float:left;">
 	        <a  href="${pageContext.servletContext.contextPath }/merchant/home">
 	            <img src="${pageContext.servletContext.contextPath }/images/logo.png" style="" class="img-responsive" alt="Indulge" />
@@ -40,10 +57,7 @@
 	      <sec:authorize var="loggedIn" access="isAuthenticated()" />
 		  <c:if test="${not empty loggedIn and  loggedIn}">
 		      	Hi, <sec:authentication property="name"/>&nbsp;&nbsp;&nbsp;
-		      		<form class="form-signin" name='form' action='${pageContext.servletContext.contextPath }/j_spring_security_logout' method='POST'>
-    
-    <button type="submit" class="btn btn-lg btn-primary btn-block" name="Logout">Logout</button>
-  </form>&nbsp;&nbsp;&nbsp;
+		      		<a style="margin-right:20px;" href="${pageContext.servletContext.contextPath }/j_spring_security_logout">Logout</a>&nbsp;&nbsp;&nbsp;
 	      </c:if>
 		 </div>
 		 <a href="${pageContext.servletContext.contextPath }/merchant/home">home</a>&nbsp;&nbsp;|&nbsp;&nbsp;
@@ -55,6 +69,7 @@
 		 <a href="${pageContext.servletContext.contextPath }/merchant/listDealRequests">Deals Request</a>
 	<div style="clear:both;"/>
 </div>
+-->
 
 </body>
 </html>

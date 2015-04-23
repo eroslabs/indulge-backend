@@ -21,6 +21,6 @@
 		<property name="basePackage" value="com.eros.service.db" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
-	
+
 
 </beans>

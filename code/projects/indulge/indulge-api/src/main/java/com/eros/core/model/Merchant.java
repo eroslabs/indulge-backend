@@ -23,7 +23,6 @@ public class Merchant extends BaseModel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private Integer merchantId;
 	private Integer id;
     private String name;
     private String email; 	 	
@@ -36,17 +35,21 @@ public class Merchant extends BaseModel {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed,store=true)
     private String image;
     private Boolean ccAccepted;	
-    private String unitNumber; 	
-    private String floor;	 	
-    private String building;	
-    private String street;
+    private String address; 	
+    private String establishment;	 	
+    private String locality;	
     private String landmark;	
     private String state;	 	
     private String pincode;	
-    private String country; 	
+    private String country; 
+    private String experience;
+    private String certification;
+    private Boolean acFacility;
+    private Integer merchantType;
     @Field(type = FieldType.Boolean, index = FieldIndex.not_analyzed,store=true)
     private Boolean status;
     private String software;
+    @Field(type = FieldType.Float, index = FieldIndex.not_analyzed,store=true)
     private Float rating;
     private Boolean homeService;
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed,store=true)
@@ -64,62 +67,35 @@ public class Merchant extends BaseModel {
 	private MerchantSchedule schedule;
     private List<MerchantService> services  ;
     private List<DigitalMenuImage> menus;
+    private Integer totalReviews;
+    private List<MerchantDeal> deals;
+    private List<UserReview> reviews;
     
-    /**
-   	 * @return the merchantId
-   	 */
-   	public Integer getMerchantId() {
-   		if(merchantId == null){
-   			this.merchantId = id;
-   		}
-   		return merchantId;
-   	}
-   	/**
-   	 * @param merchantId the merchantId to set
-   	 */
-   	public void setMerchantId(Integer merchantId) {
-   		if(id !=null){
-   			this.merchantId = id;
-   		}else{
-   		this.merchantId = merchantId;
-   		}
-   	}
-    /**
-	 * @return the separateRateCard
+  
+	/**
+	 * @return the deals
 	 */
-	public Boolean getSeparateRateCard() {
-		return separateRateCard;
+	public List<MerchantDeal> getDeals() {
+		return deals;
 	}
 	/**
-	 * @param separateRateCard the separateRateCard to set
+	 * @param deals the deals to set
 	 */
-	public void setSeparateRateCard(Boolean separateRateCard) {
-		this.separateRateCard = separateRateCard;
+	public void setDeals(List<MerchantDeal> deals) {
+		this.deals = deals;
 	}
 	/**
-	 * @return the serviceRadius
+	 * @return the totalReviews
 	 */
-	public Integer getServiceRadius() {
-		return serviceRadius;
+	public Integer getTotalReviews() {
+		return totalReviews;
 	}
 	/**
-	 * @param serviceRadius the serviceRadius to set
+	 * @param totalReviews the totalReviews to set
 	 */
-	public void setServiceRadius(Integer serviceRadius) {
-		this.serviceRadius = serviceRadius;
+	public void setTotalReviews(Integer totalReviews) {
+		this.totalReviews = totalReviews;
 	}
-	/**
-   	 * @return the homeService
-   	 */
-   	public Boolean getHomeService() {
-   		return homeService;
-   	}
-   	/**
-   	 * @param homeService the homeService to set
-   	 */
-   	public void setHomeService(Boolean homeService) {
-   		this.homeService = homeService;
-   	}
 	/**
 	 * @return the id
 	 */
@@ -157,16 +133,16 @@ public class Merchant extends BaseModel {
 		this.email = email;
 	}
 	/**
-	 * @return the passphrase
+	 * @return the passPhrase
 	 */
 	public String getPassPhrase() {
 		return passPhrase;
 	}
 	/**
-	 * @param passphrase the passphrase to set
+	 * @param passPhrase the passPhrase to set
 	 */
-	public void setPassPhrase(String passphrase) {
-		this.passPhrase = passphrase;
+	public void setPassPhrase(String passPhrase) {
+		this.passPhrase = passPhrase;
 	}
 	/**
 	 * @return the city
@@ -187,18 +163,6 @@ public class Merchant extends BaseModel {
 		return lat;
 	}
 	/**
-	 * @return the image
-	 */
-	public String getImage() {
-		return image;
-	}
-	/**
-	 * @param image the image to set
-	 */
-	public void setImage(String image) {
-		this.image = image;
-	}
-	/**
 	 * @param lat the lat to set
 	 */
 	public void setLat(Double lat) {
@@ -211,10 +175,34 @@ public class Merchant extends BaseModel {
 		return lng;
 	}
 	/**
+	 * @return the acFacility
+	 */
+	public Boolean getAcFacility() {
+		return acFacility;
+	}
+	/**
+	 * @param acFacility the acFacility to set
+	 */
+	public void setAcFacility(Boolean acFacility) {
+		this.acFacility = acFacility;
+	}
+	/**
 	 * @param lng the lng to set
 	 */
 	public void setLng(Double lng) {
 		this.lng = lng;
+	}
+	/**
+	 * @return the image
+	 */
+	public String getImage() {
+		return image;
+	}
+	/**
+	 * @param image the image to set
+	 */
+	public void setImage(String image) {
+		this.image = image;
 	}
 	/**
 	 * @return the ccAccepted
@@ -229,82 +217,52 @@ public class Merchant extends BaseModel {
 		this.ccAccepted = ccAccepted;
 	}
 	/**
-	 * @return the geo
+	 * @return the address
 	 */
-	public GeoPoint getGeo() {
-		GeoPoint point = new GeoPoint(lat,lng);
-		this.setGeo(point);
-		return geo;
+	public String getAddress() {
+		return address;
 	}
 	/**
-	 * @param geo the geo to set
+	 * @param address the address to set
 	 */
-	public void setGeo(GeoPoint geo) {
-		if(geo != null){
-			this.setLat(geo.getLat());
-			this.setLng(geo.getLon());
-		}
-		this.geo = geo;
+	public void setAddress(String address) {
+		this.address = address;
 	}
 	/**
-	 * @return the unitNumber
+	 * @return the establishment
 	 */
-	public String getUnitNumber() {
-		return unitNumber;
+	public String getEstablishment() {
+		return establishment;
 	}
 	/**
-	 * @param unitNumber the unitNumber to set
+	 * @param establishment the establishment to set
 	 */
-	public void setUnitNumber(String unitNumber) {
-		this.unitNumber = unitNumber;
+	public void setEstablishment(String establishment) {
+		this.establishment = establishment;
 	}
 	/**
-	 * @return the floor
+	 * @return the locality
 	 */
-	public String getFloor() {
-		return floor;
+	public String getLocality() {
+		return locality;
 	}
 	/**
-	 * @param floor the floor to set
+	 * @return the reviews
 	 */
-	public void setFloor(String floor) {
-		this.floor = floor;
+	public List<UserReview> getReviews() {
+		return reviews;
 	}
 	/**
-	 * @return the building
+	 * @param reviews the reviews to set
 	 */
-	public String getBuilding() {
-		return building;
+	public void setReviews(List<UserReview> reviews) {
+		this.reviews = reviews;
 	}
 	/**
-	 * @return the menus
+	 * @param locality the locality to set
 	 */
-	public List<DigitalMenuImage> getMenus() {
-		return menus;
-	}
-	/**
-	 * @param menus the menus to set
-	 */
-	public void setMenus(List<DigitalMenuImage> menus) {
-		this.menus = menus;
-	}
-	/**
-	 * @param building the building to set
-	 */
-	public void setBuilding(String building) {
-		this.building = building;
-	}
-	/**
-	 * @return the street
-	 */
-	public String getStreet() {
-		return street;
-	}
-	/**
-	 * @param street the street to set
-	 */
-	public void setStreet(String street) {
-		this.street = street;
+	public void setLocality(String locality) {
+		this.locality = locality;
 	}
 	/**
 	 * @return the landmark
@@ -355,6 +313,42 @@ public class Merchant extends BaseModel {
 		this.country = country;
 	}
 	/**
+	 * @return the experience
+	 */
+	public String getExperience() {
+		return experience;
+	}
+	/**
+	 * @param experience the experience to set
+	 */
+	public void setExperience(String experience) {
+		this.experience = experience;
+	}
+	/**
+	 * @return the certification
+	 */
+	public String getCertification() {
+		return certification;
+	}
+	/**
+	 * @param certification the certification to set
+	 */
+	public void setCertification(String certification) {
+		this.certification = certification;
+	}
+	/**
+	 * @return the merchantType
+	 */
+	public Integer getMerchantType() {
+		return merchantType;
+	}
+	/**
+	 * @param merchantType the merchantType to set
+	 */
+	public void setMerchantType(Integer merchantType) {
+		this.merchantType = merchantType;
+	}
+	/**
 	 * @return the status
 	 */
 	public Boolean getStatus() {
@@ -379,10 +373,28 @@ public class Merchant extends BaseModel {
 		this.software = software;
 	}
 	/**
-	 * @return the review_rating
+	 * @return the rating
 	 */
 	public Float getRating() {
 		return rating;
+	}
+	/**
+	 * @param rating the rating to set
+	 */
+	public void setRating(Float rating) {
+		this.rating = rating;
+	}
+	/**
+	 * @return the homeService
+	 */
+	public Boolean getHomeService() {
+		return homeService;
+	}
+	/**
+	 * @param homeService the homeService to set
+	 */
+	public void setHomeService(Boolean homeService) {
+		this.homeService = homeService;
 	}
 	/**
 	 * @return the phone
@@ -397,10 +409,40 @@ public class Merchant extends BaseModel {
 		this.phone = phone;
 	}
 	/**
-	 * @param Rating the review_rating to set
+	 * @return the genderSupport
 	 */
-	public void setRating(Float rating) {
-		this.rating = rating;
+	public Integer getGenderSupport() {
+		return genderSupport;
+	}
+	/**
+	 * @param genderSupport the genderSupport to set
+	 */
+	public void setGenderSupport(Integer genderSupport) {
+		this.genderSupport = genderSupport;
+	}
+	/**
+	 * @return the separateRateCard
+	 */
+	public Boolean getSeparateRateCard() {
+		return separateRateCard;
+	}
+	/**
+	 * @param separateRateCard the separateRateCard to set
+	 */
+	public void setSeparateRateCard(Boolean separateRateCard) {
+		this.separateRateCard = separateRateCard;
+	}
+	/**
+	 * @return the serviceRadius
+	 */
+	public Integer getServiceRadius() {
+		return serviceRadius;
+	}
+	/**
+	 * @param serviceRadius the serviceRadius to set
+	 */
+	public void setServiceRadius(Integer serviceRadius) {
+		this.serviceRadius = serviceRadius;
 	}
 	/**
 	 * @return the profileComplete
@@ -462,18 +504,34 @@ public class Merchant extends BaseModel {
 	public void setServices(List<MerchantService> services) {
 		this.services = services;
 	}
-
 	/**
-	 * @return the genderSupport
+	 * @return the menus
 	 */
-	public Integer getGenderSupport() {
-		return genderSupport;
+	public List<DigitalMenuImage> getMenus() {
+		return menus;
 	}
 	/**
-	 * @param genderSupport the genderSupport to set
+	 * @param menus the menus to set
 	 */
-	public void setGenderSupport(Integer genderSupport) {
-		this.genderSupport = genderSupport;
+	public void setMenus(List<DigitalMenuImage> menus) {
+		this.menus = menus;
 	}
-	
-    }
+	/**
+	 * @return the geo
+	 */
+	public GeoPoint getGeo() {
+		GeoPoint point = new GeoPoint(lat,lng);
+		this.setGeo(point);
+		return geo;
+	}
+	/**
+	 * @param geo the geo to set
+	 */
+	public void setGeo(GeoPoint geo) {
+		if(geo != null){
+			this.setLat(geo.getLat());
+			this.setLng(geo.getLon());
+		}
+		this.geo = geo;
+	}
+}

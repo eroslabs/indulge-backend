@@ -25,9 +25,14 @@ import com.eros.core.model.MerchantImage;
 import com.eros.core.model.MerchantPhone;
 import com.eros.core.model.Reviews;
 import com.eros.core.model.ServiceCategory;
+import com.eros.core.model.State;
 import com.eros.core.model.UserReview;
+import com.eros.notification.utils.Message;
+import com.eros.notification.utils.NotificationService;
+import com.eros.notification.utils.NotificationType;
 import com.eros.service.MerchantCustomService;
 import com.eros.service.db.MerchantDBService;
+import com.eros.service.util.NotificationCategory;
 
 /**
  * 
@@ -40,9 +45,16 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(MerchantServiceImpl.class);
 
+	private static final int MAX_DEALS = 100;
+
+	private static final int MAX_REVIEWS = 3;
+
 	@Autowired
 	protected MerchantDBService merchantDBService;
 
+	@Autowired
+	protected NotificationService notificationService;
+	
 	@Value("${merchant.base.path}")
 	private String MERCHANT_BASE_PATH;
 
@@ -52,6 +64,13 @@ public class MerchantServiceImpl implements MerchantCustomService {
 		}
 		try {
 			Merchant merchant = merchantDBService.fetchMerchant(email);
+			if(merchant != null){
+				merchant.setDeals(fetchDeals(merchant.getId(), 0, MAX_DEALS));
+				Reviews reviews = fetchReviews(merchant.getId(), 0, MAX_REVIEWS);
+				if(reviews != null && reviews.getUserReviews() != null){
+					merchant.setReviews(reviews.getUserReviews());
+				}
+			}
 			return merchant;
 		} catch (Exception e) {
 			LOG.error("Error in fetching merchant", e);
@@ -59,21 +78,28 @@ public class MerchantServiceImpl implements MerchantCustomService {
 		return null;
 	}
 	@Override
-	public Merchant registerMerchant(Merchant merchant) throws Exception{
+	public void registerMerchant(Merchant merchant) throws Exception{
 		if (merchant == null) {
-			return null;
+			return ;
 		}
 		try {
-			Merchant savedMerchant = merchantDBService
+			Integer saved = merchantDBService
 					.registerMerchant(merchant);
-			return savedMerchant;
+			if(StringUtils.isNotEmpty(merchant.getEmail())){
+				Map<String, Object> params = new HashMap<String, Object>();
+				params.put("email", merchant.getEmail());
+				params.put("merchant", merchant);
+				sendNotification(NotificationCategory.registerNewMerchant ,params);	
+			}
+			
+			return ;
 		} catch (Exception e) {
 			LOG.error("Error in saving basic profile : ", e);
 			if(e instanceof org.springframework.dao.DuplicateKeyException){
 				throw new Exception("Merchant with this mail id already exist",e);
 			}
 		}
-		return null;
+		return ;
 	}
 
 	/*
@@ -308,17 +334,37 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	 */
 	@Override
 	public List<MerchantDeal> fetchDeals(Integer id, int start, int rows) {
+		return fetchDeals(id,null, start, rows);
+	}
+	
+	@Override
+	public List<MerchantDeal> fetchDeals(Integer id,String coupon, int start, int rows) {
 		try{
 			HashMap<String, Object> params = new HashMap<String, Object>(3);
 			params.put("id", id);
 			params.put("start", start);
 			params.put("rows", rows);
+			params.put("coupon", coupon);
 			List<MerchantDeal> merchantDeals = merchantDBService.fetchMerchantDeals(params);
 			return merchantDeals;
 		}catch (Exception e) {
 			LOG.error("Error in fetching deals services: ", e);
 		}
 		return null;
+	}
+	
+	@Override
+	public Boolean killDeal(Integer merchantId,Integer id) {
+		try{
+			HashMap<String, Object> params = new HashMap<String, Object>(3);
+			params.put("merchantId", merchantId);
+			params.put("dealId", id);
+			Integer i = merchantDBService.killDeal(params);
+			if(i> 0){return true;}
+		}catch (Exception e) {
+			LOG.error("Error in fetching deals services: ", e);
+		}
+		return false;
 	}
 	
 	@Override
@@ -380,6 +426,112 @@ public class MerchantServiceImpl implements MerchantCustomService {
 			throw new Exception("Error in saving digital menus",e);
 		}
 	}
+	/* (non-Javadoc)
+	 * @see com.eros.service.MerchantCustomService#fetchStates()
+	 */
+	@Override
+	public List<State> fetchStates() {
+		try{
+			return merchantDBService.fetchStates();
+		}catch (Exception e) {
+			LOG.error("Error in fetching States: ", e);
+		}
+		return null;
+	}
 	
-	
+	@Override
+	public Integer saveForgotPasswordRequest(String email) throws Exception{
+		
+		try {
+			Map<String, Object> param = new HashMap<String, Object>(3);
+			 param.put("email", email);
+			 param.put("type", 0);
+			 param.put("id", 0);
+			 merchantDBService.saveForgotRequest(param);
+			 sendNotification(NotificationCategory.forgotPasswordTemplate ,param);
+			return (Integer)param.get("id");
+		} catch (Exception e) {
+			LOG.error("Error in saving User review : ", e);
+			throw new Exception("Forgot request cannot be saved",e);
+		}
+	}
+
+	/**
+	 * @param string
+	 * @param param
+	 */
+	private void sendNotification(String string, Map<String, Object> param) throws Exception{
+		try{
+		Message message = new Message(NotificationType.MAIL);
+		message.setToEmails(new String[] {param.get("email").toString()});
+		message.setDataMap(param);
+		message.setMessageTemplate(string);
+		notificationService.sendNotification(message);
+		}catch (Exception e) {
+			LOG.error("Please check : There is some error in sending notification ", e);
+		}
+		
+	}
+	/* (non-Javadoc)
+	 * @see com.eros.service.UserService#changePassword(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void changePassword(String email, String requestId, String passphrase)
+			throws Exception {
+		try{
+		Map<String, Object> param = new HashMap<String, Object>(3);
+		 param.put("email", email);
+		 param.put("requestId", requestId);
+		 param.put("passphrase", passphrase);
+		 merchantDBService.updatePassword(param);
+		}catch (Exception e) {
+			LOG.error("Error in changing password : ", e);
+			throw new Exception("Change password unsuccessful",e);
+		}
+	}
+	/* (non-Javadoc)
+	 * @see com.eros.service.MerchantCustomService#getMerchantByEmailOrPhone(java.lang.String)
+	 */
+	@Override
+	public Merchant getMerchantByEmailOrPhone(String name) {
+		if (StringUtils.isEmpty(name)) {
+			return null;
+		}
+		try {
+			Merchant merchant = merchantDBService.fetchMerchant(name);
+			if(merchant != null){
+				merchant.setDeals(fetchDeals(merchant.getId(), 0, MAX_DEALS));
+			}
+			return merchant;
+		} catch (Exception e) {
+			LOG.error("Error in fetching merchant", e);
+		}
+		return null;
+
+	}
+	/* (non-Javadoc)
+	 * @see com.eros.service.MerchantCustomService#getMerchantById(java.lang.Integer)
+	 */
+	@Override
+	public Merchant getMerchantById(Integer id) {
+		if (id == null) {
+			return null;
+		}
+		try {
+			Merchant merchant = merchantDBService.fetchMerchant(id.toString());
+			if(merchant != null){
+				merchant.setDeals(fetchDeals(merchant.getId(), 0, MAX_DEALS));
+				Reviews reviews = fetchReviews(merchant.getId(), 0, MAX_REVIEWS);
+				if(reviews != null && reviews.getUserReviews() != null){
+					merchant.setReviews(reviews.getUserReviews());
+				}
+			}
+			return merchant;
+		} catch (Exception e) {
+			LOG.error("Error in fetching merchant", e);
+		}
+		return null;
+
+		
+	}	
 }

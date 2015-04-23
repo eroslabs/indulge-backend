@@ -18,6 +18,13 @@
 			<param name="ConversionPattern" value="[%d{dd/MM/yy hh:mm:ss:sss z}] %5p %c{2}: %m%n" />
 		</layout>
 	</appender>
+	<appender name="FILE_SEARCH" class="org.apache.log4j.RollingFileAppender">
+		<param name="File" value="${catalina.base}/logs/indulge-search.log" />
+		<param name="MaxBackupIndex" value="100" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="[%d{dd/MM/yy hh:mm:ss:sss z}] %5p %c{2}: %m%n" />
+		</layout>
+	</appender>
 	
 	<category name="com.eros">
 		<priority value="DEBUG" />
@@ -30,6 +37,10 @@
 	<category name="java.sql">
 		<priority value="debug" />
 		<appender-ref ref="ASYNC" />
+	</category>
+	<category name="SEARCH_LOG">
+		<priority value="TRACE" />
+		<appender-ref ref="FILE_SEARCH" />
 	</category>	
 	<root>
 		<priority value="INFO" />

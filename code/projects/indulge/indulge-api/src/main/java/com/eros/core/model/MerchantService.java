@@ -15,14 +15,42 @@ public class MerchantService extends BaseModel{
 	private static final long serialVersionUID = 1L;
 	private Integer id;
     private String description;
+    private String type;
     private Boolean status;
     private Float price;
     private Integer serviceId;
     private String image;
     private String name;
     private Integer merchantId;
+    private Integer categoryId;
+    private String categoryName;
+    
     
 	
+	/**
+	 * @return the categoryId
+	 */
+	public Integer getCategoryId() {
+		return categoryId;
+	}
+	/**
+	 * @param categoryId the categoryId to set
+	 */
+	public void setCategoryId(Integer categoryId) {
+		this.categoryId = categoryId;
+	}
+	/**
+	 * @return the categoryName
+	 */
+	public String getCategoryName() {
+		return categoryName;
+	}
+	/**
+	 * @param categoryName the categoryName to set
+	 */
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
 	/**
 	 * @return the merchantId
 	 */
@@ -119,6 +147,18 @@ public class MerchantService extends BaseModel{
 	 */
 	public void setImage(String image) {
 		this.image = image;
+	}
+	/**
+	 * @return the type
+	 */
+	public String getType() {
+		return type;
+	}
+	/**
+	 * @param type the type to set
+	 */
+	public void setType(String type) {
+		this.type = type;
 	}
     
 }

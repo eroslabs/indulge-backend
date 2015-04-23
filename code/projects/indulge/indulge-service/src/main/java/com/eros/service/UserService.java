@@ -1,6 +1,7 @@
 package com.eros.service;
 
 import com.eros.core.model.Merchant;
+import com.eros.core.model.ReportedError;
 import com.eros.core.model.UserReview;
 import com.eros.core.model.user.User;
 
@@ -60,6 +61,12 @@ public interface UserService {
 	 * @param passphrase
 	 */
 	public void changePassword(String email, String requestId, String passphrase) throws Exception;
+
+	/**
+	 * @param error
+	 * @throws Exception
+	 */
+	void saveReportedError(ReportedError error) throws Exception;
 
 
 }

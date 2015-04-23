@@ -13,7 +13,9 @@ import com.eros.core.model.MerchantDeal;
  * @author vikas
  *
  */
-public interface MerchantDealRepository extends ElasticsearchRepository<MerchantDeal, String>{
+public interface MerchantDealRepository extends ElasticsearchRepository<MerchantDeal, Integer>{
 	
-	MerchantDeal findById(String email);
+	MerchantDeal findById(Integer id);
+	void deleteByMerchantId(Integer merchantId);
+	
 }

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.eros.service.db.AdminDBService">
+	<select id="fetchMerchantsStatus" resultType="Map">
+			SELECT COUNT(m.id) AS "Merchant Count", COUNT(d.id) AS "Total Deals", m.status "Merchant Active",city "City", m.merchant_type as "Type" 
+			FROM merchant m 
+			LEFT JOIN merchant_deal d 
+			ON d.merchant_id= m.id GROUP BY m.status,city,merchant_type
+	</select>
+	<select id="listMerchant" parameterType="Hashmap" resultType="com.eros.core.model.Merchant">
+		select id,email,name,merchant_type as merchantType , city,phone,image,address,pincode,state,total_reviews as totalReviews,review_rating as rating,
+		status from merchant where name like concat('%',#{s},'%') or email like concat('%',#{s},'%') or city like concat('%',#{s},'%')  order by created_date desc limit #{page} , #{limit}
+		
+	</select>
+	<select id="countMerchant" parameterType="String" resultType="Integer">
+		select count(*) from merchant where name like concat('%',#{s},'%') or email like concat('%',#{s},'%') or city like concat('%',#{s},'%') 
+		
+	</select>
+	<update id="updateMerchantStatus" parameterType="Map">
+		update merchant set status=#{status} where id =${merchantId}
+	</update>
+	
+	
+</mapper>

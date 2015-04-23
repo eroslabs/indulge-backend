@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.eros.core.BaseController;
 import com.eros.core.model.UserReview;
@@ -33,22 +35,18 @@ import com.eros.service.search.Filter;
 import com.eros.service.search.IndexType;
 import com.eros.service.search.SearchResponse;
 import com.eros.utils.RequestUtils;
+
 /**
  * indulge-web author vikas created on Apr 3, 2015
  */
 
 @Controller
 @RequestMapping("/user")
-public class UserController extends BaseController{
+public class UserController extends BaseController {
 
-	
+	protected static Log LOGGER = LogFactory.getLog(UserController.class);
 
-	
-
-	protected static Log LOGGER = LogFactory
-			.getLog(UserController.class);
-
-	@Resource(name = "userService")
+	@Resource(name = "userServiceImpl")
 	protected UserService userService;
 
 	@Resource(name = "searchService")
@@ -222,14 +220,35 @@ public class UserController extends BaseController{
 		return map;
 
 	}
-	
-		@ExceptionHandler(Exception.class)
-	public @ResponseBody Map handleCustomException(Exception ex) {
- 
+
+	@RequestMapping(value = "/reportError", method = RequestMethod.POST)
+	public @ResponseBody Map reportError(
+			@ModelAttribute("error") com.eros.core.model.ReportedError error,
+			final RedirectAttributes redirectAttributes) {
+		Boolean success = false;
+		try {
+			userService.saveReportedError(error);
+			success = true;
+		} catch (Exception e) {
+			LOGGER.error("Error in saving Error ::" , e);
+		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put(STATUS, success);
+		if (!success) {
+			map.put(ERROR, "Error in saving reported error");
+		}
+		return map;
+
+	}
+
+	@ExceptionHandler(Exception.class)
+	public @ResponseBody
+	Map handleCustomException(Exception ex) {
+
 		Map returnMap = new HashMap<String, Object>();
 		returnMap.put(ERROR, ex);
 		returnMap.put(STATUS, false);
 		return returnMap;
- 
+
 	}
 }

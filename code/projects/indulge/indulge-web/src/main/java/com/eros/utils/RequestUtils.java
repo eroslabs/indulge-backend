@@ -35,13 +35,8 @@ public class RequestUtils {
 	private static final String ASC = "asc";
 	protected static Log LOGGER = LogFactory
 			.getLog(RequestUtils.class);
-	private static Integer size = new Integer(20);
-	private static List<String> sortDirection = new ArrayList<String>(2); 
-	static{
-		sortDirection.add(ASC);
-		sortDirection.add(DESC);
-		
-	}
+	
+	
 	/**
 	 * @param s
 	 * @param hs
@@ -58,17 +53,18 @@ public class RequestUtils {
 	public static Filter generateFilter(String s, Boolean hs, Boolean gs,
 			Integer[] services, Float pf, Float pt, String lat, String lon,
 			Integer page, Integer limit, String dir,String sort, IndexType index,
-			IndexType type) {
+			IndexType type,Boolean autoSuggest) {
 		if(index == null || type == null){
 			throw new IllegalArgumentException("Index/type cannot be null");
 		}
 		Filter filter = new Filter();
+		filter.setAutoSuggest(autoSuggest);
 		filter.setIndex(index.getText());
 		filter.setType(type.getText());
 		filter.setPage(page == null ? 0 : page);
-		filter.setLimit((limit == null ? size : limit));
-		filter.setSortField(StringUtils.isNotBlank(sort) ? sort : RATING );
-		filter.setDirection(StringUtils.isNotBlank(dir)&& sortDirection.contains(dir) ? dir : DESC );
+		filter.setLimit(limit);
+		filter.setSortField(sort);
+		filter.setDirection(dir);
 		filter.setGenderSupport(gs);
 		filter.setHomeService(hs);
 		filter.setPriceFrom(pf);
@@ -99,9 +95,20 @@ public class RequestUtils {
 	 */
 	public static Filter generateFilter(String s, String lat, String lon,
 			Integer page, Integer limit, String dir, String sort,
-			IndexType index, IndexType type) {
+			IndexType index, IndexType type, Boolean autoSuggest) {
 		
-		return generateFilter(s, null, null, null, null, null, lat, lon, page, limit, dir, sort, index, type);
+		return generateFilter(s, null, null, null, null, null, lat, lon, page, limit, dir, sort, index, type,autoSuggest);
+	}
+	/**
+	 * @param s
+	 * @param indulge
+	 * @param merchant
+	 * @param b
+	 * @return
+	 */
+	public static Filter generateFilter(String s, IndexType index,
+			IndexType type, boolean autoSuggest) {
+		return generateFilter(s, null, null, null, null, null, null, null, null, null, null, null, index, type,autoSuggest);
 	}
 
 	

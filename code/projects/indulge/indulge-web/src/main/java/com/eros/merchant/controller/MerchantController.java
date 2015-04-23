@@ -34,7 +34,6 @@ import com.eros.core.model.MerchantSchedule;
 import com.eros.core.model.MerchantService;
 import com.eros.core.model.Reviews;
 import com.eros.core.model.ServiceCategory;
-import com.eros.filter.ISecurityContextAccessor;
 import com.eros.service.MerchantCustomService;
 
 /**
@@ -46,37 +45,49 @@ import com.eros.service.MerchantCustomService;
 @RequestMapping(value = "/merchant")
 public class MerchantController extends BaseController{
 
+	/**
+	 * 
+	 */
+	private static final String MERCHANT_SESSION_ID = "com.eros.core.model.merchant";
+
+	/**
+	 * 
+	 */
+	private static final String MERCHANT = "merchant";
+
+	private static final String MERCHANT_EMAIL_SESSION_ID = "merchant_identifier";
+
 	protected static Log MERCHANT_LOGGER = LogFactory
 			.getLog(MerchantController.class);
 
 	@Resource(name = "merchantService")
 	protected MerchantCustomService merchantService;
 
-	@Autowired
-	ISecurityContextAccessor securityContextAccessor;
 
 	@RequestMapping(value = "/login")
 	public String login() {
-		if (securityContextAccessor != null
-				&& !securityContextAccessor.isAnonymous()) {
-			return "redirect:/merchant/home";
-
-		} else {
 			return "login";
-		}
 	}
 
 	@RequestMapping(value = "/home")
 	public String home(ModelMap modelMap, Principal principle,
 			HttpServletRequest request) {
 		Merchant merchant = null;
+		String merchantIdentifier = principle.getName();
 		try {
-			merchant = merchantService.getMerchantByEmail(principle.getName());
-			request.getSession().setAttribute("com.eros.core.model.merchant",
+		
+			if(request.getSession().getAttribute(MERCHANT_EMAIL_SESSION_ID) != null){
+				merchantIdentifier = request.getSession().getAttribute(MERCHANT_EMAIL_SESSION_ID).toString();
+			}
+			merchant = merchantService.getMerchantByEmailOrPhone(merchantIdentifier);
+			request.getSession().setAttribute(MERCHANT_SESSION_ID,
 					merchant);
-			modelMap.put("merchant", merchant);
+			request.getSession().setAttribute(MERCHANT_EMAIL_SESSION_ID,
+					principle.getName());
+			modelMap.put(MERCHANT, merchant);
 		} catch (Exception e) {
-			e.printStackTrace();
+			MERCHANT_LOGGER.error("Error in loading merchant : principle" +principle.getName(), e);
+			
 		}
 		if (merchant == null) {
 			return "redirect:/merchant/createProfile";
@@ -88,14 +99,14 @@ public class MerchantController extends BaseController{
 	public String create(ModelMap modelMap, HttpServletRequest request) {
 		Merchant merchant = (Merchant) request.getSession().getAttribute(
 				WebConstants.MERCHANT_ATTRIBUTE);
-		modelMap.put("merchant", merchant);
+		modelMap.put(MERCHANT, merchant);
 		return "inputLocation";
 	}
 
 	@RequestMapping(value = "/saveLocation", method = RequestMethod.POST)
 	public String handleSingleFileUpload(
 			@RequestParam("file") MultipartFile file,
-			@ModelAttribute("merchant") com.eros.core.model.Merchant merchant,
+			@ModelAttribute(MERCHANT) com.eros.core.model.Merchant merchant,
 			final RedirectAttributes redirectAttributes, HttpSession session,
 			Principal principal) {
 		Merchant contextMerchant = (Merchant) session
@@ -118,7 +129,8 @@ public class MerchantController extends BaseController{
 
 		}
 		try {
-			contextMerchant.setName(merchant.getName());
+			contextMerchant.setCertification(merchant.getCertification());
+			contextMerchant.setExperience(merchant.getExperience());
 			contextMerchant.setLat(merchant.getLat());
 			contextMerchant.setLng(merchant.getLng());
 			merchantService.saveLocation(contextMerchant);
@@ -134,8 +146,8 @@ public class MerchantController extends BaseController{
 		}
 		redirectAttributes.addFlashAttribute("success_message",
 				"Location Information Saved Successfully");
-		session.setAttribute("com.eros.core.model.merchant", contextMerchant);
-		return "redirect:/merchant/inputAddress";
+		session.setAttribute(MERCHANT_SESSION_ID, contextMerchant);
+		return "redirect:/merchant/home";
 
 	}
 
@@ -143,26 +155,27 @@ public class MerchantController extends BaseController{
 	public String inputAddress(ModelMap modelMap, HttpServletRequest request) {
 		Merchant merchant = (Merchant) request.getSession().getAttribute(
 				WebConstants.MERCHANT_ATTRIBUTE);
-		modelMap.put("merchant", merchant);
+		modelMap.put(MERCHANT, merchant);
 		return "inputAddress";
 	}
 
 	@RequestMapping(value = "/saveAddress", method = RequestMethod.POST)
 	public String saveAddress(
-			@ModelAttribute("merchant") com.eros.core.model.Merchant merchant,
+			@ModelAttribute(MERCHANT) com.eros.core.model.Merchant merchant,
 			final RedirectAttributes redirectAttributes, HttpSession session) {
 		Merchant contextMerchant = (Merchant) session
 				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
 		Boolean clear = true;
 		try {
-			contextMerchant.setUnitNumber(merchant.getName());
-			contextMerchant.setBuilding(merchant.getBuilding());
-			contextMerchant.setFloor(merchant.getFloor());
+			contextMerchant.setAddress(merchant.getAddress());
+			contextMerchant.setLocality(merchant.getLocality());
+			contextMerchant.setEstablishment(merchant.getEstablishment());
 			contextMerchant.setCity(merchant.getCity());
-			contextMerchant.setStreet(merchant.getStreet());
 			contextMerchant.setPincode(merchant.getPincode());
 			contextMerchant.setCountry(merchant.getCountry());
 			contextMerchant.setLandmark(merchant.getLandmark());
+			contextMerchant.setCcAccepted(merchant.getCcAccepted());
+			contextMerchant.setAcFacility(merchant.getAcFacility());
 			clear = merchantService.saveAddress(contextMerchant);
 
 		} catch (Throwable e) {
@@ -177,7 +190,7 @@ public class MerchantController extends BaseController{
 		}
 		redirectAttributes.addFlashAttribute("success_message",
 				"Address Information Saved Successfully");
-		session.setAttribute("com.eros.core.model.merchant", contextMerchant);
+		session.setAttribute(MERCHANT_SESSION_ID, contextMerchant);
 		return "redirect:/merchant/inputContact";
 
 	}
@@ -186,7 +199,7 @@ public class MerchantController extends BaseController{
 	public String inputContact(ModelMap modelMap, HttpServletRequest request) {
 		Merchant merchant = (Merchant) request.getSession().getAttribute(
 				WebConstants.MERCHANT_ATTRIBUTE);
-		modelMap.put("merchant", merchant);
+		modelMap.put(MERCHANT, merchant);
 		return "inputContact";
 	}
 
@@ -194,7 +207,7 @@ public class MerchantController extends BaseController{
 	public String saveContact(@RequestParam("phone1") String phone1,
 			@RequestParam("phone2") String phone2,
 			@RequestParam("phone3") String phone3,
-			@ModelAttribute("merchant") com.eros.core.model.Merchant merchant,
+			@ModelAttribute(MERCHANT) com.eros.core.model.Merchant merchant,
 			final RedirectAttributes redirectAttributes, HttpSession session) {
 		Merchant contextMerchant = (Merchant) session
 				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
@@ -216,8 +229,8 @@ public class MerchantController extends BaseController{
 		}
 		redirectAttributes.addFlashAttribute("success_message",
 				"Your Contact Information Saved Successfully");
-		session.setAttribute("com.eros.core.model.merchant", contextMerchant);
-		return "redirect:/merchant/inputSchedule";
+		session.setAttribute(MERCHANT_SESSION_ID, contextMerchant);
+		return "redirect:/merchant/home";
 
 	}
 
@@ -257,8 +270,8 @@ public class MerchantController extends BaseController{
 		}
 		redirectAttributes.addFlashAttribute("success_message",
 				"Your Schedule Saved Successfully");
-		session.setAttribute("com.eros.core.model.merchant", contextMerchant);
-		return "redirect:/merchant/inputPhoto";
+		session.setAttribute(MERCHANT_SESSION_ID, contextMerchant);
+		return "redirect:/merchant/home";
 
 	}
 
@@ -266,14 +279,14 @@ public class MerchantController extends BaseController{
 	public String inputPhoto(ModelMap modelMap, HttpSession session) {
 		Merchant merchant = (Merchant) session
 				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
-		modelMap.put("merchant", merchant);
+		modelMap.put(MERCHANT, merchant);
 		return "inputPhoto";
 
 	}
 
 	@RequestMapping(value = "/savePhoto", method = RequestMethod.POST)
 	public String savePhoto(@RequestParam("file") MultipartFile file,
-			@ModelAttribute("merchant") com.eros.core.model.Merchant merchant,
+			@ModelAttribute(MERCHANT) com.eros.core.model.Merchant merchant,
 			final RedirectAttributes redirectAttributes, HttpSession session) {
 		Merchant contextMerchant = (Merchant) session
 				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
@@ -320,8 +333,8 @@ public class MerchantController extends BaseController{
 		} 
 		redirectAttributes.addFlashAttribute("success_message",
 				"Merchant Image Saved Successfully");
-		session.setAttribute("com.eros.core.model.merchant", contextMerchant);
-		return "redirect:/merchant/inputPhoto";
+		session.setAttribute(MERCHANT_SESSION_ID, contextMerchant);
+		return "redirect:/merchant/home";
 
 	}
 	
@@ -330,13 +343,13 @@ public class MerchantController extends BaseController{
 	public String inputDigitalMenu(ModelMap modelMap, HttpSession session) {
 		Merchant merchant = (Merchant) session
 				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
-		modelMap.put("merchant", merchant);
+		modelMap.put(MERCHANT, merchant);
 		return "inputDigitalMenu";
 
 	}
 	
 	@RequestMapping(value = "/saveDigitalMenu", method = RequestMethod.POST)
-	public String saveDigitalMenu(@RequestParam("file") List<MultipartFile> file,@ModelAttribute("merchant") Merchant merchant,
+	public String saveDigitalMenu(@RequestParam("file") List<MultipartFile> file,@ModelAttribute(MERCHANT) Merchant merchant,
 			final RedirectAttributes redirectAttributes, HttpSession session) {
 		Merchant contextMerchant = (Merchant) session
 				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
@@ -389,8 +402,8 @@ public class MerchantController extends BaseController{
 		} 
 		redirectAttributes.addFlashAttribute("success_message",
 				"Merchant Digital Menu Saved Successfully");
-		session.setAttribute("com.eros.core.model.merchant", contextMerchant);
-		return "redirect:/merchant/inputPhoto";
+		session.setAttribute(MERCHANT_SESSION_ID, contextMerchant);
+		return "redirect:/merchant/home";
 
 	}
 
@@ -410,12 +423,21 @@ public class MerchantController extends BaseController{
 	@RequestMapping(value = "/listDeals")
 	public String listDeals(ModelMap modelMap, HttpSession session,
 			@RequestParam(value = "start", defaultValue = "0") int start,
-			@RequestParam(value = "rows", defaultValue = "10") int rows) {
+			@RequestParam(value = "rows", required = false) int rows,@RequestParam(value = "coupon", required = false) String coupon) {
 		Merchant contextMerchant = (Merchant) session
 				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
-		List<MerchantDeal> deals = merchantService.fetchDeals(contextMerchant.getId(),
+		List<MerchantDeal> deals = merchantService.fetchDeals(contextMerchant.getId(),coupon,
 				start, rows);
 		modelMap.put("deals", deals);
+		return "listDeals";
+
+	}
+	
+	@RequestMapping(value = "/killDeal")
+	public String listDeals(ModelMap modelMap, HttpSession session,@RequestParam(value = "dealId") Integer dealId) {
+		Merchant contextMerchant = (Merchant) session
+				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+		merchantService.killDeal(contextMerchant.getId(),dealId);
 		return "listDeals";
 
 	}
@@ -470,9 +492,7 @@ public class MerchantController extends BaseController{
 			MERCHANT_LOGGER.error(
 					"Merchant Deal : Error while saving deal "
 							, e);
-			redirectAttributes.addFlashAttribute("error_message",
-					"Error:: " + e.getMessage());
-			return "redirect:/merchant/listDeals";
+			saved=false;
 		}
 		if (!saved) {
 			redirectAttributes.addFlashAttribute("error_message",
@@ -491,16 +511,22 @@ public class MerchantController extends BaseController{
 				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
 		List<ServiceCategory> categories = merchantService.fetchAllServices();
 		modelMap.put("categories", categories);
-		modelMap.put("merchant", contextMerchant);
+		modelMap.put(MERCHANT, contextMerchant);
 		return "createMerchantServices";
 
 	}
 	
 	@RequestMapping(value = "/saveMerchantServices", method = RequestMethod.POST)
-	public String saveDeal(@RequestParam("selectedId") String[] selectedId,@RequestParam("selectedPrice") String[] selectedPrice,
+	public String saveMerchantServices(@RequestParam("selectedId") String[] selectedId,@RequestParam("selectedType") String[] selectedType,@RequestParam("selectedPrice") String[] selectedPrice,
 			final RedirectAttributes redirectAttributes, HttpSession session) {
 		Merchant contextMerchant = (Merchant) session
 				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+		if(selectedType == null || selectedPrice== null || selectedId == null )
+		{
+			redirectAttributes.addFlashAttribute("error_message",
+					"Error in saving service information, Invalid selection.");
+			return "redirect:/merchant/inputServices";
+		}
 		Boolean clear = true;
 		List<MerchantService> services = new ArrayList<MerchantService>();
 		try{
@@ -508,6 +534,7 @@ public class MerchantController extends BaseController{
 			MerchantService merchantService = new MerchantService();
 			merchantService.setServiceId(Integer.parseInt(selectedId[i]));
 			merchantService.setPrice(Float.parseFloat(selectedPrice[i]));
+			merchantService.setType(selectedType[i]);
 			merchantService.setMerchantId(contextMerchant.getId());
 			services.add(merchantService);
 		}
@@ -515,13 +542,13 @@ public class MerchantController extends BaseController{
 		clear  = merchantService.saveServices(contextMerchant);
 		}catch (Exception e) {
 			MERCHANT_LOGGER.error(
-					"Merchant Address: Error while saving Image data ", e);
-			clear = false;
+					"Merchant Address: Error while saving Service data ", e);
+			return "redirect:/merchant/inputServices";
 		}
 		if (!clear) {
 			redirectAttributes.addFlashAttribute("error_message",
-					"Error'in saving image information");
-
+					"Error'in saving service information");
+			return "redirect:/merchant/inputServices";
 		}
 		redirectAttributes.addFlashAttribute("success_message",
 				"Merchant Services Saved Successfully");

@@ -12,7 +12,7 @@ import com.eros.core.model.Merchant;
  * @author vikas
  *
  */
-public interface MerchantRepository extends ElasticsearchRepository<Merchant, String>{
+public interface MerchantRepository extends ElasticsearchRepository<Merchant, Integer>{
 	
 	Merchant findByEmail(String email);
 }

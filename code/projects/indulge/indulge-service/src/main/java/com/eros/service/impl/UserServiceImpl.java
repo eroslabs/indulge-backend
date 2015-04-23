@@ -4,9 +4,9 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,24 +16,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.eros.core.model.Merchant;
-import com.eros.core.model.MerchantDeal;
-import com.eros.core.model.MerchantService;
+import com.eros.core.model.ReportedError;
 import com.eros.core.model.UserReview;
 import com.eros.core.model.user.User;
 import com.eros.service.MerchantCustomService;
-import com.eros.service.SearchService;
 import com.eros.service.UserService;
-import com.eros.service.db.MerchantDBService;
 import com.eros.service.db.UserDBService;
-import com.eros.service.elasticsearch.MerchantRepository;
 
 /**
  * 
  * @author vikas
  * 
  */
-@Service("userService")
+@Service("userServiceImpl")
 public class UserServiceImpl implements UserService {
 	/**
 	 * 
@@ -133,15 +128,13 @@ public class UserServiceImpl implements UserService {
 		 Map<String, Object> param = new HashMap<String, Object>(3);
 		 param.put("userId", user.getId());
 		 param.put("dealId", dealId);
-		 param.put("couponCode", null);
-		 userDBService.redeemDeal(param);
-		 if(param.containsKey("couponCode") && StringUtils.isNotBlank(param.get("couponCode").toString())){
-			 return param.get("couponCode").toString();
-		 }
+		 String coupon = RandomStringUtils.randomAlphanumeric(20).toUpperCase();
+		 param.put("couponCode", coupon);
+		 	userDBService.redeemDeal(param);
+		 return coupon;
 		}catch (Exception e) {
 			throw new Exception("Error in redeeming Deal Id "+dealId ,e);
 		}
-		return null;
 	}
 
 	/* (non-Javadoc)
@@ -249,6 +242,19 @@ public class UserServiceImpl implements UserService {
 		} catch (Exception e) {
 			LOG.error("Error in saving User review : ", e);
 			throw new Exception("Forgot request cannot be saved",e);
+		}
+	}
+	
+	@Override
+	public void saveReportedError(ReportedError error) throws Exception{
+		if(error.getUserId() == null || error.getMerchantId() == null){
+			throw new IllegalArgumentException("User/Merchant information missing ");
+		}
+		try {
+			 userDBService.saveReportedError(error);
+		} catch (Exception e) {
+			LOG.error("Error in saving User error : ", e);
+			throw new Exception("Error in saving error reported",e);
 		}
 	}
 

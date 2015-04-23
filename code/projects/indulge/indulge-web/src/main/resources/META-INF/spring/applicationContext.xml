@@ -16,7 +16,7 @@
         				http://www.springframework.org/schema/util/spring-util-3.1.xsd
         				http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd">
 	<context:property-placeholder
-		location="classpath*:*.properties" order="-1"
+		location="classpath*:*.properties,classpath*:spring/*.properties,file:${env.prop}" order="-1"
 		ignore-unresolvable="true" ignore-resource-not-found="true" />
 
 	<jee:jndi-lookup id="dataSource" jndi-name="jdbc/indulge" />

@@ -4,49 +4,61 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+   <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
+    <link href="${pageContext.servletContext.contextPath }/css/custom.css" rel="stylesheet" >
+    <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,500,200,600,700' rel='stylesheet' type='text/css'>
+    <link href="${pageContext.servletContext.contextPath }/css/merchant.css" rel="stylesheet" />
+    <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="${pageContext.servletContext.contextPath }/css/new.css" rel="stylesheet" >
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="${pageContext.servletContext.contextPath }/js/jquery-1.11.1.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="${pageContext.servletContext.contextPath }/js/bootstrap.min.js"></script>
+    <script src="${pageContext.servletContext.contextPath }/js/jquery.validate.js"></script>
   </head>
-<body>
-	
-	<jsp:include page="../views/merchantHeader.jsp" />
-	<div class="lh20">&nbsp;</div>
-	<div class="container">
-		<!-- Nav tabs -->
-		<div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 formRightBody">
-		<center><h2>Upload Images</h2></center>
-		<c:if test="${not empty error_message}">
-			<div class="lh10">&nbsp;</div>
-			<div class="alert alert-danger">${error_message}</div>
-		</c:if>
-		<c:if test="${not empty success_message}">
-			<div class="lh10">&nbsp;</div>
-			<div class="alert alert-danger">${success_message}</div>
-		</c:if>
-		<div class="lh20">&nbsp;</div>
-		<form:form method="POST" action="savePhoto" modelAttribute="merchant" enctype="multipart/form-data"  class="form-horizontal" id="uploadMerchantPhoto" >
-			<div class="form-group">
-				    <label class="col-sm-3 control-label">File</label>
-				    <div class="col-sm-7">
-				      <input type="file" name="file">
-				    </div>
-				  </div>
-				<div class="form-group">
-				    <div class="col-sm-offset-3 col-sm-7">
-				      <input type="submit" value="Upload" class="btn btn-primary" />
-				    </div>
-				  </div> 
-		</form:form>
-		<c:if test="${merchant.images ne null and  not empty merchant.images}">
-				<div class="col-lg-8 col-md-8 col-sm-12 col-xs-12" style="padding:0px;">
-					<c:forEach var="banner" items="${merchant.images}" varStatus="status">
-							image Path :${banner.image}
-					</c:forEach>	
-				</div>
-			</c:if>
-		
-	</div>
+<body style="background-color:#f0f0f0">
+	<div class="container-fluid" style="background-color:#f0f0f0">
+		<div class="row">
+		<center>
+			<div class="col-xs-22 col-sm-14 col-md-12 col-lg-10 col-xs-push-1 col-sm-push-5 col-md-push-6 col-lg-push-7">
+				
+	    		<div class="row font-type sign-up font-size-24" style="color:#ddcbbd; padding-top:10px; padding-bottom:10px">Ensure that clients can get easily in touch</div>
+	    		<ol class="progress-meter">
+	    			<li class="progress-point done">Basic</li><li class="progress-point done">Address</li><li class="progress-point done">Contacts</li><li class="progress-point done">Schedule</li><li class="progress-point todo">Photos</li>
+	    		</ol>
+	    		<form:form method="POST" action="saveMerchantBasicProfile" modelAttribute="merchant" class="form-horizontal white-bg" id="creatMerchantForm" style="margin-top:15px;margin-bottom:15px;padding-bottom:30px">
+		    		<div class="row row15 font-size-20 location-head font-type" style="background-color:#1fbbad; margin-bottom:15px">
+			    			Add photos
+			    	</div>
+			    	<div class="row row15">
+			    		<div class="col-md-7 col-lg-7 col-sm-12 col-xs-24">
+				    		<div class="row" style="height:150px;width:150px; margin-top:15px">
+			    				<div id="file-upload-cont">
+							    	<input id="file" type="file"/>
+							    	<div id="my-button"></div>
+							    	<input id="overlay"/>
+								</div>
+			    			</div><br>
+			    		</div>
+			    		<c:if test="${merchant.images ne null and  not empty merchant.images}">
+								<c:forEach var="banner" items="${merchant.images}" varStatus="status">
+									<div class="col-md-7 col-lg-7 col-sm-12 col-xs-24">
+										image Path :${banner.image}
+									</div>
+								</c:forEach>
+						</c:if>
+			    	</div>
+					<input type="submit" value="Save and Next" class="signup-button font-size-16 font-type">
+					<div class="white-bg col-md-22 col-lg-22 col-xs-22 col-sm-22" style="text-align:right">        
+						<a class="font-size-16 font-type" href="login"><u>Skip this step<u></a>
+					</div>
+	    		</form:form>
+	  		</div>
+	  	</center>
+	  	</div>
 	</div>
 	
 </body>

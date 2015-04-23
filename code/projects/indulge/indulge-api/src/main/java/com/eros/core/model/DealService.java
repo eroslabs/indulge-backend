@@ -14,6 +14,8 @@ public class DealService {
 	private String name;
 	private Integer dealId;
 	private String image;
+	private String categoryId;
+	private String categoryName;
 	/**
 	 * @return the image
 	 */
@@ -89,6 +91,30 @@ public class DealService {
 	 */
 	public void setDealId(Integer dealId) {
 		this.dealId = dealId;
+	}
+	/**
+	 * @return the categoryName
+	 */
+	public String getCategoryName() {
+		return categoryName;
+	}
+	/**
+	 * @param categoryName the categoryName to set
+	 */
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
+	/**
+	 * @return the categoryId
+	 */
+	public String getCategoryId() {
+		return categoryId;
+	}
+	/**
+	 * @param categoryId the categoryId to set
+	 */
+	public void setCategoryId(String categoryId) {
+		this.categoryId = categoryId;
 	}
 
 }

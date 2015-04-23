@@ -9,6 +9,7 @@ import com.eros.core.model.MerchantDeal;
 import com.eros.core.model.MerchantImage;
 import com.eros.core.model.Reviews;
 import com.eros.core.model.ServiceCategory;
+import com.eros.core.model.State;
 
 
 
@@ -19,7 +20,7 @@ import com.eros.core.model.ServiceCategory;
 public interface MerchantCustomService {
 
 	public Merchant getMerchantByEmail(String Email);
-	public Merchant registerMerchant(Merchant merchant) throws Exception;
+	public void registerMerchant(Merchant merchant) throws Exception;
 	/**
 	 * @param merchant
 	 */
@@ -71,12 +72,14 @@ public interface MerchantCustomService {
 	public Boolean saveDeal(MerchantDeal deal)throws Exception;
 	/**
 	 * @param id
+	 * @param coupon 
 	 * @param start
 	 * @param rows
 	 * @return
 	 */
+	public List<MerchantDeal> fetchDeals(Integer id, String coupon, int start, int rows);
 	public List<MerchantDeal> fetchDeals(Integer id, int start, int rows);
-	
+	public Boolean killDeal(Integer merchantId, Integer dealId) ;
 	public List<DealRequest> fetchDealRequest(Integer id);
 	/**
 	 * @param contextMerchant
@@ -94,4 +97,31 @@ public interface MerchantCustomService {
 	 * @return
 	 */
 	public List<MerchantDeal> fetchDealWithMerchant(Integer id);
+	/**
+	 * @return
+	 */
+	public List<State> fetchStates();
+	/**
+	 * @param email
+	 * @param requestId
+	 * @param passphrase
+	 * @throws Exception
+	 */
+	void changePassword(String email, String requestId, String passphrase)
+			throws Exception;
+	/**
+	 * @param email
+	 * @return
+	 * @throws Exception
+	 */
+	Integer saveForgotPasswordRequest(String email) throws Exception;
+	/**
+	 * @param name
+	 * @return
+	 */
+	public Merchant getMerchantByEmailOrPhone(String name);
+	/**
+	 * @param id
+	 */
+	public Merchant getMerchantById(Integer id);
 }

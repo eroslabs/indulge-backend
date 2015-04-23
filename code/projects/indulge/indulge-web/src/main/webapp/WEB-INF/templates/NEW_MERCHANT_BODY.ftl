@@ -1,0 +1,1 @@
+welcome onboard buddy  ${merchant.email } 

@@ -43,21 +43,22 @@ public class MerchantDeal extends BaseModel{
 	private String name;
 	private String city;
 	private String pincode;
-	private String building;
+	private String locality;
 	private String landmark;
+	@Field(type = FieldType.Float, index = FieldIndex.not_analyzed,store=true)
 	private String rating;
 	@GeoPointField
     private GeoPoint geo;
-	@Field(type = FieldType.Boolean, index = FieldIndex.not_analyzed,store=true)
+	@Field(type = FieldType.Boolean, index = FieldIndex.no,store=true)
     private Double lat;	
-    @Field(type = FieldType.Boolean, index = FieldIndex.not_analyzed,store=true)
+    @Field(type = FieldType.Boolean, index = FieldIndex.no,store=true)
     private Double lng;
     private String country; 	
     private Boolean homeService;
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed,store=true)
+    @Field(type = FieldType.String, index = FieldIndex.no,store=true)
 	private String phone;
 	private Integer genderSupport;
-	@Field(type = FieldType.Integer, index = FieldIndex.not_analyzed,store=true)
+	@Field(type = FieldType.Integer, index = FieldIndex.no,store=true)
 	private Integer serviceRadius;
 	
 	
@@ -258,14 +259,14 @@ public class MerchantDeal extends BaseModel{
 	/**
 	 * @return the building
 	 */
-	public String getBuilding() {
-		return building;
+	public String getLocality() {
+		return locality;
 	}
 	/**
 	 * @param building the building to set
 	 */
-	public void setBuilding(String building) {
-		this.building = building;
+	public void setLocality(String building) {
+		this.locality = building;
 	}
 	/**
 	 * @return the landmark

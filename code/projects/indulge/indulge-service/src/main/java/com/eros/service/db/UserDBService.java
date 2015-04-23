@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.eros.core.model.Coupon;
 import com.eros.core.model.MerchantDeal;
+import com.eros.core.model.ReportedError;
 import com.eros.core.model.UserReview;
 import com.eros.core.model.user.User;
 
@@ -63,6 +64,7 @@ public interface UserDBService {
 	 */
 	public void saveForgotRequest(Map<String, Object> param);
 
+	public void saveReportedError(ReportedError error);
 	/**
 	 * @param param
 	 */

@@ -4,12 +4,15 @@
  */
 package com.eros.core;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author vikas
- *
+ * 
  */
 public class BaseController {
-	
+
 	/**
 	 * 
 	 */
@@ -26,11 +29,13 @@ public class BaseController {
 	 * 
 	 */
 	protected static final String ERROR = "error";
-	
+
 	/**
 	 * 
 	 */
 	protected static final String STATUS = "status";
 
-	
+	protected static final String SEARCH = "SEARCH_LOG";
+	protected static final Logger SEARCHLOG = LoggerFactory
+			.getLogger(SEARCH);
 }
