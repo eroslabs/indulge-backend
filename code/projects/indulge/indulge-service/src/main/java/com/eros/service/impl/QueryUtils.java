@@ -17,11 +17,15 @@ import static org.elasticsearch.index.query.QueryBuilders.queryString;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.search.PrefixQuery;
+import org.apache.lucene.search.RegexpQuery;
 import org.elasticsearch.common.geo.GeoDistance;
 import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.AndFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
+import org.elasticsearch.index.query.PrefixQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.RegexpQueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -73,6 +77,10 @@ public class QueryUtils implements SearchConstants{
 			String configuredFields, String configuredBoost) {
 		QueryBuilder queryBuilder = null;
 		if (StringUtils.isNotBlank(filter.getSearch())) {
+			if(filter.getAutoSuggest() != null && filter.getAutoSuggest()){
+				queryBuilder = new RegexpQueryBuilder(NAME_FIELD,filter.getSearch() + "."+ALL_REGEX);
+			}else{
+			
 			String[] searchFields = null;
 			String[] boost = null;
 			if(StringUtils.isNotBlank(configuredFields) && !configuredFields.contains("$")){
@@ -96,7 +104,7 @@ public class QueryUtils implements SearchConstants{
 							.field(STATE_FIELD, 2.0f).field(PINCODE_FIELD,2.0f).field(SERVICES_NAME_FIELD,2.0f));
 			}
 			 
-		} else {
+		}} else {
 			queryBuilder = matchAllQuery();
 		}
 

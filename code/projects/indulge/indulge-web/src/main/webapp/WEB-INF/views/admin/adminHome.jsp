@@ -39,9 +39,11 @@
 				
 	    		<div class="row font-type sign-up font-size-24" style="color:#ddcbbd; padding-top:10px; padding-bottom:10px">Ensure that clients can get easily in touch</div>
 	    			<div class="row row15 font-size-20 location-head font-type" style="background-color:#1fbbad; margin-bottom:15px">
-			    			Basic Merchant Statistics
+			    			Basic Merchant Statistics (<a href="${pageContext.servletContext.contextPath }/admin/listDeactiveMerchants">View Pending Activations</a>)
 			    	</div>
-			    	
+			    	<div class="row row15 font-size-20 location-head font-type" style="background-color:#1fbbad; margin-bottom:15px">
+			    			Load All Merchants ( <a href="${pageContext.servletContext.contextPath }/admin/refresh">Load All</a>)
+			    	</div>
  		<form:form method="GET" action="searchMerchant" class="form-horizontal white-bg" id="creatMerchantForm" style="margin-top:15px; margin-bottom:15px;padding-bottom:30px">
 		    		<div class="row row15 font-size-20 location-head font-type" style="background-color:#1fbbad; margin-bottom:15px">
 			    			Search Merchant 
@@ -75,7 +77,17 @@
                 <c:forEach var="stats" items="${merchant_stats}" varStatus="status">
 				    	<tr>
 					    	<c:forEach var="item" items="${stats}" varStatus="statusItem">
+					    		<c:choose>
+					    		<c:when test="${ item.key == 'Type'}">
+					    		<c:choose>
+							    		<c:when test="${item.value == 0}"><td>Salon</td></c:when>
+						    			<c:otherwise><td>Individual</td></c:otherwise>
+						    		</c:choose>
+					    		</c:when>
+					    		<c:otherwise>
 				    				 <td>${item.value}</td>
+				    				 </c:otherwise>
+				    			</c:choose>	 
 							</c:forEach>
 						</tr>
 					</c:forEach>

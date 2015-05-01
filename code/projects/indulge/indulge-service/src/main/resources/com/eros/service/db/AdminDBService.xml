@@ -7,19 +7,34 @@
 			SELECT COUNT(m.id) AS "Merchant Count", COUNT(d.id) AS "Total Deals", m.status "Merchant Active",city "City", m.merchant_type as "Type" 
 			FROM merchant m 
 			LEFT JOIN merchant_deal d 
-			ON d.merchant_id= m.id GROUP BY m.status,city,merchant_type
+			ON d.merchant_id= m.id where m.role != 'ROLE_ADMIN' GROUP BY m.status,city,merchant_type
 	</select>
 	<select id="listMerchant" parameterType="Hashmap" resultType="com.eros.core.model.Merchant">
 		select id,email,name,merchant_type as merchantType , city,phone,image,address,pincode,state,total_reviews as totalReviews,review_rating as rating,
-		status from merchant where name like concat('%',#{s},'%') or email like concat('%',#{s},'%') or city like concat('%',#{s},'%')  order by created_date desc limit #{page} , #{limit}
+		status from merchant where 
+		<if test="s != null">
+			name like concat('%',#{s},'%') or email like concat('%',#{s},'%') or city like concat('%',#{s},'%')  
+		
+		</if>
+		<if test="status != null">
+			status =#{status}  
+		</if>
+		
+		order by created_date desc limit #{page} , #{limit}
 		
 	</select>
 	<select id="countMerchant" parameterType="String" resultType="Integer">
 		select count(*) from merchant where name like concat('%',#{s},'%') or email like concat('%',#{s},'%') or city like concat('%',#{s},'%') 
 		
 	</select>
+	<select id="getAllActiveMerchantsId" resultType="Integer">
+		select id from merchant where status=true
+	</select>
 	<update id="updateMerchantStatus" parameterType="Map">
-		update merchant set status=#{status} where id =${merchantId}
+		update merchant set status=#{status} where id =#{merchantId}
+	</update>
+	<update id="saveLatLng" parameterType="com.eros.core.model.Merchant">
+		update merchant set lat=#{lat},lng=#{lng} where id =#{id}
 	</update>
 	
 	

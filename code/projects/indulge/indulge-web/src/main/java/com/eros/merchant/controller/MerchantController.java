@@ -8,9 +8,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,6 +35,7 @@ import com.eros.core.model.MerchantSchedule;
 import com.eros.core.model.MerchantService;
 import com.eros.core.model.Reviews;
 import com.eros.core.model.ServiceCategory;
+import com.eros.core.model.security.SecurityUser;
 import com.eros.service.MerchantCustomService;
 
 /**
@@ -55,7 +57,6 @@ public class MerchantController extends BaseController{
 	 */
 	private static final String MERCHANT = "merchant";
 
-	private static final String MERCHANT_EMAIL_SESSION_ID = "merchant_identifier";
 
 	protected static Log MERCHANT_LOGGER = LogFactory
 			.getLog(MerchantController.class);
@@ -73,17 +74,20 @@ public class MerchantController extends BaseController{
 	public String home(ModelMap modelMap, Principal principle,
 			HttpServletRequest request) {
 		Merchant merchant = null;
-		String merchantIdentifier = principle.getName();
+		String merchantEmail = ((SecurityUser)((UsernamePasswordAuthenticationToken)principle).getPrincipal()).getEmail();
+		String merchantPhone = ((SecurityUser)((UsernamePasswordAuthenticationToken)principle).getPrincipal()).getPhone(); 
+		String merchantIdentifier = StringUtils.isNotBlank(merchantEmail) ?merchantEmail:merchantPhone;
+		boolean fAdmin = request.isUserInRole("ROLE_ADMIN");
+		  if(fAdmin){
+			  return "redirect:/admin/home";
+		  }
+		 
+
 		try {
 		
-			if(request.getSession().getAttribute(MERCHANT_EMAIL_SESSION_ID) != null){
-				merchantIdentifier = request.getSession().getAttribute(MERCHANT_EMAIL_SESSION_ID).toString();
-			}
 			merchant = merchantService.getMerchantByEmailOrPhone(merchantIdentifier);
 			request.getSession().setAttribute(MERCHANT_SESSION_ID,
 					merchant);
-			request.getSession().setAttribute(MERCHANT_EMAIL_SESSION_ID,
-					principle.getName());
 			modelMap.put(MERCHANT, merchant);
 		} catch (Exception e) {
 			MERCHANT_LOGGER.error("Error in loading merchant : principle" +principle.getName(), e);
@@ -94,6 +98,26 @@ public class MerchantController extends BaseController{
 		}
 		return "merchantHome";
 	}
+	
+	@RequestMapping(value = "/homeFromAdmin")
+	public String homeAdmin(ModelMap modelMap, Principal principle,
+			HttpServletRequest request, @RequestParam(value = "id", required = true) String merchantIdentifier) {
+		Merchant merchant = null;
+		try {
+			merchant = merchantService.getMerchantByEmailOrPhone(merchantIdentifier);
+			request.getSession().setAttribute(MERCHANT_SESSION_ID,
+					merchant);
+			modelMap.put(MERCHANT, merchant);
+		} catch (Exception e) {
+			MERCHANT_LOGGER.error("Error in loading merchant : principle" +principle.getName(), e);
+			
+		}
+		if (merchant == null) {
+			return "redirect:/merchant/createProfile";
+		}
+		return "merchantHome";
+	}	
+	
 
 	@RequestMapping(value = "/inputLocation")
 	public String create(ModelMap modelMap, HttpServletRequest request) {
@@ -191,7 +215,7 @@ public class MerchantController extends BaseController{
 		redirectAttributes.addFlashAttribute("success_message",
 				"Address Information Saved Successfully");
 		session.setAttribute(MERCHANT_SESSION_ID, contextMerchant);
-		return "redirect:/merchant/inputContact";
+		return "redirect:/merchant/home";
 
 	}
 
@@ -316,7 +340,7 @@ public class MerchantController extends BaseController{
 									+ file.getOriginalFilename(), e);
 					redirectAttributes.addFlashAttribute("error_message",
 							"Error:: " + e.getMessage());
-					return "redirect:/merchant/inputLocation";
+					return "redirect:/merchant/home";
 				}
 
 			}
@@ -415,6 +439,7 @@ public class MerchantController extends BaseController{
 				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
 		Reviews reviews = merchantService.fetchReviews(contextMerchant.getId(),
 				start, rows);
+		modelMap.put("merchant", contextMerchant);
 		modelMap.put("reviews", reviews);
 		return "reviews";
 
@@ -457,33 +482,29 @@ public class MerchantController extends BaseController{
 	@RequestMapping(value = "/inputDeal")
 	public String inputDeal(ModelMap modelMap, HttpSession session) {
 		List<ServiceCategory> categories = merchantService.fetchAllServices();
+		Merchant contextMerchant = (Merchant) session
+				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+		List<MerchantService> services  = merchantService.fetchMerchantServices(contextMerchant.getId());
 		modelMap.put("categories", categories);
 		MerchantDeal deal = new MerchantDeal();
 		modelMap.put("deal", deal);
+		modelMap.put("services", services);
 		return "createDeal";
 
 	}
 
 	@RequestMapping(value = "/saveDeal", method = RequestMethod.POST)
-	public String saveDeal(@RequestParam("selection") Integer[] selection,
+	public String saveDeal(@RequestParam("selection") Integer selection,
 			@ModelAttribute MerchantDeal deal,
 			final RedirectAttributes redirectAttributes, HttpSession session) {
 		Merchant contextMerchant = (Merchant) session
 				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
-		if (selection == null || selection.length <= 0) {
+		if (selection == null || selection <= 0) {
 			redirectAttributes.addFlashAttribute("error_message",
 					"No services Selected for this deal");
 			return "redirect:/merchant/inputDeal";
 		}
-		List<DealService> services = new ArrayList<DealService>();
-		for (int i = 0; i < selection.length; i++) {
-			Integer id = selection[i];
-			DealService service = new DealService(id);
-			services.add(service);
-		}
-		if (services.size() > 0) {
-			deal.setServices(services);
-		}
+		deal.setServiceId(selection);
 		deal.setMerchantId(contextMerchant.getId());
 		Boolean saved = true;
 		try{

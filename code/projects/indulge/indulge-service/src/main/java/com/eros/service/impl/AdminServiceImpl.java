@@ -4,18 +4,29 @@
  */
 package com.eros.service.impl;
 
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.net.ssl.HttpsURLConnection;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang.StringUtils;
-import org.elasticsearch.common.recycler.Recycler.V;
+import org.apache.commons.lang.time.StopWatch;
+import org.elasticsearch.common.geo.GeoPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.eros.core.model.Merchant;
 import com.eros.core.model.MerchantDeal;
@@ -35,6 +46,13 @@ import com.eros.service.search.SearchResponse;
 public class AdminServiceImpl implements AdminService {
 	private static final Logger LOG = LoggerFactory
 			.getLogger(AdminServiceImpl.class);
+	
+	@Value("${google.api.key}")
+	private String GOOGLE_KEY;
+	
+	@Value("${google.geo.url}")
+	private String GOOGLE_URL;
+	
 	@Autowired
 	protected AdminDBService adminDBService;
 
@@ -100,10 +118,10 @@ public class AdminServiceImpl implements AdminService {
 			Map<String, Object> param = new HashMap<String, Object>();
 			param.put("merchantId", id);
 			param.put("status", b);
-			adminDBService.updateMerchantStatus(param);
-			if (b) {
+			Integer rows = adminDBService.updateMerchantStatus(param);
+			if (b && rows >0) {
 				addToCache(id);
-			}else{
+			} else {
 				removeFromCache(id);
 			}
 		} catch (Exception e) {
@@ -116,33 +134,185 @@ public class AdminServiceImpl implements AdminService {
 	 * @param id
 	 */
 	private void removeFromCache(Integer id) {
-		try{
+		try {
 			if (id != null) {
 				merchantRepository.delete(id);
 				dealRepository.deleteByMerchantId(id);
 
 			}
-			}catch (Exception e) {
-				LOG.error("Error in updating cache while enabling a merchant" , e);
-			}
+		} catch (Exception e) {
+			LOG.error("Error in updating cache while enabling a merchant", e);
+		}
 
 	}
 
 	/**
 	 * @param id
 	 */
-	private void addToCache(Integer id) {
-		try{
-		Merchant merchant = merchantService.getMerchantById(id);
-		if (merchant != null && merchant.getId() != null) {
-			merchantRepository.save(merchant);
-		}
-		List<MerchantDeal> deals = merchantService.fetchDealWithMerchant(id);
-		if (deals != null && deals.size() > 0) {
-			dealRepository.save(deals);
-		}}catch (Exception e) {
-			LOG.error("Error in updating cache while enabling a merchant" , e);
+	public void addToCache(Integer id) {
+		try {
+			Merchant merchant = merchantService.getMerchantById(id);
+			if (merchant != null && merchant.getId() != null) {
+				merchantRepository.save(merchant);
+			}
+			List<MerchantDeal> deals = merchantService
+					.fetchDealWithMerchant(id);
+			if (deals != null && deals.size() > 0) {
+				dealRepository.save(deals);
+			}
+		} catch (Exception e) {
+			LOG.error("Error in updating cache while enabling a merchant", e);
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.eros.service.AdminService#uploadAllActiveMerchants()
+	 */
+	@Override
+	public void uploadAllActiveMerchants() {
+		LOG.info("Starting loading of all merchant");
+		StopWatch watch = new StopWatch();
+		watch.start();
+		List<Integer> activeIds = adminDBService.getAllActiveMerchantsId();
+		for (Integer integer : activeIds) {
+			try {
+				Merchant merchant = merchantService.getMerchantById(integer);
+				if (merchant != null) {
+					merchantRepository.save(merchant);
+					List<MerchantDeal> deals = merchantService
+							.fetchDealWithMerchant(merchant.getId());
+					if (deals != null && deals.size() > 0) {
+						dealRepository.save(deals);
+					}
+				}
+			} catch (Exception e) {
+				LOG.error("Error in loading merchant with id " + integer);
+			}
+		}
+		watch.stop();
+		LOG.error("**************************** Total Time taken to load all Merchants " + watch.getTime());
+	}
+
+	/* (non-Javadoc)
+	 * @see com.eros.service.AdminService#fetchDeactiveMerchant(java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public SearchResponse fetchDeactiveMerchant(Integer page, Integer limit) {
+			if (page == null) {
+				page = 0;
+			}
+			if (limit == null) {
+				limit = 50;
+			}
+			Map<String, Object> param = new HashMap<String, Object>();
+			param.put("status", 0);
+			param.put("page", page);
+			param.put("limit", limit);
+			List<Merchant> merchants = adminDBService.listMerchant(param);
+			SearchResponse res = new SearchResponse();
+			res.setResponse(merchants);
+
+			return res;
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.eros.service.AdminService#fetchAndUpdateLatLng(java.lang.Integer)
+	 */
+	@Override
+	public void fetchAndUpdateLatLng(List<Integer> id) throws Exception{
+		for (Integer integer : id) {
+			Merchant merchant = merchantService.getMerchantById(integer);
+			
+			if(merchant != null && StringUtils.isNotBlank(merchant.getAddress()) ){
+				GeoPoint point = connectGoogleAPI(merchant.getAddress());
+				if(point != null){
+					merchant.setLat(point.getLat());
+					merchant.setLng(point.getLon());
+					adminDBService.saveLatLng(merchant);
+				}
+			}
+			//for google API
+			try {
+			    Thread.sleep(1000);
+			} catch(InterruptedException ex) {
+			    Thread.currentThread().interrupt();
+			}
+		}
+		
+	}
+
+	/**
+	 * @param address
+	 * @return
+	 */
+	private GeoPoint connectGoogleAPI(String address) {
+		HttpsURLConnection con = null;
+		try{
+		String url = GOOGLE_URL+"?address="+URLEncoder.encode(address,"utf-8")+"&key="+GOOGLE_KEY;
+		URL obj = new URL(url);
+		con = (HttpsURLConnection) obj.openConnection();
+		GeoPoint point = null;
+		con.setRequestMethod("GET");
+		con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+		int responseCode = con.getResponseCode();
+		if(responseCode != 200){
+			throw new Exception("Error response code ::" +responseCode);
+		}
+		Double lat=null,lng = null;
+		 Document doc = parseXML(con.getInputStream());
+	        NodeList locNodes = doc.getElementsByTagName("location");
+
+	        for(int i=0; i<locNodes.getLength();i++)
+	        {
+	        	if(locNodes.item(i).hasChildNodes()){
+	        		NodeList childList = locNodes.item(i).getChildNodes();
+	    	        for(int j=0; j<childList.getLength();j++)
+	    	        {
+	    	        	if(childList.item(j) != null && childList.item(j).getNodeName() != null){
+	    	        	if(childList.item(j).getNodeName().equalsIgnoreCase("lat")){
+	    	        		lat=Double.valueOf(childList.item(j).getTextContent());
+	    	        		continue;
+	    	        	}else if(childList.item(j).getNodeName().equalsIgnoreCase("lng")){
+	    	        		lng=Double.valueOf(childList.item(j).getTextContent());
+	    	        	}
+	    	        	}
+	    	        }
+	        	}
+	        }
+	      if(lat != null && lng!=null){
+	    	  point = new GeoPoint(lat, lng);
+	      }
+	      
+		return point;
+		}catch (Exception e) {
+			LOG.error("Error in extracking lat/long from google API " +GOOGLE_KEY ,e);
+		}finally{
+			con.disconnect();
+		}
+		return null;
+	}
+	
+	private Document parseXML(InputStream stream)
+		    throws Exception
+		    {
+		        DocumentBuilderFactory objDocumentBuilderFactory = null;
+		        DocumentBuilder objDocumentBuilder = null;
+		        Document doc = null;
+		        try
+		        {
+		            objDocumentBuilderFactory = DocumentBuilderFactory.newInstance();
+		            objDocumentBuilder = objDocumentBuilderFactory.newDocumentBuilder();
+
+		            doc = objDocumentBuilder.parse(stream);
+		        }
+		        catch(Exception ex)
+		        {
+		            throw ex;
+		        }       
+
+		        return doc;
+		    }
 }

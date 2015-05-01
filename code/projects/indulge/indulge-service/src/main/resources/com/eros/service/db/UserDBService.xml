@@ -39,7 +39,7 @@
 		(#{name},#{dob},#{gender},#{mobile},#{passphrase},#{mail},#{facebook},#{profilePhoto},#{refCode},CURRENT_TIMESTAMP)
 	</insert>
 <select id="fetchUser" parameterType="String" resultType="com.eros.core.model.user.User">
-		select id,name,dob,gender,mobile,passphrase,mail,image_path as imagePath,facebook_id facebook,profile_photo profilePhoto,status,ref_code refCode from user where mail=#{mail}
+		select id,name,dob,gender,mobile,passphrase,mail,image_path as imagePath,facebook_id facebook,profile_photo profilePhoto,status,ref_code refCode from user where mail=#{mail} or id=#{mail}
 	</select>	
 	<update id="markLoggedStatus" parameterType="Hashmap">
 		update user set logged_status = #{status} where mail=#{mail}

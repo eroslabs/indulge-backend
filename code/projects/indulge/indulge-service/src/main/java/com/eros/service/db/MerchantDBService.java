@@ -8,6 +8,7 @@ import com.eros.core.model.DealRequest;
 import com.eros.core.model.Merchant;
 import com.eros.core.model.MerchantDeal;
 import com.eros.core.model.MerchantImage;
+import com.eros.core.model.MerchantService;
 import com.eros.core.model.ServiceCategory;
 import com.eros.core.model.State;
 import com.eros.core.model.UserReview;
@@ -64,10 +65,7 @@ public interface MerchantDBService {
 	 * 
 	 */
 	public Integer saveDeal(MerchantDeal deal);
-	/**
-	 * @param param
-	 */
-	public void saveDealServices(Map<String, Object> param);
+	
 	/**
 	 * @param params
 	 * @return
@@ -105,7 +103,7 @@ public interface MerchantDBService {
 	 * @param param
 	 * @return
 	 */
-	public Map<String, String> loadMerchantByUsernameOrPhone(
+	public Map<String, Object> loadMerchantByUsernameOrPhone(
 			Map<String, String> param);
 	/**
 	 * @param params
@@ -119,6 +117,6 @@ public interface MerchantDBService {
 	 * @param param
 	 */
 	public void updatePassword(Map<String, Object> param);
-	
+	public List<MerchantService> selectMerchantServices(Integer id);
 	
 }

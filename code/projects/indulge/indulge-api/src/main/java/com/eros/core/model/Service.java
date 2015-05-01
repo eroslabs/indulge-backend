@@ -4,6 +4,8 @@
  */
 package com.eros.core.model;
 
+import java.util.List;
+
 /**
  * @author vikas
  *
@@ -16,6 +18,7 @@ public class Service extends BaseModel{
 	private String image;
 	private String description;
     private Boolean status;
+    private List<MerchantService> merchantServices;
     /**
 	 * 
 	 */
@@ -89,6 +92,20 @@ public class Service extends BaseModel{
 	 */
 	public void setStatus(Boolean status) {
 		this.status = status;
+	}
+
+	/**
+	 * @return the merchantServices
+	 */
+	public List<MerchantService> getMerchantServices() {
+		return merchantServices;
+	}
+
+	/**
+	 * @param merchantServices the merchantServices to set
+	 */
+	public void setMerchantServices(List<MerchantService> merchantServices) {
+		this.merchantServices = merchantServices;
 	}
     
     

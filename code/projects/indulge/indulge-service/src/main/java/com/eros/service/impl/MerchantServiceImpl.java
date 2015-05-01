@@ -23,6 +23,7 @@ import com.eros.core.model.Merchant;
 import com.eros.core.model.MerchantDeal;
 import com.eros.core.model.MerchantImage;
 import com.eros.core.model.MerchantPhone;
+import com.eros.core.model.MerchantService;
 import com.eros.core.model.Reviews;
 import com.eros.core.model.ServiceCategory;
 import com.eros.core.model.State;
@@ -313,15 +314,7 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	@Override
 	public Boolean saveDeal(MerchantDeal deal) throws Exception {
 		try{
-			Integer id = merchantDBService.saveDeal(deal);
-			List<DealService> services = deal.getServices();
-			for (DealService dealService : services) {
-				dealService.setDealId(id);
-				
-			}
-			Map<String, Object> param = new HashMap<String, Object>(1);
-			param.put("list",services);
-			merchantDBService.saveDealServices(param);
+			merchantDBService.saveDeal(deal);
 			return true;
 			}catch (Exception e) {
 				LOG.error("Error in fetching all services: ", e);
@@ -520,10 +513,12 @@ public class MerchantServiceImpl implements MerchantCustomService {
 		try {
 			Merchant merchant = merchantDBService.fetchMerchant(id.toString());
 			if(merchant != null){
-				merchant.setDeals(fetchDeals(merchant.getId(), 0, MAX_DEALS));
+				merchant.setDeals(fetchDealWithMerchant(merchant.getId()));
+				if(merchant.getTotalReviews() > 0){
 				Reviews reviews = fetchReviews(merchant.getId(), 0, MAX_REVIEWS);
 				if(reviews != null && reviews.getUserReviews() != null){
 					merchant.setReviews(reviews.getUserReviews());
+				}
 				}
 			}
 			return merchant;
@@ -533,5 +528,22 @@ public class MerchantServiceImpl implements MerchantCustomService {
 		return null;
 
 		
+	}
+	/* (non-Javadoc)
+	 * @see com.eros.service.MerchantCustomService#fetchMerchantServices(java.lang.Integer)
+	 */
+	@Override
+	public List<MerchantService> fetchMerchantServices(Integer id) {
+		if (id == null) {
+			return null;
+		}
+		try {
+			List<MerchantService> services = merchantDBService.selectMerchantServices(id);
+			return services;
+		} catch (Exception e) {
+			LOG.error("Error in fetching merchant", e);
+		}
+		return null;
+
 	}	
 }

@@ -39,8 +39,21 @@ public interface AdminDBService {
 
 	/**
 	 * @param param
+	 * @return 
 	 */
-	void updateMerchantStatus(Map<String, Object> param);
+	Integer updateMerchantStatus(Map<String, Object> param);
+
+
+	/**
+	 * @return
+	 */
+	List<Integer> getAllActiveMerchantsId();
+
+
+	/**
+	 * @param merchant
+	 */
+	void saveLatLng(Merchant merchant);
 
    
    }

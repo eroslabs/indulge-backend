@@ -251,4 +251,28 @@ public class UserController extends BaseController {
 		return returnMap;
 
 	}
+	
+	/**
+	 * 
+	 * @param userEmail
+	 * @param dealId
+	 *            (path variable)
+	 * @return including status (true/false) , Optional error ( message)
+	 */
+	@RequestMapping(value = "/resource/{type}/{id}", method = RequestMethod.GET)
+	public @ResponseBody
+	byte[] redeemDeal(@PathVariable("type") String type,@PathVariable("id") Integer id) {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		try {
+			byte[] imageBytes = userService.fetchResource(type, id);
+			return  imageBytes;
+		} catch (Exception e) {
+			LOGGER.error("Error in fetching image ::" + id + " of type "
+					+ type, e);
+			
+		}
+				return null;
+
+	}
+
 }

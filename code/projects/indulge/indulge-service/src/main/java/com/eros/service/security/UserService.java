@@ -34,7 +34,12 @@ public class UserService implements UserDetailsService {
     	Map<String, String> param = new HashMap<String, String>(2);
     	param.put("user", username);
     	param.put("passphrase", password);
-    	Map<String , String> user = merchantDBService.loadMerchantByUsernameOrPhone(param);
+    	Map<String , Object> user = null;
+    	try{
+    		user = merchantDBService.loadMerchantByUsernameOrPhone(param);
+    	}catch (Exception e) {
+			e.printStackTrace();
+		}
     	if (user == null) {
             throw new BadCredentialsException("Invalid Credentials");
         }else{
@@ -42,8 +47,8 @@ public class UserService implements UserDetailsService {
         }
        
         List<Role> authorities = new ArrayList< Role>();
-        authorities.add(new Role(user.get("role")));
-    	SecurityUser userDetails = new SecurityUser(user.get("email"), user.get("passphrase"), user.get("phone"), authorities);
+        authorities.add(new Role(user.get("role").toString()));
+    	SecurityUser userDetails = new SecurityUser(user.get("email").toString(), user.get("passphrase").toString(), user.get("phone").toString(), authorities);
         return userDetails;
     }
 

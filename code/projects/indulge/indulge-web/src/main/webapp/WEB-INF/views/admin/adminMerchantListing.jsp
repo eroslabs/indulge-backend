@@ -32,18 +32,10 @@
   </head>
 
 <body>
-	<div class="container-fluid" style="background-color:#f0f0f0">
-		<div class="row">
-		<center>
-			<div class="col-xs-22 col-sm-14 col-md-12 col-lg-10 col-xs-push-1 col-sm-push-5 col-md-push-6 col-lg-push-7">
-				
-	    		<div class="row font-type sign-up font-size-24" style="color:#ddcbbd; padding-top:10px; padding-bottom:10px">Ensure that clients can get easily in touch</div>
-	    			<div class="row row15 font-size-20 location-head font-type" style="background-color:#1fbbad; margin-bottom:15px">
-			    			Searched Merchant List
-			    	</div>
+		<center><h2>Searched Merchant List</h2></center>
 			    	
 
-    <table class="table table-bordered">
+    <table class="table table-bordered" style="width:80%;margin:0 auto;">
 
         <thead>
 
@@ -59,7 +51,8 @@
 								<th>Address</th>
 								<th>Review Count</th>
 								<th>Rating</th>
-								<th>active (activate /Deactivate)</th>	
+								<th>active (activate /Deactivate)</th>
+								<th>view</th>	
             </tr>
 
         </thead>
@@ -81,7 +74,9 @@
 								<td>${mer.address}</td>
 								<td>${mer.totalReviews}</td>
 								<td>${mer.rating}</td>
-								<td>${mer.status} <c:choose><c:when test="${mer.status}"><a target="_blank" href="${pageContext.servletContext.contextPath }/admin/deactivateMerchant/${mer.id}">Deactivate</a></c:when><c:otherwise><a target="_blank" href="${pageContext.servletContext.contextPath }/admin/activateMerchant/${mer.id}">Activate</a></c:otherwise></c:choose></td>
+								<td>${mer.status} <c:choose><c:when test="${mer.status}"><a onclick="window.location.reload();" target="_blank" href="${pageContext.servletContext.contextPath }/admin/deactivateMerchant/${mer.id}">Deactivate</a></c:when><c:otherwise><a target="_blank" onclick="window.location.reload();" href="${pageContext.servletContext.contextPath }/admin/activateMerchant/${mer.id}">Activate</a></c:otherwise></c:choose></td>
+								<td><a target="_blank" href="${pageContext.servletContext.contextPath }/merchant/homeFromAdmin?id=${mer.id}">view</a></td>
+								<td><a target="_blank" href="${pageContext.servletContext.contextPath }/admin/fetchLatLong?id=${mer.id}">update Lat/Lng</a></td>
 						</tr>
 					</c:forEach>
 					
@@ -90,8 +85,5 @@
 					</table>
 					</div>
 	  		</div>
-	  	</center>
-	  	</div>
-	</div>
 </body>
 </html>

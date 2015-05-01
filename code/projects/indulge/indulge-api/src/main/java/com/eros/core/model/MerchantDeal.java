@@ -38,7 +38,8 @@ public class MerchantDeal extends BaseModel{
 	private Integer redemption;
 	private Integer confirmed;
 	private Boolean recurring;
-	private List<DealService> services;
+	private MerchantService service;
+	private Integer serviceId;
 	private Boolean status;
 	private String name;
 	private String city;
@@ -47,6 +48,11 @@ public class MerchantDeal extends BaseModel{
 	private String landmark;
 	@Field(type = FieldType.Float, index = FieldIndex.not_analyzed,store=true)
 	private String rating;
+	private MerchantSchedule schedule;
+    private List<DigitalMenuImage> menus;
+    private Boolean ccAccepted;
+    private Boolean acFacility;
+    
 	@GeoPointField
     private GeoPoint geo;
 	@Field(type = FieldType.Boolean, index = FieldIndex.no,store=true)
@@ -63,18 +69,17 @@ public class MerchantDeal extends BaseModel{
 	
 	
 	
-	
 	/**
-	 * @return the services
+	 * @return the service
 	 */
-	public List<DealService> getServices() {
-		return services;
+	public MerchantService getService() {
+		return service;
 	}
 	/**
-	 * @param services the services to set
+	 * @param service the service to set
 	 */
-	public void setServices(List<DealService> services) {
-		this.services = services;
+	public void setService(MerchantService service) {
+		this.service = service;
 	}
 	/**
 	 * @return the id
@@ -123,6 +128,18 @@ public class MerchantDeal extends BaseModel{
 	 */
 	public void setValidFrom(Date validFrom) {
 		this.validFrom = validFrom;
+	}
+	/**
+	 * @return the serviceId
+	 */
+	public Integer getServiceId() {
+		return serviceId;
+	}
+	/**
+	 * @param serviceId the serviceId to set
+	 */
+	public void setServiceId(Integer serviceId) {
+		this.serviceId = serviceId;
 	}
 	/**
 	 * @return the validTill
@@ -189,6 +206,54 @@ public class MerchantDeal extends BaseModel{
 	 */
 	public Integer getConfirmed() {
 		return confirmed;
+	}
+	/**
+	 * @return the schedule
+	 */
+	public MerchantSchedule getSchedule() {
+		return schedule;
+	}
+	/**
+	 * @param schedule the schedule to set
+	 */
+	public void setSchedule(MerchantSchedule schedule) {
+		this.schedule = schedule;
+	}
+	/**
+	 * @return the menus
+	 */
+	public List<DigitalMenuImage> getMenus() {
+		return menus;
+	}
+	/**
+	 * @param menus the menus to set
+	 */
+	public void setMenus(List<DigitalMenuImage> menus) {
+		this.menus = menus;
+	}
+	/**
+	 * @return the ccAccepted
+	 */
+	public Boolean getCcAccepted() {
+		return ccAccepted;
+	}
+	/**
+	 * @param ccAccepted the ccAccepted to set
+	 */
+	public void setCcAccepted(Boolean ccAccepted) {
+		this.ccAccepted = ccAccepted;
+	}
+	/**
+	 * @return the acFacility
+	 */
+	public Boolean getAcFacility() {
+		return acFacility;
+	}
+	/**
+	 * @param acFacility the acFacility to set
+	 */
+	public void setAcFacility(Boolean acFacility) {
+		this.acFacility = acFacility;
 	}
 	/**
 	 * @param confirmed the confirmed to set

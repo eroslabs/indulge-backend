@@ -68,5 +68,12 @@ public interface UserService {
 	 */
 	void saveReportedError(ReportedError error) throws Exception;
 
+	/**
+	 * @param type
+	 * @param id
+	 * @return
+	 */
+	public byte[] fetchResource(String type, Integer id);
+
 
 }

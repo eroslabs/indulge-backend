@@ -24,7 +24,8 @@ public class Merchant extends BaseModel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private Integer id;
-    private String name;
+	@Field(type = FieldType.String, index = FieldIndex.analyzed,store=true,indexAnalyzer="simple")
+	private String name;
     private String email; 	 	
     private String passPhrase; 	
     private String city;	

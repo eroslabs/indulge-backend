@@ -22,7 +22,7 @@
 		<intercept-url pattern="/j_spring_security_check" access="permitAll"/>
 		<intercept-url pattern="/j_spring_security_logout" access="permitAll"/>
 		<intercept-url pattern="/merchant/login" access="permitAll" />
-		<intercept-url pattern="/merchant/*" access="hasRole('ROLE_ADMIN')" />
+		<intercept-url pattern="/merchant/*" access="hasAnyRole('ROLE_USER','ROLE_ADMIN')" />
 		<logout logout-success-url="/merchant/login" logout-url="/j_spring_security_logout"/>
 		<remember-me />
 	</http>

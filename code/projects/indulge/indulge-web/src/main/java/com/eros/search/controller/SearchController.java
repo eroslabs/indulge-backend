@@ -190,17 +190,22 @@ public class SearchController extends BaseController {
 		Filter filter = RequestUtils.generateFilter(s, hs, gs, services, pf,
 				pt, lat, lon, page, limit, dir, sort, IndexType.INDULGE,
 				IndexType.MERCHANT,false);
-		
+		Map<String, Object> map = new HashMap<String, Object>();
 		SearchResponse response = null;
 		try {
 			response = searchService.search(filter);
+			if(response !=null){
+				map.put(RESULT, response.getResponse());
+			}else{
+				map.put(RESULT, null);
+			}
+			map.put(STATUS, success);
+			
 		} catch (Exception e) {
 			LOGGER.error("Error in search ::" + filter, e);
 			success = false;
 		}
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put(RESULT, response.getResponse());
-		map.put(STATUS, success);
+		
 		if (!success) {
 			map.put(ERROR, "Error in search " + filter);
 		}
@@ -218,17 +223,21 @@ public class SearchController extends BaseController {
 		Boolean success = true;
 		Filter filter = RequestUtils.generateFilter(s,IndexType.INDULGE,
 				IndexType.MERCHANT,true);
-		
+		Map<String, Object> map = new HashMap<String, Object>();
 		SearchResponse response = null;
 		try {
 			response = searchService.search(filter);
+			if(response != null){
+				map.put(RESULT, response.getResponse());
+			}else{
+				map.put(RESULT, null);
+			}
+			map.put(STATUS, success);
 		} catch (Exception e) {
 			LOGGER.error("Error in search ::" + filter, e);
 			success = false;
 		}
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put(RESULT, response.getResponse());
-		map.put(STATUS, success);
+		
 		if (!success) {
 			map.put(ERROR, "Error in search " + filter);
 		}
@@ -278,16 +287,22 @@ public class SearchController extends BaseController {
 		watch.start();
 		Filter filter = RequestUtils.generateFilter(s, lat, lon, page, limit,
 				dir, sort, IndexType.INDULGE, IndexType.DEAL,false);
+		Map<String, Object> map = new HashMap<String, Object>();
 		SearchResponse response = null;
 		try {
 			response = searchService.search(filter);
+			if(response !=null){
+				map.put(RESULT, response.getResponse());
+			}else{
+				map.put(RESULT, response.getResponse());
+			}
+		
+			map.put(STATUS, success);	
 		} catch (Exception e) {
 			LOGGER.error("Error in search ::" + filter, e);
 			success = false;
 		}
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put(RESULT, response.getResponse());
-		map.put(STATUS, success);
+		
 		if (!success) {
 			map.put(ERROR, "Error in search " + filter);
 		}

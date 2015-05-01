@@ -34,4 +34,21 @@ public interface AdminService {
 	 */
 	void changeMerchantStatus(Integer id, boolean b);
 
+	/**
+	 * 
+	 */
+	void uploadAllActiveMerchants();
+	public void addToCache(Integer id);
+
+	/**
+	 * @param page
+	 * @param limit
+	 * @return
+	 */
+	SearchResponse fetchDeactiveMerchant(Integer page, Integer limit);
+
+	/**
+	 * @param id
+	 */
+	void fetchAndUpdateLatLng(List<Integer> id)  throws Exception;
 }

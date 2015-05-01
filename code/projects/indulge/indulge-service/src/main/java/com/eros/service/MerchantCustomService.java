@@ -7,6 +7,7 @@ import com.eros.core.model.DigitalMenuImage;
 import com.eros.core.model.Merchant;
 import com.eros.core.model.MerchantDeal;
 import com.eros.core.model.MerchantImage;
+import com.eros.core.model.MerchantService;
 import com.eros.core.model.Reviews;
 import com.eros.core.model.ServiceCategory;
 import com.eros.core.model.State;
@@ -124,4 +125,9 @@ public interface MerchantCustomService {
 	 * @param id
 	 */
 	public Merchant getMerchantById(Integer id);
+	/**
+	 * @param id
+	 * @return
+	 */
+	public List<MerchantService> fetchMerchantServices(Integer id);
 }
