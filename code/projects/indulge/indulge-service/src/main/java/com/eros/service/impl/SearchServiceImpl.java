@@ -105,7 +105,10 @@ public class SearchServiceImpl implements SearchService {
 	public void loadDeal(Integer id) {
 		List<MerchantDeal> deals = merchantService.fetchDealWithMerchant(id);
 		if(deals != null && deals.size() > 0)
-			dealRepository.save(deals);
+			for (MerchantDeal merchantDeal : deals) {
+				dealRepository.index(merchantDeal);	
+			}
+			
 		
 	}
 
@@ -116,7 +119,7 @@ public class SearchServiceImpl implements SearchService {
 	public void loadMerchant(String email) {
 		Merchant merchant= merchantService.getMerchantByEmail(email);
 		if(merchant != null)
-			repository.save(merchant);
+			repository.index(merchant);
 		
 	}
 }

@@ -21,7 +21,7 @@ public class MerchantSchedule extends BaseModel{
 	 * 
 	 */
 	public MerchantSchedule() {
-		// TODO Auto-generated constructor stub
+		super();
 	}
 	public MerchantSchedule(String opString,String clString, String weekString) {
 		super();

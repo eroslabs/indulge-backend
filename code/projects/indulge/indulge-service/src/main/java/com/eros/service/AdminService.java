@@ -51,4 +51,10 @@ public interface AdminService {
 	 * @param id
 	 */
 	void fetchAndUpdateLatLng(List<Integer> id)  throws Exception;
+
+	/**
+	 * @param id
+	 * @param rating
+	 */
+	void setMerchantLuxuryRating(Integer id, Integer rating);
 }

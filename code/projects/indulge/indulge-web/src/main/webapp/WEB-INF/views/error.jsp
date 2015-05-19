@@ -19,7 +19,6 @@
     <![endif]-->
   </head>
   <body>
-  	<jsp:include page="WEB-INF/views/adminHeader.jsp" />
     <div class="lh20">&nbsp;</div>
     <div class="container">
 		<div class="row">

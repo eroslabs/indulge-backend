@@ -1,9 +1,9 @@
 package com.eros.service;
 
 import java.util.List;
+import java.util.Set;
 
 import com.eros.core.model.DealRequest;
-import com.eros.core.model.DigitalMenuImage;
 import com.eros.core.model.Merchant;
 import com.eros.core.model.MerchantDeal;
 import com.eros.core.model.MerchantImage;
@@ -37,15 +37,6 @@ public interface MerchantCustomService {
 	 */
 	public Boolean saveAddress(Merchant merchant);
 	/**
-	 * @param merchant
-	 * @param phone1
-	 * @param phone12
-	 * @param phone3
-	 * @return
-	 */
-	public Boolean saveContact(Merchant merchant, String phone1,
-			String phone12, String phone3)throws Exception;
-	/**
 	 * @param contextMerchant
 	 * @return
 	 */
@@ -68,9 +59,12 @@ public interface MerchantCustomService {
 	public List<ServiceCategory> fetchAllServices();
 	/**
 	 * @param deal
+	 * @param serviceTypeIds 
+	 * @param serviceIds 
+	 * @param categoryIds 
 	 * @return
 	 */
-	public Boolean saveDeal(MerchantDeal deal)throws Exception;
+	public Boolean saveDeal(MerchantDeal deal, List<Integer> categoryIds, List<Integer> serviceIds, List<Integer> serviceTypeIds)throws Exception;
 	/**
 	 * @param id
 	 * @param coupon 
@@ -78,10 +72,10 @@ public interface MerchantCustomService {
 	 * @param rows
 	 * @return
 	 */
-	public List<MerchantDeal> fetchDeals(Integer id, String coupon, int start, int rows);
-	public List<MerchantDeal> fetchDeals(Integer id, int start, int rows);
+	public List<MerchantDeal> fetchDeals(Integer id, String coupon, Integer start, Integer rows);
+	public List<MerchantDeal> fetchDeals(Integer id, Integer start, Integer rows);
 	public Boolean killDeal(Integer merchantId, Integer dealId) ;
-	public List<DealRequest> fetchDealRequest(Integer id);
+	public List<DealRequest> fetchDealRequest(Merchant contextMerchant);
 	/**
 	 * @param contextMerchant
 	 * @return
@@ -130,4 +124,10 @@ public interface MerchantCustomService {
 	 * @return
 	 */
 	public List<MerchantService> fetchMerchantServices(Integer id);
+	/**
+	 * @param contextMerchant
+	 * @param phones
+	 * @return
+	 */
+	public Boolean saveContact(Merchant contextMerchant, Set<String> phones) throws Exception;
 }

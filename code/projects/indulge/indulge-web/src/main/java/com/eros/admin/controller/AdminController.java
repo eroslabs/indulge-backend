@@ -101,6 +101,17 @@ public class AdminController extends BaseController{
 
 	}
 
+	@RequestMapping(value = "/setLuxuryRating")
+	public String changeLuxuryRating(ModelMap modelMap,@RequestParam(value = "id", required = true) Integer id,@RequestParam(value = "rating", required = true) Integer rating, Principal principle,
+			HttpServletRequest request) {
+		try {
+			adminService.setMerchantLuxuryRating(id,rating);
+		} catch (Exception e) {
+			LOGGER.error("Error in retrieving Stats", e);
+		}
+		
+		return "admin/thanks";
+	}
 	@RequestMapping(value = "/activateMerchant/{id}")
 	public String activate(ModelMap modelMap,@PathVariable("id") Integer id, Principal principle,
 			HttpServletRequest request) {

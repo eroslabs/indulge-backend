@@ -29,8 +29,8 @@ public class Filter implements Serializable {
 	private static Integer DEFAULT_SIZE = new Integer(20);
 	private String index;
 	private String type;
-	private Boolean homeService;
-	private Boolean genderSupport;
+	private Integer homeService;
+	private Integer genderSupport;
 	private Float priceFrom;
 	private Float priceTo;
 	private Integer[] services;
@@ -42,6 +42,7 @@ public class Filter implements Serializable {
 	private SortOrder direction;
 	private static List<String> sortFields = new ArrayList<String>(2);
 	private Boolean autoSuggest;
+	private Integer luxury;
 	static {
 		sortFields.add(SearchConstants.RATING_FIELD);
 		sortFields.add(SearchConstants.DISTANCE_PARAMETER);
@@ -72,7 +73,7 @@ public class Filter implements Serializable {
 	/**
 	 * @return the homeService
 	 */
-	public Boolean getHomeService() {
+	public Integer getHomeService() {
 		return homeService;
 	}
 
@@ -80,14 +81,14 @@ public class Filter implements Serializable {
 	 * @param homeService
 	 *            the homeService to set
 	 */
-	public void setHomeService(Boolean homeService) {
+	public void setHomeService(Integer homeService) {
 		this.homeService = homeService;
 	}
 
 	/**
 	 * @return the genderSupport
 	 */
-	public Boolean getGenderSupport() {
+	public Integer getGenderSupport() {
 		return genderSupport;
 	}
 
@@ -95,7 +96,7 @@ public class Filter implements Serializable {
 	 * @param genderSupport
 	 *            the genderSupport to set
 	 */
-	public void setGenderSupport(Boolean genderSupport) {
+	public void setGenderSupport(Integer genderSupport) {
 		this.genderSupport = genderSupport;
 	}
 
@@ -292,7 +293,22 @@ public class Filter implements Serializable {
 	public void setAutoSuggest(Boolean autoSuggest) {
 		this.autoSuggest = autoSuggest;
 	}
-
+	
+	/**
+	 * @param lr
+	 */
+	public void setLuxury(Integer lr) {
+	 this.luxury = lr;
+		
+	}
+	
+	/**
+	 * 
+	 */
+	public Integer getLuxury() {
+	 return luxury;
+		
+	}
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -345,4 +361,6 @@ public class Filter implements Serializable {
 		}
 		return buffer.toString();
 	}
+
+	
 }

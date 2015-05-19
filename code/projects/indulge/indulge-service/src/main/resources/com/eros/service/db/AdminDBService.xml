@@ -33,6 +33,9 @@
 	<update id="updateMerchantStatus" parameterType="Map">
 		update merchant set status=#{status} where id =#{merchantId}
 	</update>
+	<update id="updateMerchantLuxuryRating" parameterType="Map">
+		update merchant set luxury_rating=#{luxury} where id =#{merchantId}
+	</update>
 	<update id="saveLatLng" parameterType="com.eros.core.model.Merchant">
 		update merchant set lat=#{lat},lng=#{lng} where id =#{id}
 	</update>

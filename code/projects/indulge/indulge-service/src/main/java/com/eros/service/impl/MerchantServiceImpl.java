@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -18,7 +19,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.eros.core.model.DealRequest;
-import com.eros.core.model.DealService;
 import com.eros.core.model.Merchant;
 import com.eros.core.model.MerchantDeal;
 import com.eros.core.model.MerchantImage;
@@ -33,6 +33,7 @@ import com.eros.notification.utils.NotificationService;
 import com.eros.notification.utils.NotificationType;
 import com.eros.service.MerchantCustomService;
 import com.eros.service.db.MerchantDBService;
+import com.eros.service.elasticsearch.MerchantDealRepository;
 import com.eros.service.util.NotificationCategory;
 
 /**
@@ -55,6 +56,9 @@ public class MerchantServiceImpl implements MerchantCustomService {
 
 	@Autowired
 	protected NotificationService notificationService;
+
+	@Autowired
+	private MerchantDealRepository dealRepository;
 	
 	@Value("${merchant.base.path}")
 	private String MERCHANT_BASE_PATH;
@@ -99,8 +103,8 @@ public class MerchantServiceImpl implements MerchantCustomService {
 			if(e instanceof org.springframework.dao.DuplicateKeyException){
 				throw new Exception("Merchant with this mail id already exist",e);
 			}
+			throw new Exception(e.getMessage());
 		}
-		return ;
 	}
 
 	/*
@@ -183,23 +187,17 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	 * 
 	 * @see
 	 * com.eros.service.MerchantService#saveContact(com.eros.core.model.Merchant
-	 * , java.lang.String, java.lang.String, java.lang.String)
+	 * , java.util.set)
 	 */
 	@Override
-	public Boolean saveContact(Merchant merchant, String phone1, String phone2,
-			String phone3) throws Exception{
+	public Boolean saveContact(Merchant merchant, Set<String> phones) throws Exception{
 		List<MerchantPhone> phoneList = new ArrayList<MerchantPhone>(3);
-		if (StringUtils.isNotBlank(phone1)) {
-			MerchantPhone phone = new MerchantPhone(phone1, merchant.getId());
-			phoneList.add(phone);
+		for (String phone : phones) {
+		
+		if (StringUtils.isNotBlank(phone)) {
+			MerchantPhone merchantPhone = new MerchantPhone(phone, merchant.getId());
+			phoneList.add(merchantPhone);
 		}
-		if (StringUtils.isNotBlank(phone2)) {
-			MerchantPhone phone = new MerchantPhone(phone2, merchant.getId());
-			phoneList.add(phone);
-		}
-		if (StringUtils.isNotBlank(phone3)) {
-			MerchantPhone phone = new MerchantPhone(phone3, merchant.getId());
-			phoneList.add(phone);
 		}
 		if (phoneList.isEmpty()) {
 			return false;
@@ -312,9 +310,21 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	 * @see com.eros.service.MerchantCustomService#saveDeal(com.eros.core.model.MerchantDeal)
 	 */
 	@Override
-	public Boolean saveDeal(MerchantDeal deal) throws Exception {
+	public Boolean saveDeal(MerchantDeal deal, List<Integer> categoryIds,
+			List<Integer> serviceIds, List<Integer> serviceTypeIds)
+			throws Exception {
+
 		try{
 			merchantDBService.saveDeal(deal);
+			if(deal.getId() != null){
+				HashMap<String, Object> params = new HashMap<String, Object>(3);
+				params.put("serviceIds", serviceIds != null && serviceIds.size() >0 ? serviceIds : null);
+				params.put("serviceTypeIds", serviceTypeIds != null && serviceTypeIds.size() >0 ? serviceTypeIds : null );
+				params.put("categoryIds", categoryIds != null && categoryIds.size() >0 ? categoryIds : null);
+				params.put("dealId", deal.getId());
+				params.put("merchantId", deal.getMerchantId());
+				merchantDBService.saveDealServices(params);	
+			}
 			return true;
 			}catch (Exception e) {
 				LOG.error("Error in fetching all services: ", e);
@@ -326,12 +336,12 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	 * @see com.eros.service.MerchantCustomService#fetchDeals(java.lang.Integer, int, int)
 	 */
 	@Override
-	public List<MerchantDeal> fetchDeals(Integer id, int start, int rows) {
+	public List<MerchantDeal> fetchDeals(Integer id, Integer start, Integer rows) {
 		return fetchDeals(id,null, start, rows);
 	}
 	
 	@Override
-	public List<MerchantDeal> fetchDeals(Integer id,String coupon, int start, int rows) {
+	public List<MerchantDeal> fetchDeals(Integer id,String coupon, Integer start, Integer rows) {
 		try{
 			HashMap<String, Object> params = new HashMap<String, Object>(3);
 			params.put("id", id);
@@ -353,6 +363,8 @@ public class MerchantServiceImpl implements MerchantCustomService {
 			params.put("merchantId", merchantId);
 			params.put("dealId", id);
 			Integer i = merchantDBService.killDeal(params);
+//			removing from cache if present
+			dealRepository.delete(id);
 			if(i> 0){return true;}
 		}catch (Exception e) {
 			LOG.error("Error in fetching deals services: ", e);
@@ -377,9 +389,9 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	 * @see com.eros.service.MerchantCustomService#fetchDealRequest(java.lang.Integer)
 	 */
 	@Override
-	public List<DealRequest> fetchDealRequest(Integer merchantId) {
+	public List<DealRequest> fetchDealRequest(Merchant merchant) {
 		try{
-			List<DealRequest> request = merchantDBService.fetchDealRequests(merchantId);
+			List<DealRequest> request = merchantDBService.fetchDealRequests(merchant);
 			return request;
 		}catch (Exception e) {
 			LOG.error("Error in fetching all deal requests: ", e);
@@ -511,7 +523,7 @@ public class MerchantServiceImpl implements MerchantCustomService {
 			return null;
 		}
 		try {
-			Merchant merchant = merchantDBService.fetchMerchant(id.toString());
+			Merchant merchant = merchantDBService.fetchMerchantById(id);
 			if(merchant != null){
 				merchant.setDeals(fetchDealWithMerchant(merchant.getId()));
 				if(merchant.getTotalReviews() > 0){
@@ -545,5 +557,5 @@ public class MerchantServiceImpl implements MerchantCustomService {
 		}
 		return null;
 
-	}	
+	}
 }

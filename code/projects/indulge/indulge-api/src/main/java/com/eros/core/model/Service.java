@@ -15,10 +15,8 @@ public class Service extends BaseModel{
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String name;
-	private String image;
-	private String description;
     private Boolean status;
-    private List<MerchantService> merchantServices;
+    private List<ServiceType> serviceTypes;
     /**
 	 * 
 	 */
@@ -58,30 +56,6 @@ public class Service extends BaseModel{
 		this.name = name;
 	}
 	/**
-	 * @return the image
-	 */
-	public String getImage() {
-		return image;
-	}
-	/**
-	 * @param image the image to set
-	 */
-	public void setImage(String image) {
-		this.image = image;
-	}
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return description;
-	}
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	/**
 	 * @return the status
 	 */
 	public Boolean getStatus() {
@@ -95,17 +69,17 @@ public class Service extends BaseModel{
 	}
 
 	/**
-	 * @return the merchantServices
+	 * @return the serviceTypes
 	 */
-	public List<MerchantService> getMerchantServices() {
-		return merchantServices;
+	public List<ServiceType> getServiceTypes() {
+		return serviceTypes;
 	}
 
 	/**
-	 * @param merchantServices the merchantServices to set
+	 * @param serviceTypes the serviceTypes to set
 	 */
-	public void setMerchantServices(List<MerchantService> merchantServices) {
-		this.merchantServices = merchantServices;
+	public void setServiceTypes(List<ServiceType> serviceTypes) {
+		this.serviceTypes = serviceTypes;
 	}
     
     

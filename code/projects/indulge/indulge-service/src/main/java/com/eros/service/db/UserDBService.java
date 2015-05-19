@@ -1,5 +1,6 @@
 package com.eros.service.db;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.eros.core.model.Coupon;
@@ -14,7 +15,7 @@ import com.eros.core.model.user.User;
  */
 public interface UserDBService {
 
-    public User registerUser(User user);
+    public Integer registerUser(User user);
 
 	/**
 	 * @param userEmail
@@ -69,4 +70,9 @@ public interface UserDBService {
 	 * @param param
 	 */
 	public void updatePassword(Map<String, Object> param);
+
+	/**
+	 * @param param
+	 */
+	public void updateProfilePic(HashMap<String, String> param);
 }

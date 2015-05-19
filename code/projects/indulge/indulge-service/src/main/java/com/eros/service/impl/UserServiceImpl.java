@@ -66,6 +66,13 @@ public class UserServiceImpl implements UserService {
 		try {
 			userDBService.registerUser(user);
 			User savedUser = userDBService.fetchUser(user.getMail());
+			if(user.getImage() != null){
+				String profilePhoto = saveUserImage(user.getImage(), savedUser.getId(), savedUser.getId()+".png");
+				HashMap<String, String> param = new HashMap<String, String>();
+				param.put("userId", savedUser.getId().toString());
+				param.put("path", profilePhoto);
+				userDBService.updateProfilePic(param);
+			}
 			return savedUser;
 		} catch (Exception e) {
 			LOG.error("Error in saving User basic profile : ", e);
@@ -85,7 +92,7 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-	public Boolean loginUser(String userEmail, String passPhrase) {
+	public User loginUser(String userEmail, String passPhrase) {
 		if (StringUtils.isNotBlank(userEmail)
 				&& StringUtils.isNotBlank(passPhrase)) {
 			try {
@@ -97,13 +104,14 @@ public class UserServiceImpl implements UserService {
 					param.put("mail", userEmail);
 					param.put("status", LOGGEDIN);
 					userDBService.markLoggedStatus(param);
-					return login;
+					User user = userDBService.fetchUser(userEmail);
+					return user;
 				}
 			} catch (Exception e) {
 				LOG.error("Error in login for user :: " + userEmail, e);
 			}
 		}
-		return false;
+		return null;
 	}
 
 	/*

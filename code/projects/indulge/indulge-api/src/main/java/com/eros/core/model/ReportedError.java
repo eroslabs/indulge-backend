@@ -21,7 +21,7 @@ public class ReportedError implements Serializable{
 	private Boolean wrongAddress;
 	private Boolean closedClosed;
 	private Boolean wrongPricing;
-	private Boolean details;
+	private String details;
 	private Integer userId;
 	private Integer merchantId;
 	private Date createdDate;
@@ -85,14 +85,14 @@ public class ReportedError implements Serializable{
 	/**
 	 * @return the details
 	 */
-	public Boolean getDetails() {
+	public String getDetails() {
 		return details;
 	}
 
 	/**
 	 * @param details the details to set
 	 */
-	public void setDetails(Boolean details) {
+	public void setDetails(String details) {
 		this.details = details;
 	}
 

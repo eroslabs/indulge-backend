@@ -21,6 +21,7 @@ public class User extends BaseModel{
 	 private String mobile;
 	 private String passphrase;
 	 private String facebook;
+	 private String google;
 	 private String profilePhoto;
 	 private Boolean status;
 	 private String refCode;
@@ -169,6 +170,18 @@ public class User extends BaseModel{
 	 */
 	public void setImagePath(String imagePath) {
 		this.imagePath = imagePath;
+	}
+	/**
+	 * @return the google
+	 */
+	public String getGoogle() {
+		return google;
+	}
+	/**
+	 * @param google the google to set
+	 */
+	public void setGoogle(String google) {
+		this.google = google;
 	}
 	/**
 	 * @return the image

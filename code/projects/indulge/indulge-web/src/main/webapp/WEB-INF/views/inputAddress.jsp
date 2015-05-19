@@ -18,19 +18,24 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="${pageContext.servletContext.contextPath }/js/bootstrap.min.js"></script>
     <script src="${pageContext.servletContext.contextPath }/js/jquery.validate.js"></script>
-
-    <script>
-	$(window).load(function(){
-    	$("ol.progtrckr").each(function(){
-        	$(this).attr("data-progtrckr-steps", 
-                $(this).children("li").length);
-    		});
-		})
-	</script>
 	<link href="${pageContext.servletContext.contextPath }/css/new.css" rel="stylesheet" >
   </head>
 
 <body>
+<div class="lh20">&nbsp;</div>
+	<div class="container">
+		<!-- Nav tabs -->
+		<div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 formRightBody">
+			<c:if test="${not empty error_message}">
+				<div class="lh10">&nbsp;</div>
+				<div class="alert alert-danger">${error_message}</div>
+			</c:if>
+			<c:if test="${not empty success_message}">
+				<div class="lh10">&nbsp;</div>
+				<div class="alert alert-success">${success_message}</div>
+			</c:if>
+		</div>
+	</div>
 	<div class="container-fluid" style="background-color:#f0f0f0">
 		<div class="row">
 		<center>
@@ -38,57 +43,64 @@
 				
 	    		<div class="row font-type sign-up font-size-24" style="color:#ddcbbd; padding-top:10px; padding-bottom:10px">Ensure that clients can get easily in touch</div>
 	    		<ol class="progress-meter">
-	    			<li class="progress-point done">Basic</li><li class="progress-point todo">Address</li><li class="progress-point todo">Contacts</li><li class="progress-point todo">Schedule</li><li class="progress-point todo">Photos</li>
+	    			<li class="progress-point done">Basic</li><li class="progress-point doing">Address</li><li class="progress-point todo">Contacts</li><li class="progress-point todo">Schedule</li><li class="progress-point todo">Photos</li>
 	    		</ol>
-	    		<form:form method="POST" action="saveMerchantBasicProfile" modelAttribute="merchant" class="form-horizontal white-bg" id="creatMerchantForm" style="margin-top:15px; margin-bottom:15px;padding-bottom:30px">
+	    		<form:form method="POST" action="saveAddress" modelAttribute="merchant" class="form-horizontal white-bg" id="creatMerchantForm" style="margin-top:15px; margin-bottom:15px;padding-bottom:30px">
 		    		<div class="row row15 font-size-20 location-head font-type" style="background-color:#1fbbad; margin-bottom:15px">
-			    			Enter Address Info
+			    			Enter Venue Info
 			    	</div>
 		    		<div style="width:70%">
-		  				<div class="form-group">
-		    				<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
-		   					<input id="unitNumber" class="form-control signup-field" type="text" name="unitNumber" placeholder="Unit No.">
-		  				</div>
-
-
-		  				<div class="form-group">
-		    				<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
-		    				<input id="floor" class="form-control signup-field" type="text" name="floor" placeholder="Floor" value="${merchant.floor }">
-		  				</div>
-
-
-		  				<div class="form-group">
-		    				<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
-		    				<input id="building" class="form-control signup-field" type="text" name="building" placeholder="Building" value="${merchant.building }">
+		    			<div class="form-group">
+		    				<label class="sr-only" for="exampleInputAmount">Address</label>
+		    				<textarea id="address" class="form-control signup-field" name="address" placeholder="Address" value="${merchant.address}" style="resize:none; height:100px; border:1px solid #1fbbad"></textarea>
 		  				</div>
 
 		  				<div class="form-group">
-		    				<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
-		    				<input id="Street" class="form-control signup-field" type="text" name="street" placeholder="Street Name" value="${merchant.street }">
-		  				</div>
-
-		  				<div class="form-group">
-		    				<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+		    				<label class="sr-only" for="exampleInputAmount">Landmark</label>
 		    				<input id="landmark" class="form-control signup-field" type="text" name="landmark" placeholder="Landmark" value="${merchant.landmark }">
 		  				</div>
-
 		  				<div class="form-group">
-		    				<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
-		    				<input id="city" class="form-control signup-field" type="text" name="city" placeholder="City" value="${merchant.city }">
-		  				</div>
-
-		  				<div class="form-group">
-		    				<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
-		    				<input id="state" class="form-control signup-field" type="text" name="state" placeholder="State" value="${merchant.state }">
+		    				<label class="sr-only" for="exampleInputAmount">Establishment</label>
+		    				<input id="establishment" class="form-control signup-field" type="text" name="establishment" placeholder="Establishment" value="${merchant.establishment }">
 		  				</div>
 		  				<div class="form-group">
-		    				<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+		    				<label class="sr-only" for="exampleInputAmount">Pincode</label>
 		    				<input id="pincode" class="form-control signup-field" type="text" name="pincode" placeholder="Pincode" value="${merchant.pincode }">
 		  				</div>
 		  				<div class="form-group">
-		    				<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
-		    				<input id="country" class="form-control signup-field" type="text" name="country" placeholder="country" value="${merchant.country }">
-		  				</div>
+			  				<div class="col-xs-16 address-radio">
+			  				Credit Card Accepted
+			  				</div>
+			  				<div class="col-xs-8">
+				  				<label>
+								    <input type="radio" name="ccAccepted" value="1" checked>
+								    <span>Yes</span>
+								</label>
+								<label>
+								    <input type="radio" name="ccAccepted" value="0">
+								    <span>No</span>
+								</label>
+							</div>
+						</div>
+						<div class="form-group">
+			  				<div class="col-xs-16 address-radio">
+			  				Air Conditioning Facility
+			  				</div>
+			  				<div class="col-xs-8">
+				  				<label>
+								    <input type="radio" name="acFacility" value="1" checked>
+								    <span>Yes</span>
+								</label>
+								<label>
+								    <input type="radio" name="acFacility" value="0">
+								    <span>No</span>
+								</label>
+							</div>
+						</div>
+	    				<input id="city" class="form-control signup-field" type="hidden" name="city" placeholder="City" value="${merchant.city }">
+	    				<input id="city" class="form-control signup-field" type="hidden" name="locality" placeholder="Locality" value="${merchant.locality }">
+	    				<input id="state" class="form-control signup-field" type="hidden" name="state" placeholder="State" value="${merchant.state }">
+	    				<input id="country" class="form-control signup-field" type="hidden" name="country" placeholder="Country" value="${merchant.country }">
 					</div>
 					<input type="submit" value="Save and Next" class="signup-button font-size-16 font-type">
 					<div class="white-bg col-md-22 col-lg-22 col-xs-22 col-sm-22" style="text-align:right">        

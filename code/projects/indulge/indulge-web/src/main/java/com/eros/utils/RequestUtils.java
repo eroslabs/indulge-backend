@@ -4,14 +4,18 @@
  */
 package com.eros.utils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.solr.common.util.Base64;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 
+import com.eros.core.model.ReportedError;
+import com.eros.core.model.UserReview;
+import com.eros.core.model.user.User;
 import com.eros.service.search.Filter;
 import com.eros.service.search.IndexType;
 
@@ -33,6 +37,8 @@ public class RequestUtils {
 	 * 
 	 */
 	private static final String ASC = "asc";
+	
+	private static final SimpleDateFormat formatter = new SimpleDateFormat("dd/mm/yyyy");
 	protected static Log LOGGER = LogFactory
 			.getLog(RequestUtils.class);
 	
@@ -50,10 +56,10 @@ public class RequestUtils {
 	 * @param indulge 
 	 * @return
 	 */
-	public static Filter generateFilter(String s, Boolean hs, Boolean gs,
+	public static Filter generateFilter(String s, Integer hs, Integer gs,
 			Integer[] services, Float pf, Float pt, String lat, String lon,
 			Integer page, Integer limit, String dir,String sort, IndexType index,
-			IndexType type,Boolean autoSuggest) {
+			IndexType type,Boolean autoSuggest,Integer lr) {
 		if(index == null || type == null){
 			throw new IllegalArgumentException("Index/type cannot be null");
 		}
@@ -71,6 +77,7 @@ public class RequestUtils {
 		filter.setServices(services);
 		filter.setPriceTo(pt);
 		filter.setSearch(s);
+		filter.setLuxury(lr);
 		if(lat !=null && lon!= null){
 			try{
 			filter.setPoint(new GeoPoint(Double.parseDouble(lat),Double.parseDouble(lon)));
@@ -95,9 +102,9 @@ public class RequestUtils {
 	 */
 	public static Filter generateFilter(String s, String lat, String lon,
 			Integer page, Integer limit, String dir, String sort,
-			IndexType index, IndexType type, Boolean autoSuggest) {
+			IndexType index, IndexType type, Boolean autoSuggest, Integer lr) {
 		
-		return generateFilter(s, null, null, null, null, null, lat, lon, page, limit, dir, sort, index, type,autoSuggest);
+		return generateFilter(s, null, null, null, null, null, lat, lon, page, limit, dir, sort, index, type,autoSuggest,lr);
 	}
 	/**
 	 * @param s
@@ -108,7 +115,69 @@ public class RequestUtils {
 	 */
 	public static Filter generateFilter(String s, IndexType index,
 			IndexType type, boolean autoSuggest) {
-		return generateFilter(s, null, null, null, null, null, null, null, null, null, null, null, index, type,autoSuggest);
+		return generateFilter(s, null, null, null, null, null, null, null, null, null, null, null, index, type,autoSuggest,null);
+	}
+	/**
+	 * @param user
+	 * @param userMap
+	 */
+	public static User populateUserObject( Map userMap) throws Exception{
+		User user = new User();
+		if(userMap == null || userMap.size() <=0 ){
+			throw new Exception("Invalid parameter");
+		}else{
+			user.setFacebook(userMap.get("facebook") != null ?userMap.get("facebook").toString():null);
+			user.setGender(userMap.get("gender").toString());
+			user.setName(userMap.get("name").toString());
+			user.setImage(Base64.base64ToByteArray(userMap.get("image").toString()));
+			user.setGoogle(userMap.get("google") != null ?userMap.get("google").toString():null);
+			user.setMail(userMap.get("mail").toString());
+			user.setMobile(userMap.get("mobile").toString());
+			user.setPassphrase(userMap.get("passphrase").toString());
+			try{
+				Date dob = formatter.parse(userMap.get("dob").toString());
+				user.setDob(dob);
+				return user;
+			}catch (Exception e) {
+				LOGGER.error("error in parsing DOB " , e);
+			}
+			return null;
+		}
+		
+	}
+	/**
+	 * @param reviewMap
+	 * @return
+	 */
+	public static UserReview populateReview(Map reviewMap) throws Exception{
+		UserReview review = new UserReview();
+		if(reviewMap == null || reviewMap.size() <=0 ){
+			throw new Exception("Invalid parameter");
+		}else{
+			review.setCleanlinessRating(reviewMap.get("cleanlinessRating") != null ? Float.parseFloat(reviewMap.get("cleanlinessRating").toString()) : null );
+			review.setText(reviewMap.get("text") != null ? reviewMap.get("text").toString() : null );
+//			Intentionally left.
+			review.setMerchantId( Integer.parseInt(reviewMap.get("merchantId").toString()) );
+			review.setServiceRating(reviewMap.get("serviceRating") != null ? Float.parseFloat(reviewMap.get("serviceRating").toString()) : null );
+			review.setRating(reviewMap.get("rating") != null ? Float.parseFloat(reviewMap.get("rating").toString()) : null);
+			return review;
+		}
+	}
+	/**
+	 * @param errorObj
+	 * @return
+	 */
+	public static ReportedError fillError(Map<String, String> errorObj) throws Exception{
+		ReportedError error = new ReportedError();
+		if(errorObj == null || errorObj.size() <=0 ){
+			throw new Exception("Invalid parameter");
+		}else{
+			error.setDetails(errorObj.get("details") != null ? errorObj.get("details") : null );
+			error.setWrongAddress(errorObj.get("wrongAddress") != null ? Boolean.parseBoolean(errorObj.get("wrongAddress")) : false );
+			error.setWrongPricing(errorObj.get("wrongPricing") != null ? Boolean.parseBoolean(errorObj.get("wrongPricing")) : false );
+			error.setWrongPhone(errorObj.get("wrongPhone") != null ? Boolean.parseBoolean(errorObj.get("wrongPhone")) : false );
+			return error;
+		}
 	}
 
 	

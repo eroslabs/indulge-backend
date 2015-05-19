@@ -77,17 +77,7 @@
                 <c:forEach var="stats" items="${merchant_stats}" varStatus="status">
 				    	<tr>
 					    	<c:forEach var="item" items="${stats}" varStatus="statusItem">
-					    		<c:choose>
-					    		<c:when test="${ item.key == 'Type'}">
-					    		<c:choose>
-							    		<c:when test="${item.value == 0}"><td>Salon</td></c:when>
-						    			<c:otherwise><td>Individual</td></c:otherwise>
-						    		</c:choose>
-					    		</c:when>
-					    		<c:otherwise>
 				    				 <td>${item.value}</td>
-				    				 </c:otherwise>
-				    			</c:choose>	 
 							</c:forEach>
 						</tr>
 					</c:forEach>

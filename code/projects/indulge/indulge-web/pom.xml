@@ -133,6 +133,10 @@
 			<artifactId>spring-security-config</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		
+<dependency>
+	<groupId>commons-beanutils</groupId>
+	<artifactId>commons-beanutils</artifactId>
+	<version>1.6</version>
+</dependency>		
 	</dependencies>
 </project>

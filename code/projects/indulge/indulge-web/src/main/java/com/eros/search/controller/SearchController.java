@@ -173,13 +173,14 @@ public class SearchController extends BaseController {
 	public @ResponseBody
 	Map search(
 			@RequestParam(value = "s", required = false) String s,
-			@RequestParam(value = "hs", required = false) Boolean hs,
-			@RequestParam(value = "gs", required = false) Boolean gs,
+			@RequestParam(value = "hs", required = false) Integer hs,
+			@RequestParam(value = "gs", required = false) Integer gs,
 			@RequestParam(value = "services", required = false) Integer[] services,
 			@RequestParam(value = "pf", required = false, defaultValue = "0") Float pf,
 			@RequestParam(value = "pt", required = false) Float pt,
 			@RequestParam(value = "lat", required = false) String lat,
 			@RequestParam(value = "lon", required = false) String lon,
+			@RequestParam(value = "lr", required = false) Integer lr,
 			@RequestParam(value = "page", required = false) Integer page,
 			@RequestParam(value = "limit", required = false) Integer limit,
 			@RequestParam(value = "sort", required = false) String sort,
@@ -189,7 +190,7 @@ public class SearchController extends BaseController {
 		watch.start();
 		Filter filter = RequestUtils.generateFilter(s, hs, gs, services, pf,
 				pt, lat, lon, page, limit, dir, sort, IndexType.INDULGE,
-				IndexType.MERCHANT,false);
+				IndexType.MERCHANT,false,lr);
 		Map<String, Object> map = new HashMap<String, Object>();
 		SearchResponse response = null;
 		try {
@@ -217,6 +218,11 @@ public class SearchController extends BaseController {
 
 	}
 
+	/**
+	 * Work on service, location, merchant name 
+	 * @param s
+	 * @return
+	 */
 	@RequestMapping(value = "/suggestMerchant", method = RequestMethod.GET)
 	public @ResponseBody Map search(
 			@RequestParam(value = "s", required = true) String s) {
@@ -280,13 +286,14 @@ public class SearchController extends BaseController {
 			@RequestParam(value = "lon", required = false) String lon,
 			@RequestParam(value = "page", required = false) Integer page,
 			@RequestParam(value = "limit", required = false) Integer limit,
+			@RequestParam(value = "lr", required = false) Integer lr,
 			@RequestParam(value = "sort", required = false) String sort,
 			@RequestParam(value = "dir", required = false) String dir) {
 		Boolean success = true;
 		StopWatch watch = new StopWatch();
 		watch.start();
 		Filter filter = RequestUtils.generateFilter(s, lat, lon, page, limit,
-				dir, sort, IndexType.INDULGE, IndexType.DEAL,false);
+				dir, sort, IndexType.INDULGE, IndexType.DEAL,false,lr);
 		Map<String, Object> map = new HashMap<String, Object>();
 		SearchResponse response = null;
 		try {

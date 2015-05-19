@@ -20,17 +20,31 @@
     <script src="${pageContext.servletContext.contextPath }/js/bootstrap.min.js"></script>
     <script src="${pageContext.servletContext.contextPath }/js/jquery.validate.js"></script>
   </head>
-<body style="background-color:#f0f0f0">
-	<div class="container-fluid" style="background-color:#f0f0f0">
+<body class="body-bg">
+<div class="lh20">&nbsp;</div>
+	<div class="container">
+		<!-- Nav tabs -->
+		<div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 formRightBody">
+			<c:if test="${not empty error_message}">
+				<div class="lh10">&nbsp;</div>
+				<div class="alert alert-danger">${error_message}</div>
+			</c:if>
+			<c:if test="${not empty success_message}">
+				<div class="lh10">&nbsp;</div>
+				<div class="alert alert-success">${success_message}</div>
+			</c:if>
+		</div>
+	</div>
+	<div class="container-fluid">
 		<div class="row">
 		<center>
 			<div class="col-xs-22 col-sm-14 col-md-12 col-lg-10 col-xs-push-1 col-sm-push-5 col-md-push-6 col-lg-push-7">
 				
 	    		<div class="row font-type sign-up font-size-24" style="color:#ddcbbd; padding-top:10px; padding-bottom:10px">Ensure that clients can get easily in touch</div>
 	    		<ol class="progress-meter">
-	    			<li class="progress-point done">Basic</li><li class="progress-point done">Address</li><li class="progress-point todo">Contacts</li><li class="progress-point todo">Schedule</li><li class="progress-point todo">Photos</li>
+	    			<li class="progress-point done">Basic</li><li class="progress-point done">Address</li><li class="progress-point doing">Contacts</li><li class="progress-point todo">Schedule</li><li class="progress-point todo">Photos</li>
 	    		</ol>
-	    		<form:form method="POST" action="saveMerchantBasicProfile" modelAttribute="merchant" class="form-horizontal white-bg" id="creatMerchantForm" style="margin-top:15px; margin-bottom:15px;padding-bottom:30px">
+	    		<form:form method="POST" action="saveContact" modelAttribute="merchant" class="form-horizontal white-bg" id="creatMerchantForm" style="margin-top:15px; margin-bottom:15px;padding-bottom:30px">
 		    		<div class="row row15 font-size-20 location-head font-type" style="background-color:#1fbbad; margin-bottom:15px">
 			    			Enter Contact Info
 			    	</div>

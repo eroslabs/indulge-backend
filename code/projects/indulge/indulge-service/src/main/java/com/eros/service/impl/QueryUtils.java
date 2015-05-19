@@ -5,6 +5,7 @@
 package com.eros.service.impl;
 
 import static org.elasticsearch.index.query.FilterBuilders.andFilter;
+import static org.elasticsearch.index.query.FilterBuilders.inFilter;
 import static org.elasticsearch.index.query.FilterBuilders.boolFilter;
 import static org.elasticsearch.index.query.FilterBuilders.geoDistanceFilter;
 import static org.elasticsearch.index.query.FilterBuilders.rangeFilter;
@@ -20,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.search.PrefixQuery;
 import org.apache.lucene.search.RegexpQuery;
 import org.elasticsearch.common.geo.GeoDistance;
+import org.elasticsearch.common.lucene.search.OrFilter;
 import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.index.query.AndFilterBuilder;
 import org.elasticsearch.index.query.FilterBuilder;
@@ -43,6 +45,8 @@ public class QueryUtils implements SearchConstants{
 
 	
 
+	private static final Object DEFAULT_HOMESERVICE = new Integer(2);
+
 	/**
 	 * @param filter
 	 * @return
@@ -53,7 +57,7 @@ public class QueryUtils implements SearchConstants{
 			sort = SortBuilders.fieldSort(RATING_FIELD).order(SortOrder.DESC);
 		}else{
 			if(filter.getSortField().equalsIgnoreCase(DISTANCE_PARAMETER) && filter.getPoint() != null){
-				sort = SortBuilders.geoDistanceSort(GEO_FIELD).point(filter.getPoint().getLat(), filter.getPoint().getLon());
+				sort = SortBuilders.geoDistanceSort(GEO_FIELD).point(filter.getPoint().getLat(), filter.getPoint().getLon()).order(SortOrder.ASC).unit(DistanceUnit.KILOMETERS).missing("_last");
 			}else if(filter.getSortField().equalsIgnoreCase(PRICE_PARAMETER) ){
 				sort = SortBuilders.fieldSort(PRICE_FIELD).order(filter.getDirection());
 			}else if(filter.getSortField().equalsIgnoreCase(POPULARITY_PARAMETER) ){
@@ -78,7 +82,12 @@ public class QueryUtils implements SearchConstants{
 		QueryBuilder queryBuilder = null;
 		if (StringUtils.isNotBlank(filter.getSearch())) {
 			if(filter.getAutoSuggest() != null && filter.getAutoSuggest()){
-				queryBuilder = new RegexpQueryBuilder(NAME_FIELD,filter.getSearch() + "."+ALL_REGEX);
+				queryBuilder = boolQuery().should(
+						queryString(ALL_REGEX + filter.getSearch() + ALL_REGEX)
+						.analyzeWildcard(true).field(NAME_FIELD, 2.0f)
+						.field(LOCALITY_FIELD, 1.0f).field(ADDRESS_FIELD, 1.5f)
+						.field(STATE_FIELD, 2.0f).field(PINCODE_FIELD,2.0f).field(SERVICES_NAME_FIELD,2.0f));
+//				queryBuilder = new RegexpQueryBuilder(NAME_FIELD,filter.getSearch() + "."+ALL_REGEX);
 			}else{
 			
 			String[] searchFields = null;
@@ -122,17 +131,20 @@ public class QueryUtils implements SearchConstants{
 
 		if (filter.getGenderSupport() != null) {
 			filterBuilderList.add(boolFilter().must(
-					termFilter(GENDER_FIELD, filter.getGenderSupport())));
+					inFilter(GENDER_FIELD, filter.getGenderSupport(),DEFAULT_HOMESERVICE )));
 		}
 		if (filter.getPriceTo() != null) {
 			filterBuilderList.add(rangeFilter(PRICE_FIELD).from(filter.getPriceFrom()).to(
 							filter.getPriceTo()).includeUpper(false));
 		}
-		if (filter.getHomeService() != null) {
-			filterBuilderList.add(boolFilter().must(
-					termFilter(HOME_SERVICE_FIELD, filter.getHomeService())));
+		if (filter.getHomeService() != null ) {
+			filterBuilderList.add(boolFilter().must(inFilter(HOME_SERVICE_FIELD,filter.getHomeService(),DEFAULT_HOMESERVICE)));
 		}
-		if (filter.getServices() != null) {
+		if (filter.getLuxury() != null ) {
+			filterBuilderList.add(boolFilter().must(
+					termFilter(LUXURY_FIELD, filter.getHomeService())));
+		}
+		if (filter.getServices() != null && filter.getServices().length >0) {
 			filterBuilderList.add(termsFilter(SERVICES_ID_FIELD, filter.getServices()));
 		}
 		 if(filter.getPoint() != null){

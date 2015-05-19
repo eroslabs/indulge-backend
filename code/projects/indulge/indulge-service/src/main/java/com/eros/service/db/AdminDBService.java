@@ -55,5 +55,12 @@ public interface AdminDBService {
 	 */
 	void saveLatLng(Merchant merchant);
 
+
+	/**
+	 * @param param
+	 * @return
+	 */
+	Integer updateMerchantLuxuryRating(Map<String, Object> param);
+
    
    }

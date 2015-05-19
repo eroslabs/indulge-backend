@@ -29,7 +29,7 @@ public class MerchantDeal extends BaseModel{
 	@Id
 	private Integer id;
 	private Integer merchantId;
-	private String description;
+	private String finalWeekSchedule;
 	private Date validFrom;
 	private Date validTill;
 	private Integer percentOff;
@@ -38,8 +38,9 @@ public class MerchantDeal extends BaseModel{
 	private Integer redemption;
 	private Integer confirmed;
 	private Boolean recurring;
-	private MerchantService service;
-	private Integer serviceId;
+	private List<MerchantDealService> services;
+	private String serviceIds;
+	private String categoryIds;
 	private Boolean status;
 	private String name;
 	private String city;
@@ -47,20 +48,21 @@ public class MerchantDeal extends BaseModel{
 	private String locality;
 	private String landmark;
 	@Field(type = FieldType.Float, index = FieldIndex.not_analyzed,store=true)
-	private String rating;
-	private MerchantSchedule schedule;
+	private Float rating;
+	private List<MerchantSchedule> schedule;
     private List<DigitalMenuImage> menus;
     private Boolean ccAccepted;
     private Boolean acFacility;
     
-	@GeoPointField
+	@GeoPointField 
     private GeoPoint geo;
 	@Field(type = FieldType.Boolean, index = FieldIndex.no,store=true)
     private Double lat;	
     @Field(type = FieldType.Boolean, index = FieldIndex.no,store=true)
     private Double lng;
     private String country; 	
-    private Boolean homeService;
+    @Field(type = FieldType.Integer, index = FieldIndex.no,store=true)
+    private Integer homeService;
     @Field(type = FieldType.String, index = FieldIndex.no,store=true)
 	private String phone;
 	private Integer genderSupport;
@@ -69,18 +71,6 @@ public class MerchantDeal extends BaseModel{
 	
 	
 	
-	/**
-	 * @return the service
-	 */
-	public MerchantService getService() {
-		return service;
-	}
-	/**
-	 * @param service the service to set
-	 */
-	public void setService(MerchantService service) {
-		this.service = service;
-	}
 	/**
 	 * @return the id
 	 */
@@ -108,15 +98,7 @@ public class MerchantDeal extends BaseModel{
 	/**
 	 * @return the description
 	 */
-	public String getDescription() {
-		return description;
-	}
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
+	
 	/**
 	 * @return the validFrom
 	 */
@@ -129,17 +111,42 @@ public class MerchantDeal extends BaseModel{
 	public void setValidFrom(Date validFrom) {
 		this.validFrom = validFrom;
 	}
+	
 	/**
-	 * @return the serviceId
+	 * @return the services
 	 */
-	public Integer getServiceId() {
-		return serviceId;
+	public List<MerchantDealService> getServices() {
+		return services;
 	}
 	/**
-	 * @param serviceId the serviceId to set
+	 * @param services the services to set
 	 */
-	public void setServiceId(Integer serviceId) {
-		this.serviceId = serviceId;
+	public void setServices(List<MerchantDealService> services) {
+		this.services = services;
+	}
+	/**
+	 * @return the serviceNames
+	 */
+	public String getServiceIds() {
+		return serviceIds;
+	}
+	/**
+	 * @param serviceNames the serviceNames to set
+	 */
+	public void setServiceIds(String serviceNames) {
+		this.serviceIds = serviceNames;
+	}
+	/**
+	 * @return the categoryIds
+	 */
+	public String getCategoryIds() {
+		return categoryIds;
+	}
+	/**
+	 * @param categoryIds the categoryIds to set
+	 */
+	public void setCategoryIds(String categoryIds) {
+		this.categoryIds = categoryIds;
 	}
 	/**
 	 * @return the validTill
@@ -210,13 +217,13 @@ public class MerchantDeal extends BaseModel{
 	/**
 	 * @return the schedule
 	 */
-	public MerchantSchedule getSchedule() {
+	public List<MerchantSchedule> getSchedule() {
 		return schedule;
 	}
 	/**
 	 * @param schedule the schedule to set
 	 */
-	public void setSchedule(MerchantSchedule schedule) {
+	public void setSchedule(List<MerchantSchedule> schedule) {
 		this.schedule = schedule;
 	}
 	/**
@@ -348,13 +355,13 @@ public class MerchantDeal extends BaseModel{
 	/**
 	 * @return the rating
 	 */
-	public String getRating() {
+	public Float getRating() {
 		return rating;
 	}
 	/**
 	 * @param rating the rating to set
 	 */
-	public void setRating(String rating) {
+	public void setRating(Float rating) {
 		this.rating = rating;
 	}
 	/**
@@ -414,13 +421,13 @@ public class MerchantDeal extends BaseModel{
 	/**
 	 * @return the homeService
 	 */
-	public Boolean getHomeService() {
+	public Integer getHomeService() {
 		return homeService;
 	}
 	/**
 	 * @param homeService the homeService to set
 	 */
-	public void setHomeService(Boolean homeService) {
+	public void setHomeService(Integer homeService) {
 		this.homeService = homeService;
 	}
 	/**
@@ -459,7 +466,28 @@ public class MerchantDeal extends BaseModel{
 	public void setServiceRadius(Integer serviceRadius) {
 		this.serviceRadius = serviceRadius;
 	}
-	
+	/**
+	 * @return the finalWeekSchedule
+	 */
+	public String getFinalWeekSchedule() {
+		if(schedule != null){
+		if(schedule.size() ==2){
+		MerchantSchedule s1 = schedule.get(0);
+		MerchantSchedule s2 = schedule.get(1);
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < s1.getWeekSchedule().length(); i++)
+		    sb.append((int)(s1.getWeekSchedule().charAt(i) ^ s2.getWeekSchedule().charAt(i % s2.getWeekSchedule().length())));
+		finalWeekSchedule = sb.toString();
+		}
+		}
+		return finalWeekSchedule;
+	}
+	/**
+	 * @param finalWeekSchedule the finalWeekSchedule to set
+	 */
+	public void setFinalWeekSchedule(String finalWeekSchedule) {
+		this.finalWeekSchedule = finalWeekSchedule;
+	}	
 	
 
 }

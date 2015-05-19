@@ -3,22 +3,42 @@
 <%@taglib  prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+ <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
+    <link href="${pageContext.servletContext.contextPath }/css/custom.css" rel="stylesheet" >
+    <link href='http://fonts.googleapis.com/css?family=Raleway:400,500,500,200,600,500' rel='stylesheet' type='text/css'>
     <link href="${pageContext.servletContext.contextPath }/css/merchant.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="${pageContext.servletContext.contextPath }/js/jquery-1.11.1.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="${pageContext.servletContext.contextPath }/js/bootstrap.min.js"></script>
+    <script src="${pageContext.servletContext.contextPath }/js/jquery.validate.js"></script>
 
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
   </head>
 <body>
-	<jsp:include page="../views/merchantHeader.jsp" />
 
 	<div class="container">
-		<div class="col-lg-18 col-md-18 col-sm-18 col-xs-24 formRightBody">
+		<!-- Nav tabs -->
+		<div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 formRightBody">
 			<c:if test="${not empty error_message}">
+				<div class="lh10">&nbsp;</div>
 				<div class="alert alert-danger">${error_message}</div>
-			</c:if>	
+			</c:if>
+			<c:if test="${not empty success_message}">
+				<div class="lh10">&nbsp;</div>
+				<div class="alert alert-success">${success_message}</div>
+			</c:if>
 		</div>
 	</div>
 <!--1fbbad ddcbbd f0f0f0-->
@@ -33,9 +53,10 @@
 				<form:form method="POST" action="saveMerchantBasicProfile" modelAttribute="merchant" class="form-horizontal white-bg" id="creatMerchantForm" style="padding-top:15px">
 
 				<div style="width:70%">
+				<center>
 	  				<div class="form-group">
-	    				<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
-	    				<div class="input-group">
+	    				<label class="sr-only" for="exampleInputAmount">Name</label>
+	    				<div class="input-group" id="signup1">
 	     					<div class="fa fa-user fa-2x input-group-addon"></div>
 	     					<input id="name" class="form-control signup-field" type="text" name="name" placeholder="Merchant Name">
 	    				</div>
@@ -43,10 +64,19 @@
 
 
 	  				<div class="form-group">
-	    				<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
+	    				<label class="sr-only" for="exampleInputAmount">City</label>
 	    				<div class="input-group">
 	    					<div class="fa fa-globe fa-2x input-group-addon"></div>
-	            			<input type="text" name="city" class="form-control signup-field" id="city" placeholder="Delhi/NCR">
+	            			<input type="text" name="city" class="form-control signup-field" id="city" placeholder="Delhi/NCR" list="browser">
+	            			<datalist id="browser">
+								<c:forEach var="state" items="${states}" varStatus="status">
+									<c:forEach var="city" items="${state.cities}" varStatus="stat">
+									    <div id="row">
+								    		<option value="${city.cityName}">
+										</div>
+									</c:forEach>
+								</c:forEach>			
+							</datalist>
 	    				</div>
 	  				</div>
 
@@ -63,9 +93,13 @@
 	    				<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
 	    				<div class="input-group">
 	    					<div class="fa fa-home fa-2x input-group-addon"></div>
-	    	        		<input id="merchantType" type="text" name="merchantType" class="form-control signup-field" placeholder="Type">
+	    					 <select id="merchantType" name="merchantType" class="form-control signup-field" placeholder="Type">
+							  	<option value="0">Merchant</option>
+						  		<option value="1">Indivisual</option>
+							</select>
 	    				</div>
 	  				</div>
+
 
 	  				<div class="form-group">
 	    				<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
@@ -90,7 +124,7 @@
 	        	    		<input id="passPhrase" type="password" name="passPhrase" class="form-control signup-field" placeholder="Password">
 	    				</div>
 	  				</div>
-
+	  			</center>
 	  			</div>
             	<input type="hidden" name="state"value="Delhi"/>
             	<input type="hidden" name="country" value="India"/>
@@ -124,44 +158,42 @@
 		jQuery(function(){
 			jQuery("#name").validate({
 		        expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "First name can not left blank"
+		        message: "First name cannot be left blank"
 		    });
 			jQuery("#email").validate({
 		        expression: "if((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Email address can not left blank."
+		        message: "Email address cannot be left blank."
 		    });
 
 			jQuery("#email").validate({
 		        expression: "if(validateEmail(VAL)) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Please Enter the valid email address."
+		        message: "Please enter a valid email address."
 		    });
 			jQuery("#passPhrase").validate({
 				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Password can not left blank."
+		        message: "Password cannot be left blank."
 		    });
     
 			jQuery("#phone").validate({
 				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Contact number can not left blank."
+		        message: "Contact number cannot be left blank."
 		    });
 			jQuery("#unit").validate({
 				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Unit can not left blank."
+		        message: "Unit cannot be left blank."
 		    });
 			jQuery("#Street").validate({
 				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Street can not left blank."
+		        message: "Street cannot be left blank."
 		    });
 			jQuery("#city").validate({
 				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "City can not left blank."
+		        message: "City cannot be left blank."
 		    });
 			jQuery("#state").validate({
 				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "State can not left blank."
+		        message: "State cannot be left blank."
 		    });
-			
-			
 		});
 	</script>
 	<script src="${pageContext.servletContext.contextPath }/js/bootstrap.js"></script>

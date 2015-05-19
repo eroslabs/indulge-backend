@@ -10,7 +10,7 @@ ol.progress-meter li {
   display: inline-block;
   text-align: center;
   text-indent: -19px;
-  height: 36px;
+  height: 39px;
   width: 20%;
   font-size: 12px;
   border-bottom-width: 4px;
@@ -49,11 +49,11 @@ ol.progress-meter li.todo:before {
 }
 ol.progress-meter li.done {
   color: black;
-  border-bottom-color: yellowgreen;
+  border-bottom-color: #1fbbad;
 }
 ol.progress-meter li.done:before {
   color: white;
-  background-color: yellowgreen;
+  background-color: #1fbbad;
 }
 ol.progress-meter li.todo {
   color: silver;
@@ -61,4 +61,24 @@ ol.progress-meter li.todo {
 }
 ol.progress-meter li.todo:before {
   color: silver;
+}
+ol.progress-meter li.doing {
+  font-size: 12px;
+}
+ol.progress-meter li.doing:before {
+  content: "\270E";
+  height: 19px;
+  width: 19px;
+  line-height: 21.85px;
+  bottom: -28.175px;
+  border: none;
+  border-radius: 19px;
+}
+ol.progress-meter li.doing {
+  color: black;
+  border-bottom-color: #735E56;
+}
+ol.progress-meter li.doing:before {
+  color: white;
+  background-color: #735E56;
 }

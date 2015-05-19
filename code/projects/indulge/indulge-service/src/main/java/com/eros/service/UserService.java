@@ -20,7 +20,7 @@ public interface UserService {
 	 * @param passPhrase
 	 * @return
 	 */
-	public Boolean loginUser(String userEmail, String passPhrase);
+	public User loginUser(String userEmail, String passPhrase);
 
 	/**
 	 * @param user

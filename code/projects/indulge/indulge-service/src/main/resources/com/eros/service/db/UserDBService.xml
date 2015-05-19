@@ -16,8 +16,16 @@
 
 <select id="fetchPassForLogin" resultType="String" >
 	select passphrase from user where mail=#{value}
-</select>	
-<insert id="saveUser" parameterType="com.eros.core.model.UserReview"
+</select>
+<insert id="registerUser" parameterType="com.eros.core.model.user.User"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+		user(name,dob,mail,gender,mobile,passphrase,facebook_auth,google_auth,ref_code,created_date)
+		VALUES
+		(#{name},#{dob},#{mail},#{gender},#{mobile},#{passphrase},#{facebook},#{google},#{refCode},CURRENT_TIMESTAMP)
+		
+	</insert>	
+<insert id="saveReview" parameterType="com.eros.core.model.UserReview"
 		useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO
 		user(user_id,merchant_id,name,rating,service_rating,cleanliness_rating,review_text,image_path,created_date)
@@ -31,15 +39,15 @@
 		VALUES
 		(#{userId},#{merchantId},#{wrongPhone},#{wrongAddress},#{closedClosed},#{wrongPricing},#{details},#{CURRENT_TIMESTAMP})
 	</insert>
-<insert id="saveReview" parameterType="com.eros.core.model.user.User"
+<insert id="saveUser" parameterType="com.eros.core.model.user.User"
 		useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO
-		user(name,dob,gender,mobile,passphrase,mail,facebook_id,profile_photo,status,ref_code,created_date)
+		user(name,dob,gender,mobile,passphrase,mail,facebook_auth,profile_photo,status,ref_code,created_date)
 		VALUES
 		(#{name},#{dob},#{gender},#{mobile},#{passphrase},#{mail},#{facebook},#{profilePhoto},#{refCode},CURRENT_TIMESTAMP)
 	</insert>
 <select id="fetchUser" parameterType="String" resultType="com.eros.core.model.user.User">
-		select id,name,dob,gender,mobile,passphrase,mail,image_path as imagePath,facebook_id facebook,profile_photo profilePhoto,status,ref_code refCode from user where mail=#{mail} or id=#{mail}
+		select id,name,dob,gender,mobile,passphrase,mail,image_path as imagePath,facebook_auth facebook,profile_photo profilePhoto,status,ref_code refCode from user where mail=#{mail} or id=#{mail}
 	</select>	
 	<update id="markLoggedStatus" parameterType="Hashmap">
 		update user set logged_status = #{status} where mail=#{mail}
@@ -61,9 +69,12 @@
 	</insert>
 	
 	<update id="updatePassword" parameterType="Hashmap">
-	
-	update user set passphrase=#{passphrase} where mail = (select email from forgot_request where email=#{email} and id=#{requestId} and created_date BETWEEN DATE_SUB(NOW(), INTERVAL 2 DAY) AND NOW() limit 1) 
+		update user set passphrase=#{passphrase} where mail = (select email from forgot_request where email=#{email} and id=#{requestId} and created_date BETWEEN DATE_SUB(NOW(), INTERVAL 2 DAY) AND NOW() limit 1) 
 	</update>
+	<update id="updateProfilePic" parameterType="Hashmap">
+		update user set image_path=#{path},profile_photo=#{path} where id=#{userId} 
+	</update>
+	
 	<update id="updateUser" parameterType="com.eros.core.model.user.User">
 		update user set updated_date = NOW()
 		<if test="name != null">

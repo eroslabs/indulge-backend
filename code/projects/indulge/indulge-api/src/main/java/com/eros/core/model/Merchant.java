@@ -65,13 +65,15 @@ public class Merchant extends BaseModel {
     private GeoPoint geo;
     private List<MerchantPhone> phones;
     private List<MerchantImage> images;
-	private MerchantSchedule schedule;
+	private List<MerchantSchedule> schedule;
     private List<MerchantService> services  ;
     private List<DigitalMenuImage> menus;
     private Integer totalReviews;
     private List<MerchantDeal> deals;
     private List<UserReview> reviews;
-    
+    @Field(type = FieldType.Integer, index = FieldIndex.not_analyzed,store=true)
+    private Integer luxuryRating;
+    private String finalWeekSchedule;
   
 	/**
 	 * @return the deals
@@ -246,6 +248,18 @@ public class Merchant extends BaseModel {
 	 */
 	public String getLocality() {
 		return locality;
+	}
+	/**
+	 * @return the luxuryRating
+	 */
+	public Integer getLuxuryRating() {
+		return luxuryRating;
+	}
+	/**
+	 * @param luxuryRating the luxuryRating to set
+	 */
+	public void setLuxuryRating(Integer luxuryRating) {
+		this.luxuryRating = luxuryRating;
 	}
 	/**
 	 * @return the reviews
@@ -484,13 +498,13 @@ public class Merchant extends BaseModel {
 	/**
 	 * @return the schedule
 	 */
-	public MerchantSchedule getSchedule() {
+	public List<MerchantSchedule> getSchedule() {
 		return schedule;
 	}
 	/**
 	 * @param schedule the schedule to set
 	 */
-	public void setSchedule(MerchantSchedule schedule) {
+	public void setSchedule(List<MerchantSchedule> schedule) {
 		this.schedule = schedule;
 	}
 	/**
@@ -535,4 +549,27 @@ public class Merchant extends BaseModel {
 		}
 		this.geo = geo;
 	}
+	/**
+	 * @return the finalWeekSchedule
+	 */
+	public String getFinalWeekSchedule() {
+		if(schedule != null){
+		if(schedule.size() ==2){
+		MerchantSchedule s1 = schedule.get(0);
+		MerchantSchedule s2 = schedule.get(1);
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < s1.getWeekSchedule().length(); i++)
+		    sb.append((int)(s1.getWeekSchedule().charAt(i) ^ s2.getWeekSchedule().charAt(i % s2.getWeekSchedule().length())));
+		finalWeekSchedule = sb.toString();
+		}
+		}
+		return finalWeekSchedule;
+	}
+	/**
+	 * @param finalWeekSchedule the finalWeekSchedule to set
+	 */
+	public void setFinalWeekSchedule(String finalWeekSchedule) {
+		this.finalWeekSchedule = finalWeekSchedule;
+	}
+	
 }

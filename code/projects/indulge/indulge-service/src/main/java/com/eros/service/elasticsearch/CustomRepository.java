@@ -71,10 +71,9 @@ public SearchResponse search(Filter filter) throws Exception {
 			response = client.prepareSearch(filter.getIndex()).setTypes(filter.getType())
 					.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
 					.setQuery(queryBuilder)
-					// Query
 					.setPostFilter(andBuilder)
-					// Filter
-					.setFrom(filter.getPage()).setSize(filter.getLimit()).addSort(sortBuilder)
+					.setFrom(filter.getPage()).setSize(filter.getLimit())
+					.addSort(sortBuilder)
 					.setExplain(false).execute().actionGet();
 
 			if (response != null && response.getHits() != null) {
@@ -110,7 +109,6 @@ private SearchResponse searchAutoSuggest(Filter filter) throws Exception{
 		response = client.prepareSearch(filter.getIndex()).setTypes(filter.getType())
 				.setSearchType(SearchType.SCAN).addField(autosuggestKey)
 				.setQuery(queryBuilder).setScroll(new TimeValue(60000))
-				// Filter
 				.setFrom(filter.getPage()).setSize(filter.getLimit())
 				.setExplain(false).execute().actionGet();
 		List<Object> list = new ArrayList<Object>();

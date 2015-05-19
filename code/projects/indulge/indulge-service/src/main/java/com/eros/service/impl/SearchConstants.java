@@ -76,4 +76,5 @@ public interface SearchConstants {
 	public static final String REVIEWS_FIELD = "totalReviews";
 	public static final String PRICE_PARAMETER = "price";
 	public static final String POPULARITY_PARAMETER = "popularity";
+	public static final String LUXURY_FIELD = "luxuryRating";
 }

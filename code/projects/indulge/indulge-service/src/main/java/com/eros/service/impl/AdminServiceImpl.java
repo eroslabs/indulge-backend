@@ -315,4 +315,21 @@ public class AdminServiceImpl implements AdminService {
 
 		        return doc;
 		    }
+
+	/* (non-Javadoc)
+	 * @see com.eros.service.AdminService#setMerchantLuxuryRating(java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public void setMerchantLuxuryRating(Integer id, Integer rating) {
+		try {
+			Map<String, Object> param = new HashMap<String, Object>();
+			param.put("merchantId", id);
+			param.put("luxury", rating);
+			Integer rows = adminDBService.updateMerchantLuxuryRating(param);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
 }

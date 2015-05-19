@@ -24,6 +24,14 @@ import org.json.simple.parser.JSONParser;
 public class Test {
 	
 	public static void main(String[] args) {
+		String  s = "0110111";
+		String  key = "1000000";
+		
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < s.length(); i++)
+		    sb.append((int)(s.charAt(i) ^ key.charAt(i % key.length())));
+		String result = sb.toString();
+		System.out.println(result);
 		System.err.println(new Date(1427719898000L));
 //		
 //		for (int i = 460; i < 480; i++) {

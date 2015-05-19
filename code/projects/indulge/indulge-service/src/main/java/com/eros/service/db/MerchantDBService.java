@@ -72,7 +72,7 @@ public interface MerchantDBService {
 	 */
 	public List<MerchantDeal> fetchMerchantDeals(HashMap<String, Object> params);
 	
-	public List<DealRequest> fetchDealRequests(Integer id);
+	public List<DealRequest> fetchDealRequests(Merchant merchant);
 	/**
 	 * @param param
 	 */
@@ -118,5 +118,14 @@ public interface MerchantDBService {
 	 */
 	public void updatePassword(Map<String, Object> param);
 	public List<MerchantService> selectMerchantServices(Integer id);
+	/**
+	 * @param string
+	 * @return
+	 */
+	public Merchant fetchMerchantById(Integer val);
+	/**
+	 * @param params
+	 */
+	public void saveDealServices(HashMap<String, Object> params);
 	
 }

@@ -34,6 +34,8 @@ public class BaseController {
 	 * 
 	 */
 	protected static final String STATUS = "status";
+	
+	protected static final String USER = "user";
 
 	protected static final String SEARCH = "SEARCH_LOG";
 	protected static final Logger SEARCHLOG = LoggerFactory

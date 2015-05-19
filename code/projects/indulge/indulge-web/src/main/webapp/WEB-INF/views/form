@@ -1,0 +1,50 @@
+		<form:form action="saveMerchantServices" method="post" id="createServiceForm" modelAttribute="merchant" >
+			<div class="form-group">
+				    <label class="col-sm-3 control-label">Go To Customer Home*</label>
+				    <div class="col-sm-7">
+				      <input id="homeService" class="form-control" type="checkbox" name="homeService" >${merchant.homeService}
+				    </div>
+				  </div>
+			<div class="form-group">
+				    <label class="col-sm-3 control-label">Service Radius </label>
+				    <div class="col-sm-7">
+				      <input id="serviceRadius" class="form-control" type="text" name="serviceRadius" value="${merchant.serviceRadius}">
+				    </div>
+				  </div>
+				<div class="form-group">
+				    <label class="col-sm-3 control-label">Separate Rate Card</label>
+				    <div class="col-sm-7">
+				      <input id="separateRateCard" class="form-control" type="checkbox" name="separateRateCard" >
+				    </div>
+				  </div>
+		<c:if test="${categories ne null and not empty categories}">
+				<div id="container">
+					<c:forEach var="category" items="${categories}" varStatus="status">
+					<div id="row">
+					<div id="middle">
+						<img src="../images/${category.image}" height="50px">
+					</div>
+					</div>		
+					<c:forEach var="catService" items="${category.services}" varStatus="serviceStatus">
+					${catService.name}	
+				    <!--<div id="row"><div id="left"><input type="checkbox" name="selectedId" value="${catService.id}" onclick="$(this).is(':checked') && $('#${catService.id}').removeAttr('disabled') || $('#${catService.id}').attr('disabled','disabled');" />${catService.name}
+				    				<div  style="display:hidden;">price : <input id="${catService.id}" type="text" name="selectedPrice" value="" disabled="disabled"></div>
+							</div>
+				  </div>-->
+							</c:forEach>
+							
+					</c:forEach>	
+				</div>
+			</c:if>
+		
+			
+				
+				  <div class="form-group">
+				    <div class="col-sm-offset-3 col-sm-7">
+				      <input type="submit" value="Post Deal" class="btn btn-primary" />
+				    </div>
+				  </div>
+	</form:form>
+	</div>
+	</div>
+	
