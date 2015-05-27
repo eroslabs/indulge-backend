@@ -8,9 +8,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
-    <link href="${pageContext.servletContext.contextPath }/css/custom.css" rel="stylesheet" >
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,500,200,600,700' rel='stylesheet' type='text/css'>
-    <link href="${pageContext.servletContext.contextPath }/css/merchant.css" rel="stylesheet" />
+    <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/css/new.css" rel="stylesheet" >
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -22,20 +21,6 @@
   </head>
 
 <body>
-<div class="lh20">&nbsp;</div>
-	<div class="container">
-		<!-- Nav tabs -->
-		<div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 formRightBody">
-			<c:if test="${not empty error_message}">
-				<div class="lh10">&nbsp;</div>
-				<div class="alert alert-danger">${error_message}</div>
-			</c:if>
-			<c:if test="${not empty success_message}">
-				<div class="lh10">&nbsp;</div>
-				<div class="alert alert-success">${success_message}</div>
-			</c:if>
-		</div>
-	</div>
 	<div class="container-fluid" style="background-color:#f0f0f0">
 		<div class="row">
 		<center>
@@ -45,6 +30,16 @@
 	    		<ol class="progress-meter">
 	    			<li class="progress-point done">Basic</li><li class="progress-point doing">Address</li><li class="progress-point todo">Contacts</li><li class="progress-point todo">Schedule</li><li class="progress-point todo">Photos</li>
 	    		</ol>
+	    		<div class="row row15">
+				<c:if test="${not empty error_message}">
+					<div class="lh10">&nbsp;</div>
+					<div class="alert alert-danger">${error_message}</div>
+				</c:if>
+				<c:if test="${not empty success_message}">
+					<div class="lh10">&nbsp;</div>
+					<div class="alert alert-success">${success_message}</div>
+				</c:if>
+				</div>
 	    		<form:form method="POST" action="saveAddress" modelAttribute="merchant" class="form-horizontal white-bg" id="creatMerchantForm" style="margin-top:15px; margin-bottom:15px;padding-bottom:30px">
 		    		<div class="row row15 font-size-20 location-head font-type" style="background-color:#1fbbad; margin-bottom:15px">
 			    			Enter Venue Info
@@ -122,37 +117,26 @@
 	    }
 	}
 		jQuery(function(){
-			jQuery("#unitNumber").validate({
-		        expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Unit Number can not left blank"
+			jQuery("#address").validate({
+		        expression: "if ((jQuery.trim(VAL)).length > 3) return true; else {$('div#uploading').hide(); return false;}",
+		        message: "Address can not be short or left blank"
 		    });
-			
-
-			
 			jQuery("#country").validate({
 				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
 		        message: "Country can not left blank."
 		    });
     
-			jQuery("#floor").validate({
-				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Floor number can not left blank."
-		    });
-			jQuery("#building").validate({
-				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Building can not left blank."
-		    });
-			jQuery("#Street").validate({
-				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Street can not left blank."
-		    });
 			jQuery("#city").validate({
 				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "City can not left blank."
+		        message: "City number can not left blank."
 		    });
 			jQuery("#state").validate({
 				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
 		        message: "State can not left blank."
+		    });
+			jQuery("#pincode").validate({
+				expression: "if ((jQuery.trim(VAL)).length == 6 && jQuery.isNumeric(VAL)) return true; else {$('div#uploading').hide(); return false;}",
+		        message: "Pincode should be 6 digit numeric."
 		    });
 			
 			

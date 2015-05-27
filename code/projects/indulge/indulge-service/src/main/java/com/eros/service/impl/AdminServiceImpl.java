@@ -180,15 +180,23 @@ public class AdminServiceImpl implements AdminService {
 			try {
 				Merchant merchant = merchantService.getMerchantById(integer);
 				if (merchant != null) {
-					merchantRepository.save(merchant);
+					merchantRepository.index(merchant);
+					try {
+					    Thread.sleep(1000);                 //1000 milliseconds is one second.
+					} catch(InterruptedException ex) {
+					    Thread.currentThread().interrupt();
+					}
 					List<MerchantDeal> deals = merchantService
 							.fetchDealWithMerchant(merchant.getId());
 					if (deals != null && deals.size() > 0) {
-						dealRepository.save(deals);
+						for (MerchantDeal merchantDeal : deals) {
+							dealRepository.index(merchantDeal);
+						}
+						
 					}
 				}
 			} catch (Exception e) {
-				LOG.error("Error in loading merchant with id " + integer);
+				LOG.error("Error in loading merchant with id " + integer ,e);
 			}
 		}
 		watch.stop();

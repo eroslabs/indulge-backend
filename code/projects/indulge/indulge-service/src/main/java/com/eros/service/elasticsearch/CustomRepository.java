@@ -4,11 +4,17 @@
  */
 package com.eros.service.elasticsearch;
 
+import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
+import static org.elasticsearch.index.query.QueryBuilders.queryString;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
@@ -102,23 +108,27 @@ public SearchResponse search(Filter filter) throws Exception {
  * @return
  */
 private SearchResponse searchAutoSuggest(Filter filter) throws Exception{
-	QueryBuilder queryBuilder = QueryUtils.buildQuery(filter, MERCHANT_SEARCH_FIELDS,MERCHANT_FIELDS_BOOST);
+	HashMap<String,QueryBuilder> queryBuilder = QueryUtils.buildSuggestQuery(filter.getSearch());
 	org.elasticsearch.action.search.SearchResponse response = null;
 	SearchResponse returnResponse = new SearchResponse();
 	try {
-		response = client.prepareSearch(filter.getIndex()).setTypes(filter.getType())
-				.setSearchType(SearchType.SCAN).addField(autosuggestKey)
-				.setQuery(queryBuilder).setScroll(new TimeValue(60000))
-				.setFrom(filter.getPage()).setSize(filter.getLimit())
-				.setExplain(false).execute().actionGet();
 		List<Object> list = new ArrayList<Object>();
-		response = client.prepareSearchScroll(response.getScrollId()).setScroll(new TimeValue(600000)).execute().actionGet();
-		    for (SearchHit hit : response.getHits()) {
-		    	if(hit.getFields() != null && hit.getFields().get(autosuggestKey) != null){
-		        list.add(hit.getFields().get(autosuggestKey).getValue());
-		    	}
-		    }
-		returnResponse.setTotal(response.getHits().getTotalHits());
+		for (String key : queryBuilder.keySet()) {
+			response = client.prepareSearch(filter.getIndex()).setTypes(filter.getType())
+					.setSearchType(SearchType.SCAN).addField(key)
+					.setQuery(queryBuilder.get(key)).setScroll(new TimeValue(60000))
+					.setFrom(filter.getPage()).setSize(key.equals(QueryUtils.NAME_FIELD) ? 10 : 2)
+					.setExplain(false).execute().actionGet();
+			
+			response = client.prepareSearchScroll(response.getScrollId()).setScroll(new TimeValue(600000)).execute().actionGet();
+			    for (SearchHit hit : response.getHits()) {
+			    	if(hit.getFields() != null && hit.getFields().get(key) != null){
+			        list.add(hit.getFields().get(key).getValue());
+			    	}
+			    }
+				
+		}
+		returnResponse.setTotal(Long.valueOf(list.size()));
 		returnResponse.setResponse(list);
 	} catch (Exception e) {
 		LOGGER.error(

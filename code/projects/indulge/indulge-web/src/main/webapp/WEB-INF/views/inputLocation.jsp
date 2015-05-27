@@ -8,9 +8,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
-    <link href="${pageContext.servletContext.contextPath }/css/custom.css" rel="stylesheet" >
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,500,200,600,700' rel='stylesheet' type='text/css'>
-    <link href="${pageContext.servletContext.contextPath }/css/merchant.css" rel="stylesheet" />
+    <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/css/new.css" rel="stylesheet" >
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -47,13 +46,13 @@
 					<div class="alert alert-success">${success_message}</div>
 				</c:if>
 			</div>
-    		<form:form method="POST" action="saveLocation" modelAttribute="merchant" enctype="multipart/form-data"  class="form-horizontal midbrownbg-color" style="margin-bottom:20px; margin-top:20px" >
+    		<form:form method="POST" action="saveLocation" modelAttribute="merchant" enctype="multipart/form-data" onsubmit="return validateForm();" class="form-horizontal midbrownbg-color" style="margin-bottom:20px; margin-top:20px" >
 	    		<div class="row font-size-20 location-head font-type">
 	    			${merchant.name}
 	    		</div>
 	    		<div class="row location-file-upload">
-	    			<div id="file-upload-cont">
-					    <input id="file" type="file" name="file"/>
+	    			<div id="file-upload-cont" title="click to load profile image.">
+					    <input id="file" type="file" name="file" title="click to load profile image."/>
 					    <div id="my-button"></div>
 					    <input id="overlay" name="file"/>
 					</div>
@@ -79,7 +78,7 @@
                	<div class="row row15 white-bg">
                		<div class="form-group row15">
                			<div class="input-group" style="width:80%">
-	               			<input type="button" onclick="codeAddress()" value="Geocode" class="geocode-button">
+	               			<input type="button" onclick="codeAddress()" value="Pick Location" class="geocode-button" title="click to select location">
 	      					<input id="address" class="form-control signup-form geocode-text" type="textbox" value="New Delhi, India">
       					</div>
       					<input id="lat" class="form-control" type="hidden" name="lat">
@@ -101,51 +100,6 @@
   	</div>
 </div>
 	
-	<script type="text/javascript"><!--
-		$(document).ready(function(){
-			$('div#uploading').hide();
-			$("option.drmFree").bind("click",function(){
-				var id = $(this).attr("id");
-				$("div.drm").hide();
-				$("div."+id).show();
-				return true;
-			});
-			$("form#resource").submit(function(){
-				$('div#uploading').show();
-			});
-		});
-		//$("#handle, #title, #originalIds, #publisher, #discount, #downloadUrl").focus(function(){
-			//	$(this).prev().hide();
-		//	});
-		
-		jQuery(function(){
-			jQuery("#handle").validate({
-		        expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Handle field can not left blank."
-		    });
-			jQuery("#title").validate({
-		        expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Title field can not left blank."
-		    });
-			jQuery("#originalIds").validate({
-		        expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "ISBN field can not left blank."
-		    });
-			jQuery("#publisher").validate({
-		        expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Title field can not left blank."
-		    });
-			jQuery("#discount").validate({
-		        expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Discount field can not left blank."
-		    });
-			
-			jQuery("#downloadUrl").validate({
-		        expression: "if (($('option.drmFree:selected').attr('id') == 'drmFreeYes' && $('div.'+$('option.drmFree:selected').attr('id')).find('input').val().trim().length ==0)) {$('div#uploading').hide(); return false;} else return true;",
-		        message: "For DRM Free resource Download URL can not left blank."
-		    });
-		});
-	</script>
 	<script type="text/javascript">
 	$("input[type='image']").click(function() {
     $("input[id='file']").click();
@@ -178,6 +132,13 @@ function initialize() {
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 }
 
+function validateForm(){
+	if(document.getElementById('lat').value == '' || document.getElementById('lng').value == ''){
+		alert("Please select geo code location for easy discovery.");
+		return false;
+	}
+	return true;
+}
 function codeAddress() {
   var address = document.getElementById('address').value;
   geocoder.geocode( { 'address': address}, function(results, status) {

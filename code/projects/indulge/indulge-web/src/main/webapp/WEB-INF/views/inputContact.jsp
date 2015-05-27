@@ -9,9 +9,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
-    <link href="${pageContext.servletContext.contextPath }/css/custom.css" rel="stylesheet" >
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,500,200,600,700' rel='stylesheet' type='text/css'>
-    <link href="${pageContext.servletContext.contextPath }/css/merchant.css" rel="stylesheet" />
+    <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/css/new.css" rel="stylesheet" >
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -21,20 +20,6 @@
     <script src="${pageContext.servletContext.contextPath }/js/jquery.validate.js"></script>
   </head>
 <body class="body-bg">
-<div class="lh20">&nbsp;</div>
-	<div class="container">
-		<!-- Nav tabs -->
-		<div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 formRightBody">
-			<c:if test="${not empty error_message}">
-				<div class="lh10">&nbsp;</div>
-				<div class="alert alert-danger">${error_message}</div>
-			</c:if>
-			<c:if test="${not empty success_message}">
-				<div class="lh10">&nbsp;</div>
-				<div class="alert alert-success">${success_message}</div>
-			</c:if>
-		</div>
-	</div>
 	<div class="container-fluid">
 		<div class="row">
 		<center>
@@ -44,6 +29,17 @@
 	    		<ol class="progress-meter">
 	    			<li class="progress-point done">Basic</li><li class="progress-point done">Address</li><li class="progress-point doing">Contacts</li><li class="progress-point todo">Schedule</li><li class="progress-point todo">Photos</li>
 	    		</ol>
+	    		<div class="row row15">
+					<c:if test="${not empty error_message}">
+						<div class="lh10">&nbsp;</div>
+						<div class="alert alert-danger">${error_message}</div>
+					</c:if>
+					<c:if test="${not empty success_message}">
+						<div class="lh10">&nbsp;</div>
+						<div class="alert alert-success">${success_message}</div>
+					</c:if>
+				</div>
+	    		
 	    		<form:form method="POST" action="saveContact" modelAttribute="merchant" class="form-horizontal white-bg" id="creatMerchantForm" style="margin-top:15px; margin-bottom:15px;padding-bottom:30px">
 		    		<div class="row row15 font-size-20 location-head font-type" style="background-color:#1fbbad; margin-bottom:15px">
 			    			Enter Contact Info
@@ -96,5 +92,24 @@
 	  	</center>
 	  	</div>
 	</div>
+	<script type="text/javascript">
+	
+		jQuery(function(){
+	
+			jQuery("#phone1").validate({
+				expression: "if ((jQuery.trim(VAL)).length == 10 && jQuery.isNumeric(VAL)  ) return true; else {$('div#uploading').hide(); return false;}",
+		        message: "Contact number should be of 10 numeric digits"
+		    });
+			jQuery("#phone2").validate({
+				expression: "if (((jQuery.trim(VAL)).length == 10 && jQuery.isNumeric(VAL)) || jQuery.trim(VAL)).length == 0   ) return true; else {$('div#uploading').hide(); return false;}",
+		        message: "Contact number should be of 10 numeric digits"
+		    });
+			jQuery("#phone3").validate({
+				expression: "if(((jQuery.trim(VAL)).length == 10 && jQuery.isNumeric(VAL)) || jQuery.trim(VAL)).length == 0   ) return true; else {$('div#uploading').hide(); return false;}",
+		        message: "Contact number should be of 10 numeric digits"
+		    });
+			
+		});
+	</script>
 </body>
 </html>

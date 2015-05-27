@@ -31,8 +31,6 @@
 		<result property="percentOff" column="percent_off" jdbcType="INTEGER" />
 		<result property="flatOff" column="flat_off" jdbcType="INTEGER" />
 		<result property="days" column="weekdays_schedule" jdbcType="VARCHAR" />
-		<result property="serviceIds" column="service_ids" jdbcType="VARCHAR" />
-		<result property="categoryIds" column="service_category_ids" jdbcType="VARCHAR" />
 		<result property="redemption" column="redemption" jdbcType="INTEGER" />
 		<result property="confirmed" column="confirmed" jdbcType="INTEGER" />
 		<result property="recurring" column="recurring" jdbcType="BOOLEAN" />
@@ -42,6 +40,7 @@
 		<result property="locality" column="locality" jdbcType="VARCHAR" />
 		<result property="landmark" column="landmark" jdbcType="VARCHAR" />
 		<result property="rating" column="review_rating" jdbcType="DECIMAL" />
+		<result property="luxuryRating" column="luxury_rating" jdbcType="INTEGER" />
 		<result property="lat" column="lat" jdbcType="DECIMAL" />	
 	    <result property="lng" column="lng" jdbcType="DECIMAL" />
 	    <result property="country" column="country" jdbcType="VARCHAR" /> 	
@@ -63,9 +62,8 @@
 			<result property="status" column="status" />
 		</collection>
 		
-		<collection property="services" column="id" ofType="com.eros.core.model.MerchantService"
-			select="com.eros.service.db.MerchantDBService.selectMerchantServiceForDeal"
-			resultMap="merchantServices" />
+		<collection property="services" column="id" ofType="com.eros.core.model.MerchantDealService"
+			select="com.eros.service.db.MerchantDBService.selectMerchantServiceForDeal"/>
 		<collection property="menus" column="merchant_id" javaType="ArrayList"
 			ofType="com.eros.core.model.DigitalMenuImage"
 			select="com.eros.service.db.MerchantDBService.selectDigitalMenuImage" >
@@ -148,23 +146,7 @@
 			<result property="status" column="status" />
 		</collection>
 		<collection property="services" column="id" javaType="ArrayList"
-			ofType="com.eros.core.model.MerchantService" select="com.eros.service.db.MerchantDBService.selectMerchantServices"
-			resultMap="services" />
-	</resultMap>
-
-	<resultMap id="merchantServices" type="com.eros.core.model.MerchantService">
-		<id property="id" column="id" />
-		<result property="gender" column="gender" />
-		<result property="price" column="price" />
-		<result property="status" column="status" />
-		<result property="serviceName" column="service_name" />
-		<result property="serviceId" column="service_id"/>
-		<result property="serviceTypeId" column="service_type_id"/>
-		<result property="homeService" column="home_service"/>
-		<result property="name" column="name"/>
-		<result property="categoryName" column="category_name"/>
-		<result property="categoryId" column="category_id"/>
-		<result property="createdDate" column="created_date"/>
+			ofType="com.eros.core.model.MerchantService" select="com.eros.service.db.MerchantDBService.selectMerchantServices"/>
 	</resultMap>
 
 	<resultMap id="dealRequestServices" type="com.eros.core.model.DealServiceRequest">
@@ -208,12 +190,26 @@
 		<result property="name" column="service_name" />
 	</resultMap>
 
+	<select id="merchantExist" parameterType="HashMap" resultType="com.eros.core.model.Merchant">
+	select id from merchant where 
+		<if test="email != null">
+			 email = #{email}
+		</if>
+		<if test="phone != null">
+		<if test="email != null">
+			or 
+		</if>
+			 phone = #{phone}
+		</if>
+	</select>
 	<select id="loadMerchantByUsernameOrPhone" parameterType="HashMap" resultType="HashMap">
 		select email,passphrase,phone,role from merchant where (email = #{user} or phone=#{user}) 
 		<if test="passphrase != null">
 			and passphrase = MD5(#{passphrase})
 		</if>
-		
+		<if test="verified != null">
+			and verified = true
+		</if>
 	
 	</select>
 	<select id="fetchMerchantReviews" parameterType="Hashmap"
@@ -248,7 +244,7 @@
 	<select id="fetchDealWithMerchant" parameterType="Integer"
 		resultMap="deals">
 		select d.id,d.merchant_id,d.valid_from,d.valid_till,d.percent_off,d.flat_off,d.weekdays_schedule,d.redemption,d.confirmed,
-		d.recurring,m.name,m.city,m.pincode,m.cc_accepted,m.ac,m.locality,m.landmark,m.review_rating,m.lat,m.lng,m.country,m.home_service,m.phone,m.gender_support
+		d.recurring,m.name,m.city,m.luxury_rating,m.pincode,m.cc_accepted,m.ac,m.locality,m.landmark,m.review_rating,m.lat,m.lng,m.country,m.home_service,m.phone,m.gender_support
 		,m.service_radius,d.created_date,d.updated_date from merchant_deal d left join merchant m on d.merchant_id=m.id where d.merchant_id=#{value} and d.status = 1 and d.valid_till > CURRENT_TIMESTAMP
 	</select>
 
@@ -259,7 +255,7 @@
 		s.id AS service_id,s.name AS service_name,c.id as category_id,c.image as category  FROM deal_request r LEFT
 		JOIN
 		deal_service_request m ON m.request_id=r.id LEFT JOIN service s ON m.service_id=s.id LEFT JOIN service_category c ON m.category_id=c.id
-		LEFT JOIN USER u ON r.user_id= u.id WHERE merchant_id=#{id} 
+		LEFT JOIN user u ON r.user_id= u.id WHERE merchant_id=#{id} 
 		<if test="locality != null">
 			or r.locality = #{locality}
 		</if>
@@ -273,19 +269,17 @@
 		from merchant_schedule where merchant_id = #{id}		
 	</select>
 
-	<select id="selectMerchantServices" resultType="com.eros.core.model.MerchantService"
-		resultMap="merchantServices">
+	<select id="selectMerchantServices" resultType="com.eros.core.model.MerchantService">
 		SELECT m.id AS
-		id,m.price,m.status,m.service_type_id,m.service_id,m.category_id,m.gender,m.home_service,t.name,s.name AS service_name
-		, c.name AS category_name,m.merchant_id,m.created_date FROM merchant_service m 
+		id,m.price,m.status,m.service_type_id serviceTypeId,m.service_id serviceId,m.category_id categoryId ,m.gender,m.home_service homeService,concat(s.name," ",t.name) as name,s.name AS serviceName
+		, c.name AS categoryName,m.merchant_id merchantId,m.created_date createdDate FROM merchant_service m 
 		LEFT JOIN service_type t ON m.service_type_id = t.service_type_id LEFT JOIN service s ON
 		m.service_id=s.id LEFT JOIN service_category c ON s.service_category_id = c.id WHERE merchant_id = #{id}
 	</select>
-	<select id="selectMerchantServiceForDeal" resultType="com.eros.core.model.MerchantService"
-		resultMap="merchantServices">
+	<select id="selectMerchantServiceForDeal" resultType="com.eros.core.model.MerchantDealService">
 		SELECT m.id AS
-		id,m.price,m.status,m.service_type_id,m.service_id,m.category_id,m.gender,m.home_service,t.name,s.name AS service_name
-		, c.name AS category_name,m.merchant_id,m.created_date FROM merchant_deal_service d left join merchant_service m on m.id = d.merchant_service_id  
+		id,m.price,m.status,m.service_type_id serviceTypeId,m.service_id serviceId,m.category_id categoryId ,m.gender,m.home_service homeService,concat(s.name," ",t.name) as name	,s.name AS serviceName
+		, c.name AS categoryName,m.merchant_id merchantId,m.created_date createdDate FROM merchant_deal_service d left join merchant_service m on m.id = d.merchant_service_id  
 		LEFT JOIN service_type t ON m.service_type_id = t.service_type_id LEFT JOIN service s ON
 		m.service_id=s.id LEFT JOIN service_category c ON s.service_category_id = c.id WHERE d.deal_id = #{id}
 	</select>
@@ -354,12 +348,19 @@
 	<insert id="saveDeal" parameterType="com.eros.core.model.MerchantDeal"
 		useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO
-		merchant_deal(merchant_id,valid_from,valid_till,flat_off,percent_off,weekdays_schedule,recurring,service_ids,service_category_ids,created_date)
+		merchant_deal(merchant_id,valid_from,valid_till,flat_off,percent_off,weekdays_schedule,recurring,created_date)
 		VALUES
-		(#{merchantId},#{validFrom},#{validTill},#{flatOff},#{percentOff},#{days},#{recurring},#{serviceIds},#{categoryIds},CURRENT_TIMESTAMP)
+		(#{merchantId},#{validFrom},#{validTill},#{flatOff},#{percentOff},#{days},#{recurring},CURRENT_TIMESTAMP)
 		<selectKey keyProperty="id" resultType="Integer" order="AFTER">
 	            SELECT LAST_INSERT_ID();
 	        </selectKey>
+	</insert>
+	<insert id="saveIssue" parameterType="com.eros.core.model.Issue"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO issues(merchant_id,subject,details,user_id,created_date)
+		VALUES
+		(#{merchantId},#{subject},#{details},#{userId},CURRENT_TIMESTAMP)
+		
 	</insert>
 	<insert id="saveDealServices" parameterType="Hashmap"
 		useGeneratedKeys="true" keyProperty="id">
@@ -431,7 +432,7 @@
 
 	<insert id="saveSchedule" parameterType="com.eros.core.model.Merchant">
 		INSERT INTO
-		merchant_Schedule (merchant_id, opening_time, closing_time,days,created_date)
+		merchant_schedule (merchant_id, opening_time, closing_time,days,created_date)
 		VALUES
 		<foreach item="element" index="index" collection="schedule"
 			open="(" separator="),(" close=")">
@@ -444,13 +445,16 @@
 		VALUES (#{merchantId}, #{image}, CURRENT_TIMESTAMP)
 	</insert>
 	<insert id="saveForgotRequest" parameterType="Hashmap" useGeneratedKeys="true" keyProperty="id">
-	insert into forgot_request (email,type,created_date) 
+	insert into forgot_request (email,type,identifier,created_date) 
 	values 
-	(#{email},#{type},CURRENT_TIMESTAMP)
+	(#{email},#{type},#{identifier},CURRENT_TIMESTAMP)
 	
 	</insert>
 	<update id="updatePassword" parameterType="Hashmap">
-		update merchant set passphrase=MD5(#{passphrase}) where email = (select email from forgot_request where type=0 and email=#{email} and id=#{requestId} and created_date BETWEEN DATE_SUB(NOW(), INTERVAL 2 DAY) AND NOW() limit 1) 
+		update merchant set passphrase=MD5(#{passphrase}) where email = (select email from forgot_request where type=0 and email=#{email} and identifier=#{requestId} and created_date BETWEEN DATE_SUB(NOW(), INTERVAL 2 DAY) AND NOW() limit 1) 
+	</update>
+	<update id="verify" parameterType="Hashmap">
+		update merchant set verified=true where (email = #{identifier} or phone=#{identifier}) and id=#{id}  
 	</update>
 	
 	<update id="saveSoftware" parameterType="com.eros.core.model.Merchant">

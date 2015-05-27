@@ -72,13 +72,15 @@ public class RegistrationController {
 				throw new Exception("Merchant Info invalid");
 			}
 
-			Merchant merchantOld = merchantService
-					.getMerchantByEmail(StringUtils.isNotBlank(merchant
-							.getEmail()) ? merchant.getEmail() : merchant
-							.getPhone());
-			if (merchantOld != null) {
-				throw new Exception(
-						"Merchant Already Exist With Entered Email/phone");
+			Boolean exist = merchantService
+					.ifMerchantExist(merchant.getEmail(), merchant.getPhone());
+			if (exist != null && exist) {
+				LOGGER.error(
+						"Merchant already exist: "
+								+ merchant.getEmail() + merchant.getPhone());
+				redirectAttributes.addFlashAttribute("error_message",
+						"Error:: Merchant already exist with entered email/phone");
+				return "redirect:/register/input";
 			}
 			merchantService.registerMerchant(merchant);
 			merchant = merchantService.getMerchantByEmail(StringUtils
@@ -256,10 +258,10 @@ public class RegistrationController {
 					"Invalid phone numbers");
 			return "redirect:/register/inputContact";
 		}
-		if ((StringUtils.isNotBlank(phone1) && phone1.matches(PHONE_REGEX))
-				|| (StringUtils.isNotBlank(phone2) && phone2
+		if ((StringUtils.isNotBlank(phone1) && !phone1.matches(PHONE_REGEX))
+				|| (StringUtils.isNotBlank(phone2) && !phone2
 						.matches(PHONE_REGEX))
-				|| (StringUtils.isNotBlank(phone3) && phone3
+				|| (StringUtils.isNotBlank(phone3) && !phone3
 						.matches(PHONE_REGEX))) {
 			redirectAttributes.addFlashAttribute("error_message",
 					"Invalid phone numbers");
@@ -339,6 +341,11 @@ public class RegistrationController {
 					merchantSchedule.add(submittedSchedule);
 				}
 				
+			}
+			if(merchantSchedule.size() <= 0){
+				redirectAttributes.addFlashAttribute("error_message",
+						"Invalid schedule information");
+				return "redirect:/register/inputSchedule";	
 			}
 			contextMerchant.setSchedule(merchantSchedule);
 			clear = merchantService.saveSchedule(contextMerchant);
@@ -428,12 +435,53 @@ public class RegistrationController {
 			return "redirect:/register/inputPhoto";
 		}
 		redirectAttributes.addFlashAttribute("success_message",
-				"Merchant Image Saved Successfully");
+				"Your basic profile & image/s are saved Successfully. Please login.");
 		session.setAttribute("com.eros.core.model.merchant", contextMerchant);
 		return "redirect:/merchant/login";
 
 	}
 
+	/**
+	 * 
+	 */
+	@RequestMapping(value = "/inputforgot", method = RequestMethod.GET)
+	public String inputForgotRequest(
+			final RedirectAttributes redirectAttributes,ModelMap modelMap) {
+		return "inputForgot";
+
+	}	
+	
+	/**
+	 * 
+	 * @param email
+	 * @return
+	 */
+	@RequestMapping(value = "/verifyMerchant", method = RequestMethod.GET)
+	public String verifyMerchant(@RequestParam("identifier") String identifier,@RequestParam("id") String id,
+			final RedirectAttributes redirectAttributes) {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		try {
+			if(StringUtils.isBlank(identifier)){
+				redirectAttributes.addFlashAttribute("error_message",
+						"Invalid Verification request.");
+				return "redirect:/merchant/login";
+			}
+			merchantService.verifyMerchant(identifier,id);
+
+		} catch (Exception e) {
+			LOGGER.error("Error in initiating forgot password request for:::"
+					+ identifier, e);
+			redirectAttributes.addFlashAttribute("error_message",
+					"Error in verifying merchant.");
+			return "redirect:/merchant/login";
+		}
+
+		redirectAttributes.addFlashAttribute("success_message",
+				"Merchant Verified Successfully. Please Login.");
+		return "redirect:/merchant/login";
+
+	}	
 	/**
 	 * 
 	 * @param email
@@ -445,6 +493,11 @@ public class RegistrationController {
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		try {
+			if(StringUtils.isBlank(email)){
+				redirectAttributes.addFlashAttribute("error_message",
+						"Error in input.");
+				return "/triggerForgot";
+			}
 			merchantService.saveForgotPasswordRequest(email);
 
 		} catch (Exception e) {
@@ -452,14 +505,37 @@ public class RegistrationController {
 					+ email, e);
 			redirectAttributes.addFlashAttribute("error_message",
 					"Error in sending password change request.");
-			return "/merchant/login";
+			return "triggerForgot";
 		}
 
 		redirectAttributes.addFlashAttribute("success_message",
 				"Forgot password request sent Successfully");
-		return "/merchant/login";
+		return "redirect:/merchant/login";
 
 	}
+	/**
+	 * 
+	 * @param email
+	 * @param requestId
+	 * @param passphrase
+	 * @return
+	 */
+	@RequestMapping(value = "/inputPassword", method = RequestMethod.GET)
+	public String inputPasword(@RequestParam("identifier") String identifier,
+			@RequestParam("requestId") String requestId,
+			final RedirectAttributes redirectAttributes,ModelMap modelMap) {
+		Boolean error = false;
+		
+		if(StringUtils.isBlank(requestId) || StringUtils.isBlank(identifier)){
+			redirectAttributes.addFlashAttribute("error_message",
+					"Error in changing password. Invalid request.");
+			return "redirect:/merchant/login";
+		}		
+		modelMap.put("identifier", identifier);
+		modelMap.put("requestId", requestId);
+		return "inputPassword";
+
+	}	
 
 	/**
 	 * 
@@ -469,17 +545,22 @@ public class RegistrationController {
 	 * @return
 	 */
 	@RequestMapping(value = "/changePassword", method = RequestMethod.GET)
-	public String forgotPasword(@RequestParam("email") String email,
+	public String forgotPasword(@RequestParam("identifier") String identifier,
 			@RequestParam("requestId") String requestId,
 			@RequestParam("passphrase") String passphrase,
 			final RedirectAttributes redirectAttributes) {
 		Boolean error = false;
+		if(StringUtils.isBlank(requestId) || StringUtils.isBlank(identifier)|| StringUtils.isBlank(passphrase)){
+			redirectAttributes.addFlashAttribute("error_message",
+					"Error in changing password. Invalid request.");
+			return "redirect:/merchant/login";
+		}
 		try {
-			merchantService.changePassword(email, requestId, passphrase);
+			merchantService.changePassword(identifier, requestId, passphrase);
 
 		} catch (Exception e) {
 			error = true;
-			LOGGER.error("Error in changing password for:::" + email);
+			LOGGER.error("Error in changing password for:::" + identifier);
 		}
 		if (error) {
 			redirectAttributes.addFlashAttribute("error_message",

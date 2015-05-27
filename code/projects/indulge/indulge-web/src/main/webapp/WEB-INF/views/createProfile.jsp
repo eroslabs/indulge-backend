@@ -8,9 +8,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
       <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
-    <link href="${pageContext.servletContext.contextPath }/css/custom.css" rel="stylesheet" >
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,500,500,200,600,500' rel='stylesheet' type='text/css'>
-    <link href="${pageContext.servletContext.contextPath }/css/merchant.css" rel="stylesheet" />
+    <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -157,43 +156,31 @@
 	}
 		jQuery(function(){
 			jQuery("#name").validate({
-		        expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "First name cannot be left blank"
+		        expression: "if ((jQuery.trim(VAL)).length > 3 && (jQuery.trim(VAL)).length < 100) return true; else {$('div#uploading').hide(); return false;}",
+		        message: "Name should be greater than 3 and less than 100 Chars"
 		    });
 			jQuery("#email").validate({
-		        expression: "if((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Email address cannot be left blank."
-		    });
-
-			jQuery("#email").validate({
-		        expression: "if(validateEmail(VAL)) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Please enter a valid email address."
+		        expression: "if(VAL=='' || validateEmail(VAL)) return true; else {$('div#uploading').hide(); return false;}",
+		        message: "Please Enter the valid email address."
 		    });
 			jQuery("#passPhrase").validate({
-				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Password cannot be left blank."
+				expression: "if ((jQuery.trim(VAL)).length != 0 && (jQuery.trim(VAL)).length > 3) return true; else {$('div#uploading').hide(); return false;}",
+		        message: "Password can not left blank and should be greater than 3 chars."
 		    });
     
 			jQuery("#phone").validate({
-				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Contact number cannot be left blank."
-		    });
-			jQuery("#unit").validate({
-				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Unit cannot be left blank."
-		    });
-			jQuery("#Street").validate({
-				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Street cannot be left blank."
+				expression: "if ((jQuery.trim(VAL)).length == 10 && jQuery.isNumeric(VAL)  ) return true; else {$('div#uploading').hide(); return false;}",
+		        message: "Contact number should be of 10 numeric digits"
 		    });
 			jQuery("#city").validate({
-				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "City cannot be left blank."
+				expression: "if ((jQuery.trim(VAL)).length > 3 ) return true; else {$('div#uploading').hide(); return false;}",
+		        message: "City can not left blank & should be a valid city."
 		    });
-			jQuery("#state").validate({
-				expression: "if ((jQuery.trim(VAL)).length != 0) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "State cannot be left blank."
+			jQuery("#locality").validate({
+				expression: "if ((jQuery.trim(VAL)).length > 3) return true; else {$('div#uploading').hide(); return false;}",
+		        message: "Locality can not left blank & should be altleast 3 chars."
 		    });
+			
 		});
 	</script>
 	<script src="${pageContext.servletContext.contextPath }/js/bootstrap.js"></script>

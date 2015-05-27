@@ -1,7 +1,7 @@
 <html>
 <body>
+<jsp:forward page="/merchant/login" />
 
-
-Welcome dude
+Welcome to Indulge
 </body>
 </html>

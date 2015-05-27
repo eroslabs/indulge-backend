@@ -4,6 +4,10 @@
  */
 package com.eros.core.model;
 
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldIndex;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+
 
 /**
  * @author vikas
@@ -18,6 +22,7 @@ public class MerchantService extends BaseModel{
     private Integer serviceId;
     private Integer serviceTypeId;
     private String serviceName;
+    @Field(type = FieldType.String, index = FieldIndex.analyzed,store=true,indexAnalyzer="simple")
     private String name;
     private Integer merchantId;
     private Integer categoryId;

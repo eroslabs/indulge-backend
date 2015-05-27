@@ -4,6 +4,7 @@
  */
 package com.eros.notification.utils;
 
+import java.awt.TrayIcon.MessageType;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,7 +38,36 @@ public class NotificationServiceImpl implements NotificationService{
 		{
 			throw new IllegalArgumentException("Message Type Null");
 		}
-		 processMessage(message);
+		if(message.getType() == NotificationType.BOTH){
+			processMessage(message);
+		}else if(message.getType() == NotificationType.MAIL){
+			processMailMessage(message);
+		}else if(message.getType() == NotificationType.SMS){
+			processSmsMessage(message);
+		}
+		
+	}
+
+	/**
+	 * @param message
+	 */
+	private void processSmsMessage(Message message) {
+		ExecutorService executor = Executors.newFixedThreadPool(2);
+		executor.execute(new SmsNotifier(message, fmConfig));
+		executor.shutdown();
+		
+		
+		
+	}
+
+	/**
+	 * @param message
+	 */
+	private void processMailMessage(Message message) {
+		ExecutorService executor = Executors.newFixedThreadPool(2);
+		executor.execute(new MailNotifier(message,fmConfig,mailSender));
+		executor.shutdown();
+		
 		
 	}
 
@@ -47,7 +77,7 @@ public class NotificationServiceImpl implements NotificationService{
 	private void processMessage(Message message) {
 		ExecutorService executor = Executors.newFixedThreadPool(2);
 		executor.execute(new MailNotifier(message,fmConfig,mailSender));
-		executor.execute(new SmsNotifier(message));
+		executor.execute(new SmsNotifier(message,fmConfig));
 		executor.shutdown();
 		
 		

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.eros.core.model.DealRequest;
+import com.eros.core.model.Issue;
 import com.eros.core.model.Merchant;
 import com.eros.core.model.MerchantDeal;
 import com.eros.core.model.MerchantImage;
@@ -116,7 +117,7 @@ public interface MerchantDBService {
 	/**
 	 * @param param
 	 */
-	public void updatePassword(Map<String, Object> param);
+	public Integer updatePassword(Map<String, Object> param);
 	public List<MerchantService> selectMerchantServices(Integer id);
 	/**
 	 * @param string
@@ -127,5 +128,19 @@ public interface MerchantDBService {
 	 * @param params
 	 */
 	public void saveDealServices(HashMap<String, Object> params);
+	/**
+	 * @param param
+	 * @return
+	 */
+	public Merchant merchantExist(HashMap<String, Object> param);
+	/**
+	 * @param issue
+	 */
+	public void saveIssue(Issue issue);
+	/**
+	 * @param param
+	 * @return
+	 */
+	public Integer verify(Map param);
 	
 }

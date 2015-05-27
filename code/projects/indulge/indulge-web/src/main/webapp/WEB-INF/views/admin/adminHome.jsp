@@ -8,9 +8,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
-    <link href="${pageContext.servletContext.contextPath }/css/custom.css" rel="stylesheet" >
+    
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,500,200,600,700' rel='stylesheet' type='text/css'>
-    <link href="${pageContext.servletContext.contextPath }/css/merchant.css" rel="stylesheet" />
+    <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/css/new.css" rel="stylesheet" >
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -42,7 +42,7 @@
 			    			Basic Merchant Statistics (<a href="${pageContext.servletContext.contextPath }/admin/listDeactiveMerchants">View Pending Activations</a>)
 			    	</div>
 			    	<div class="row row15 font-size-20 location-head font-type" style="background-color:#1fbbad; margin-bottom:15px">
-			    			Load All Merchants ( <a href="${pageContext.servletContext.contextPath }/admin/refresh">Load All</a>)
+			    			Load All Merchants ( <a href="${pageContext.servletContext.contextPath }/admin/loadMeta">Load All</a>)
 			    	</div>
  		<form:form method="GET" action="searchMerchant" class="form-horizontal white-bg" id="creatMerchantForm" style="margin-top:15px; margin-bottom:15px;padding-bottom:30px">
 		    		<div class="row row15 font-size-20 location-head font-type" style="background-color:#1fbbad; margin-bottom:15px">

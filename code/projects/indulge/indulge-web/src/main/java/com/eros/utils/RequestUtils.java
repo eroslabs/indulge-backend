@@ -127,15 +127,17 @@ public class RequestUtils {
 			throw new Exception("Invalid parameter");
 		}else{
 			user.setFacebook(userMap.get("facebook") != null ?userMap.get("facebook").toString():null);
-			user.setGender(userMap.get("gender").toString());
+			user.setGender(userMap.get("gender") != null ? userMap.get("gender").toString() : null);
 			user.setName(userMap.get("name").toString());
-			user.setImage(Base64.base64ToByteArray(userMap.get("image").toString()));
+			if(userMap.get("image") != null){
+				user.setImage(Base64.base64ToByteArray(userMap.get("image").toString()));
+			}
 			user.setGoogle(userMap.get("google") != null ?userMap.get("google").toString():null);
-			user.setMail(userMap.get("mail").toString());
-			user.setMobile(userMap.get("mobile").toString());
-			user.setPassphrase(userMap.get("passphrase").toString());
+			user.setMail(userMap.get("mail") != null ? userMap.get("mail").toString(): null);
+			user.setMobile(userMap.get("mobile") != null ? userMap.get("mobile").toString() : null);
+			user.setPassphrase(userMap.get("passphrase") != null ? userMap.get("passphrase").toString() :null);
 			try{
-				Date dob = formatter.parse(userMap.get("dob").toString());
+				Date dob = formatter.parse(userMap.get("dob") != null ? userMap.get("dob").toString() : null);
 				user.setDob(dob);
 				return user;
 			}catch (Exception e) {
@@ -156,8 +158,10 @@ public class RequestUtils {
 		}else{
 			review.setCleanlinessRating(reviewMap.get("cleanlinessRating") != null ? Float.parseFloat(reviewMap.get("cleanlinessRating").toString()) : null );
 			review.setText(reviewMap.get("text") != null ? reviewMap.get("text").toString() : null );
+			review.setUser(reviewMap.get("user") != null ? reviewMap.get("user").toString() : null );
 //			Intentionally left.
 			review.setMerchantId( Integer.parseInt(reviewMap.get("merchantId").toString()) );
+			review.setUserId(Integer.parseInt(reviewMap.get("userId").toString()) );
 			review.setServiceRating(reviewMap.get("serviceRating") != null ? Float.parseFloat(reviewMap.get("serviceRating").toString()) : null );
 			review.setRating(reviewMap.get("rating") != null ? Float.parseFloat(reviewMap.get("rating").toString()) : null);
 			return review;
@@ -167,15 +171,18 @@ public class RequestUtils {
 	 * @param errorObj
 	 * @return
 	 */
-	public static ReportedError fillError(Map<String, String> errorObj) throws Exception{
+	public static ReportedError fillError(Map<String, Object> errorObj) throws Exception{
 		ReportedError error = new ReportedError();
 		if(errorObj == null || errorObj.size() <=0 ){
 			throw new Exception("Invalid parameter");
 		}else{
-			error.setDetails(errorObj.get("details") != null ? errorObj.get("details") : null );
-			error.setWrongAddress(errorObj.get("wrongAddress") != null ? Boolean.parseBoolean(errorObj.get("wrongAddress")) : false );
-			error.setWrongPricing(errorObj.get("wrongPricing") != null ? Boolean.parseBoolean(errorObj.get("wrongPricing")) : false );
-			error.setWrongPhone(errorObj.get("wrongPhone") != null ? Boolean.parseBoolean(errorObj.get("wrongPhone")) : false );
+			error.setDetails(errorObj.get("details") != null ? errorObj.get("details").toString() : null );
+			error.setWrongAddress(errorObj.get("wrongAddress") != null ? (Boolean)errorObj.get("wrongAddress") : false );
+			error.setWrongPricing(errorObj.get("wrongPricing") != null ? (Boolean)errorObj.get("wrongPricing") : false );
+			error.setWrongPhone(errorObj.get("wrongPhone") != null ? (Boolean)errorObj.get("wrongPhone") : false );
+			error.setMerchantId( Integer.parseInt(errorObj.get("merchantId").toString()) );
+			error.setUserId(Integer.parseInt(errorObj.get("userId").toString()) );
+			
 			return error;
 		}
 	}

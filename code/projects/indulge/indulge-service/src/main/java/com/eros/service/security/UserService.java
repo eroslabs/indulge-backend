@@ -34,6 +34,7 @@ public class UserService implements UserDetailsService {
     	Map<String, String> param = new HashMap<String, String>(2);
     	param.put("user", username);
     	param.put("passphrase", password);
+    	param.put("verified", "1");
     	Map<String , Object> user = null;
     	try{
     		user = merchantDBService.loadMerchantByUsernameOrPhone(param);
@@ -41,7 +42,7 @@ public class UserService implements UserDetailsService {
 			e.printStackTrace();
 		}
     	if (user == null) {
-            throw new BadCredentialsException("Invalid Credentials");
+            throw new BadCredentialsException("Invalid Credentials or Still Unverified");
         }else{
         	
         }

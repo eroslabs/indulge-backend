@@ -15,7 +15,7 @@
     <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" />
 
     <!-- Custom CSS -->
-    <link href="${pageContext.servletContext.contextPath }/css/merchant.css" rel="stylesheet" />
+    <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
 
     <!-- Custom Fonts -->
     <link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>

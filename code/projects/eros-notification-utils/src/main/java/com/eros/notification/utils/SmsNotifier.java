@@ -4,6 +4,13 @@
  */
 package com.eros.notification.utils;
 
+import java.io.IOException;
+
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+
+import freemarker.template.Configuration;
+import freemarker.template.TemplateException;
+
 /**
  * @author vikas
  *
@@ -11,11 +18,20 @@ package com.eros.notification.utils;
 public class SmsNotifier implements Runnable{
 
 	private Message message;
+	private Configuration fmConfig;
+	/**
+	 * 
+	 */
+	public SmsNotifier() {
+		// TODO Auto-generated constructor stub
+	}
 	/**
 	 * @param message
+	 * @param fmConfig 
 	 */
-	public SmsNotifier(Message message) {
+	public SmsNotifier(Message message, Configuration fmConfig) {
 		this.message = message;
+		this.fmConfig = fmConfig;
 	}
 	
 	
@@ -24,7 +40,16 @@ public class SmsNotifier implements Runnable{
 	 */
 	@Override
 	public void run() {
-		System.err.println("Tto be implemented");
+		try {
+			String text = FreeMarkerTemplateUtils
+			.processTemplateIntoString(
+					fmConfig.getTemplate(message.getMessageTemplate()
+							+ "_SMS.ftl"), message.getDataMap());
+			System.out.println("-----------------------------"+ message.getDataMap().toString());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
 		
 	}
 

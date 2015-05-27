@@ -39,5 +39,9 @@ public interface RequestConstants {
 	 * 
 	 */
 	public static final String USER_PARAM = "user";
+	
+	public static final String USER_ID = "user_id";
+	
+	public static final String ERROR_PARAM = "error";
 
 }

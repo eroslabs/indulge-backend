@@ -13,6 +13,31 @@
 		<version>${version.eros}</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
+		<build>
+		<plugins>
+			<plugin>
+				<groupId>net.sf.alchim</groupId>
+				<artifactId>yuicompressor-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compress</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<excludes>
+						<exclude>**/*.properties</exclude>
+						<exclude>**/*.xml</exclude>
+					</excludes>
+					<includes>
+						<include>**/*.js</include>
+						<include>**/*.css</include>
+					</includes>					
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	
 	
 	<dependencies>

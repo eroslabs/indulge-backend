@@ -8,9 +8,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
-    <link href="${pageContext.servletContext.contextPath }/css/custom.css" rel="stylesheet" >
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,500,200,600,700' rel='stylesheet' type='text/css'>
-    <link href="${pageContext.servletContext.contextPath }/css/merchant.css" rel="stylesheet" />
+    <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/css/new.css" rel="stylesheet" >
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -25,19 +24,6 @@
 	<link href="${pageContext.servletContext.contextPath }/css/jquery.nouislider.pips.min.css" rel="stylesheet">
   </head>
 <body>
-	<div class="container">
-		<!-- Nav tabs -->
-		<div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 formRightBody">
-			<c:if test="${not empty error_message}">
-				<div class="lh10">&nbsp;</div>
-				<div class="alert alert-danger">${error_message}</div>
-			</c:if>
-			<c:if test="${not empty success_message}">
-				<div class="lh10">&nbsp;</div>
-				<div class="alert alert-success">${success_message}</div>
-			</c:if>
-		</div>
-	</div>
 <div class="container-fluid" style="background-color:#f0f0f0">
 	<div class="row">
 		<div class="col-xs-22 col-sm-14 col-md-12 col-lg-10 col-xs-push-1 col-sm-push-5 col-md-push-6 col-lg-push-7">
@@ -45,7 +31,18 @@
     		<ol class="progress-meter">
     			<li class="progress-point done">Basic</li><li class="progress-point done">Address</li><li class="progress-point done">Contacts</li><li class="progress-point doing">Schedule</li><li class="progress-point todo">Photos</li>
     		</ol>
-    		<form:form method="POST" action="saveSchedule" modelAttribute="schedule" class="form-horizontal white-bg" id="creatMerchantForm" style="margin-top:15px;margin-bottom:15px;padding-bottom:30px">
+    		<div class="row row15">
+				<c:if test="${not empty error_message}">
+					<div class="lh10">&nbsp;</div>
+					<div class="alert alert-danger">${error_message}</div>
+				</c:if>
+				<c:if test="${not empty success_message}">
+					<div class="lh10">&nbsp;</div>
+					<div class="alert alert-success">${success_message}</div>
+				</c:if>
+			</div>
+    		
+    		<form:form method="POST" action="saveSchedule" modelAttribute="schedule" onsubmit="return validateForm();" class="form-horizontal white-bg" id="creatMerchantForm" style="margin-top:15px;margin-bottom:15px;padding-bottom:30px">
 	    		<div class="row row15 font-size-20 location-head font-type" style="background-color:#1fbbad; margin-bottom:15px; text-align:center">
 		    			Enter Availability Details
 		    	</div>
@@ -69,8 +66,8 @@
 					</div>
 			        <form:input path="schedule[0].weekSchedule" type="hidden" id="scheduleval0"/>
 			        <form:input path="schedule[1].weekSchedule" type="hidden" id="scheduleval1"/>
-			        <form:input path="schedule[0].closingTime" type="hidden" id="closingTime0"/>
-			        <form:input path="schedule[0].openingTime" type="hidden" id="openingTime0"/>
+			        <form:input path="schedule[0].closingTime" type="hidden" id="closingTime0" value="10:00"/>
+			        <form:input path="schedule[0].openingTime" type="hidden" id="openingTime0" value="10:00"/>
 			        <form:input path="schedule[1].closingTime" type="hidden" id="closingTime1"/>
 			        <form:input path="schedule[1].openingTime" type="hidden" id="openingTime1"/>
 				</center>
@@ -187,6 +184,14 @@
 </script>
 
 <script type="text/javascript">
+function validateForm(){
+	if(document.getElementById('scheduleval0').value == '' ){
+		alert("Please select weekdays.");
+		return false;
+	}
+	return true;
+}
+
 	$("#behaviour").noUiSlider({
 		start: [10 , 20 ],
 		step: 1,

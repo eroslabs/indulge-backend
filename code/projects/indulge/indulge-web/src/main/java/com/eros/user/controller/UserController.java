@@ -5,8 +5,8 @@ import static com.eros.constants.RequestConstants.EMAIL_PARAM;
 import static com.eros.constants.RequestConstants.PASS_PHRASE;
 import static com.eros.constants.RequestConstants.REVIEW_PARAM;
 import static com.eros.constants.RequestConstants.USER_PARAM;
-
-import java.lang.reflect.InvocationTargetException;
+import static com.eros.constants.RequestConstants.USER_ID;
+import static com.eros.constants.RequestConstants.ERROR_PARAM;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,16 +15,13 @@ import javax.annotation.Resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.eros.core.BaseController;
 import com.eros.core.model.ReportedError;
@@ -77,7 +74,10 @@ public class UserController extends BaseController {
 		}
 		
 		try {
-			userService.saveUser(user);
+			User savedUser = userService.saveUser(user);
+			if(savedUser != null){
+				returnMap.put(USER_ID, savedUser.getId());
+			}
 		} catch (Exception e) {
 			LOGGER.error("Error in updating user " + map, e);
 			returnMap.put(ERROR, "Error in updating User");
@@ -235,12 +235,15 @@ public class UserController extends BaseController {
 
 	@RequestMapping(value = "/reportError", method = RequestMethod.POST)
 	public @ResponseBody Map reportError(@RequestBody Map map) {
-		Map<String , String> errorObj = (Map<String , String>)map.get("error");
+		Map<String , Object> errorObj = (Map<String , Object>)map.get(ERROR_PARAM);
 		ReportedError error = null;
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		returnMap.put(STATUS, true);		
 		try {
 			error = RequestUtils.fillError(errorObj);
+			if (error == null) {
+				throw new Exception("Invalid param map error missing");
+			}
 			userService.saveReportedError(error);
 		} catch (Exception e) {
 			LOGGER.error("Error in saving Error ::" , e);

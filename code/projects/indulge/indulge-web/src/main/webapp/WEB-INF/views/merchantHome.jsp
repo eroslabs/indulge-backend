@@ -8,9 +8,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
       <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
-    <link href="${pageContext.servletContext.contextPath }/css/custom.css" rel="stylesheet" >
+    
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,500,500,200,600,500' rel='stylesheet' type='text/css'>
-    <link href="${pageContext.servletContext.contextPath }/css/merchant.css" rel="stylesheet" />
+    <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -46,19 +46,19 @@
             	<li class="active" style="height:50px;background-color:#f0f0f0"><a href="${pageContext.servletContext.contextPath }/merchant/home" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/Info.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Basic Info</a></li>
             	<li><a href="${pageContext.servletContext.contextPath }/merchant/inputDigitalMenu" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/Service-active.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Services</a></li>
             	<li><a href="${pageContext.servletContext.contextPath }/merchant/listDeals" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/Deal-active.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Deals</a></li>
-            	<li><a data-toggle="modal" data-target="#myModalAcc" href="" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/account.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Account</a></li>
+            	<li><a data-toggle="modal" data-target="#myModalAcc" href="${pageContext.servletContext.contextPath }/j_spring_security_logout" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/account.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Logout</a></li>
             </ul>
         </div>
     </div>
   </nav>
-	<nav class="navbar navbar-default navbar-fixed-bottom nav-bot">
-  		<div class="container-fluid">
+	<nav class="navbar navbar-default navbar-fixed-bottom nav-bot" style="border:1px solid;background-color:#735E56">
+  		<div class="container-fluid" style="border:1px solid #1fbbad">
   			<center>
-  			<div class="col-xs-5" style="font:14px; padding-left:0px; padding-right:0px">Stats</div>
-  			<div class="col-xs-5 act" style="font:14px; padding-left:0px; padding-right:0px">Basic Info</div>
-  			<div class="col-xs-4" style="font:14px;padding-left:0px; padding-right:0px">Services</div>
-  			<div class="col-xs-5" style="font:14px;padding-left:0px; padding-right:0px">Deals</div>
-  			<div class="col-xs-5" style="font:14px;padding-left:0px; padding-right:0px">Account</div>
+  			<div class="col-xs-5" style="font:14px; padding-left:0px; padding-right:0px"><a href="${pageContext.servletContext.contextPath }/merchant/reviews" style="line-height:35px; margin-top:-5px;color:#fff"><img src="${pageContext.servletContext.contextPath }/images/Stats-active.png" class="img-responsive" alt="Indulge" style="height:40px;"/>Stats</a></div>
+  			<div class="col-xs-5 active" style="font:14px; padding-left:0px; padding-right:0px;background-color:#f0f0f0"><a href="${pageContext.servletContext.contextPath }/merchant/home" style="line-height:35px; margin-top:-5px; color:#735E56"><img src="${pageContext.servletContext.contextPath }/images/Info.png" class="img-responsive" alt="Indulge" style="height:40px"/>Basic Info</a></div>
+  			<div class="col-xs-4" style="font:14px;padding-left:0px; padding-right:0px"><a href="${pageContext.servletContext.contextPath }/merchant/inputDigitalMenu" style="line-height:35px; margin-top:-5px;color:#fff"><img src="${pageContext.servletContext.contextPath }/images/Service-active.png" class="img-responsive" alt="Indulge" style="height:40px" />Services</a></div>
+  			<div class="col-xs-5" style="font:14px;padding-left:0px; padding-right:0px"><a href="${pageContext.servletContext.contextPath }/merchant/listDeals" style="line-height:35px; margin-top:-5px; color:#fff"><img src="${pageContext.servletContext.contextPath }/images/Deal-active.png" class="img-responsive" alt="Indulge" style="height:40px" />Deals</div>
+  			<div class="col-xs-5" style="font:14px;padding-left:0px; padding-right:0px"><a data-toggle="modal" data-target="#myModalAcc" href="" style="line-height:35px; margin-top:-5px; color: #fff"><img src="${pageContext.servletContext.contextPath }/images/account.png" class="img-responsive" alt="Indulge" style="height:40px" />Account</a></div>
   			</center>
   		</div>
 	</nav>
@@ -80,7 +80,7 @@
         <div class="row row15" style=" margin-left:15px; background-color:#B4978D">
           <center>
             <div class="col-md-8 col-sm-8" >
-            <img src="../images/${merchant.image}" style="border-radius:75px; height:90px; width:90px; margin-top:20px; margin-bottom:15px; border:1px solid red">
+            <img src="<c:if test="${merchant.image ne null and merchant.image != ''}" >../images/merchant/${merchant.image}</c:if>" style="border-radius:75px; height:90px; width:90px; margin-top:20px; margin-bottom:15px; border:1px solid red">
             </div>
           </center>
           <div class="col-md-10 col-sm-10" style="padding-bottom:10px">
@@ -96,8 +96,16 @@
       <div class="col-md-10 col-md-push-3 col-sm-10 col-sm-push-3" style="height:100%">
         <div class="row row15 font-size-16 font-type" style="padding-left:15px; padding-right:15px"> Opening Hours <a style="float:right" data-toggle="modal" data-target="#myModalSch">edit</a></div>
         <div class="merchant-home font-size-16 font-type">
-          Mon - Fri : 10 AM to 5 PM<br>
-          Sat - Sun : 11 AM to 4 PM<br>
+	<c:choose>
+		<c:when test="${merchant.schedule ne null}">
+		<c:forEach var="schedule" items="${merchant.schedule}" varStatus="status">
+			${schedule.weekStr} ${schedule.openingTime} - ${schedule.closingTime}<br/>
+		</c:forEach>
+	</c:when>
+	<c:otherwise>
+		No schedule specified.
+	</c:otherwise>
+	</c:choose> 
         </div>
       </div>
   </div>
@@ -201,7 +209,7 @@
     <center>
       <div class="row" style="height:150px;width:150px; margin-top:15px">
                   <div id="file-upload-cont">
-                    <input id="file" type="file" name="files[]" multiple/>
+                    <input id="file" type="file" name="files" multiple/>
                     <div id="my-button"></div>
                     <input id="overlay"/>
                 </div>
@@ -211,7 +219,7 @@
       <output id="list"></output>
       <c:forEach var="imageItem" items="${merchant.images}" varStatus="status"> 
       <div class="col-md-6 thumb-home" style="overflow:hidden">
-        <img src="${pageContext.servletContext.contextPath}/images/${imageItem.image}">--
+        <img src="${pageContext.servletContext.contextPath}/images/merchant/${imageItem.image}">
       </div>
     </c:forEach>
     </div>

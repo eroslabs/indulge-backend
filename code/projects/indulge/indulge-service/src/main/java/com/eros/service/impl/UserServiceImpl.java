@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.solr.common.util.Hash;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,9 +64,15 @@ public class UserServiceImpl implements UserService {
 		if (user == null) {
 			return null;
 		}
+		User savedUser = null;
 		try {
+			if(StringUtils.isNotBlank(user.getFacebook()) || StringUtils.isNotBlank(user.getGoogle())){
+				savedUser = userDBService.fetchUserBySocialAuth(StringUtils.isNotBlank(user.getFacebook()) ? user.getFacebook() : user.getGoogle());
+				if(savedUser != null){
+				return savedUser;}
+			}
 			userDBService.registerUser(user);
-			User savedUser = userDBService.fetchUser(user.getMail());
+			savedUser = userDBService.fetchUser(user.getMail());
 			if(user.getImage() != null){
 				String profilePhoto = saveUserImage(user.getImage(), savedUser.getId(), savedUser.getId()+".png");
 				HashMap<String, String> param = new HashMap<String, String>();
@@ -203,6 +210,9 @@ public class UserServiceImpl implements UserService {
 		}
 		try {
 			userDBService.saveReview(review);
+			HashMap<String, Object> param = new HashMap<String, Object>();
+			param.put("merchantId", review.getMerchantId());
+			userDBService.updateRating(param);
 			return;
 		} catch (Exception e) {
 			LOG.error("Error in saving User review : ", e);
@@ -236,7 +246,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public String saveUserImage(byte[] bytes, Integer id, String fileName) {
 		try {
-
+			if(bytes == null){
+				return null;
+			}
 			File file = new File(USER_BASE_PATH + File.separator + id);
 			if (!file.exists()) {
 				file.mkdir();
@@ -339,6 +351,8 @@ public class UserServiceImpl implements UserService {
 				// we can fetch by id and email both
 				User user = userDBService.fetchUser(id.toString());
 				if (user != null && StringUtils.isNotBlank(user.getImagePath())) {
+					LOG.error("----------------------------"+USER_BASE_PATH + File.separator
+							+ user.getImagePath());
 					return fetchImage(USER_BASE_PATH + File.separator
 							+ user.getImagePath());
 				}

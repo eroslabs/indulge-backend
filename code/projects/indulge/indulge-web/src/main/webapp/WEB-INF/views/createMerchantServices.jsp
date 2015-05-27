@@ -8,9 +8,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
       <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
-    <link href="${pageContext.servletContext.contextPath }/css/custom.css" rel="stylesheet" >
+    
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,500,500,200,600,500' rel='stylesheet' type='text/css'>
-    <link href="${pageContext.servletContext.contextPath }/css/merchant.css" rel="stylesheet" />
+    <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -64,7 +64,7 @@
 	</nav>
 	<div class="container-fluid" style="margin-top:50px">
 		<div class="row row15">
-		<form:form method="POST" action="saveMerchantServices" modelAttribute="merchant" enctype="multipart/form-data"  class="form-horizontal" id="uploadMerchantPhoto" >
+		<form:form method="POST" onsubmit="return validateForm();" action="saveMerchantServices" modelAttribute="merchant" enctype="multipart/form-data"  class="form-horizontal" id="uploadMerchantPhoto" >
 			<div class="col-lg-20 col-lg-push-2 col-md-22 col-md-push-1 col-sm-24 col-xs-24 white-bg">
 				<div class="row row15 font-size-20" style="padding-left:15px;padding-top:12px; padding-bottom:12px;background-color:#1fbbad; text-align:center">Enter prices for the services you offer and create a digital menu</div>
 				<div class="container">
@@ -93,6 +93,7 @@
 						</c:forEach>
 					</datalist>
 					<input type="button" onclick="search()" class="col-xs-4 midbrownbg-color" style="border-radius:0px;color:white; height:40px" value="Search">
+					
 				</div>
 
 
@@ -109,9 +110,9 @@
 
 							<div class="row row15">
 								<div id="initial_${category.id}">
-									<input type="hidden" name="categoryId" value="${category.id}">
+									<input type="hidden" id="categoryId" name="categoryId" value="${category.id}">
 									<div class="col-md-6 col-sm-12 col-xs-12" style="padding:0px 5px 0px 5px; margin-top:5px;">
-										<select style="width:100%" class="select-style" id="servicedrop_${category.id}" name="selectedId">
+										<select style="width:100%" class="select-style" id="servicedrop_${category.id}" name="selectedId" onchange="servicedropdown(${category.id})">
 										<option selected="selected" value="0">---Select---</option>
 										<c:forEach var="Service" items="${category.services}" varStatus="serviceStatus">
 										<c:if test="${Service.name ne null}">
@@ -155,7 +156,7 @@
 										</div>
 									</div>
 									<div class="col-md-3 col-sm-5 col-xs-12" style="padding:0px 5px 0px 5px;margin-top:5px;">
-										<input type="text" name="selectedPrice" style="width:100%;height:40px" class="form-input signup-field" placeholder="Add Price">
+										<input type="text" name="selectedPrice" id="selectedPrice" style="width:100%;height:40px" class="form-input signup-field" placeholder="Add Price">
 									</div>
 								</div>
 								<div class="col-md-2 col-sm-5 col-xs-12" style="padding:0px 5px 0px 5px;margin-top:5px;">
@@ -171,7 +172,7 @@
 
 								<input type="hidden" name="categoryId" value="${category.id}">
 								<div class="col-md-6 col-sm-12 col-xs-12" style="padding:0px 5px 0px 5px; margin-top:5px;">
-									<select style="width:100%" class="select-style" id="servicedrop_${category.id}" name="selectedId">
+									<select style="width:100%" class="select-style" id="servicedrop_${category.id}" name="selectedId" onchange="servicedropdown(${category.id})">
 									<option selected="selected" value="0">---Select---</option>
 									<c:forEach var="Service" items="${category.services}" varStatus="serviceStatus">
 									<c:if test="${Service.name ne null}">
@@ -224,7 +225,7 @@
 							<div id="prepend_${category.id}"></div>
 						</div>
 						</c:forEach>
-						<input type="submit" class="row row15 midbrownbg-color" style="border-radius:0px;color:white; height:40px" value="Save">
+						<input type="submit" class="row row15 midbrownbg-color" style="border-radius:0px;margin:20px;color:white; height:40px" value="Save Services">
 					</div>
 				</c:if>
 			</div>
@@ -232,6 +233,14 @@
 		</div>
 	</div>
 	<script type="text/javascript">
+	function validateForm(){
+		if(document.getElementById('selectedPrice').value == '' || document.getElementById('selectedCategory').value == ''){
+			alert("Please enter complete information for atleast one service.");
+			return false;
+		}
+		return true;
+	}
+	
 	function search(){
 		var a = $("#searchbox").val();
 		<c:forEach var="category" items="${categories}" varStatus="status">
@@ -282,6 +291,7 @@
 	</script>
 	<script type="text/javascript">
 	function servicedropdown(dropid){
+			alert(dropid);
 			var e = document.getElementById("servicedrop_"+ dropid);
 			var strUser = e.options[e.selectedIndex].value;
 			//$("#servicetypedrop_"+dropid).removeAttr("disabled");

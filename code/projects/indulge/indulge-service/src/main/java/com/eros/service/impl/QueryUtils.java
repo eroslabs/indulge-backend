@@ -16,6 +16,7 @@ import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 import static org.elasticsearch.index.query.QueryBuilders.queryString;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.search.PrefixQuery;
@@ -33,6 +34,7 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 
 import com.eros.service.search.Filter;
+import com.sun.org.apache.bcel.internal.generic.RET;
 
 
 /**
@@ -81,14 +83,7 @@ public class QueryUtils implements SearchConstants{
 			String configuredFields, String configuredBoost) {
 		QueryBuilder queryBuilder = null;
 		if (StringUtils.isNotBlank(filter.getSearch())) {
-			if(filter.getAutoSuggest() != null && filter.getAutoSuggest()){
-				queryBuilder = boolQuery().should(
-						queryString(ALL_REGEX + filter.getSearch() + ALL_REGEX)
-						.analyzeWildcard(true).field(NAME_FIELD, 2.0f)
-						.field(LOCALITY_FIELD, 1.0f).field(ADDRESS_FIELD, 1.5f)
-						.field(STATE_FIELD, 2.0f).field(PINCODE_FIELD,2.0f).field(SERVICES_NAME_FIELD,2.0f));
-//				queryBuilder = new RegexpQueryBuilder(NAME_FIELD,filter.getSearch() + "."+ALL_REGEX);
-			}else{
+			
 			
 			String[] searchFields = null;
 			String[] boost = null;
@@ -113,7 +108,7 @@ public class QueryUtils implements SearchConstants{
 							.field(STATE_FIELD, 2.0f).field(PINCODE_FIELD,2.0f).field(SERVICES_NAME_FIELD,2.0f));
 			}
 			 
-		}} else {
+		} else {
 			queryBuilder = matchAllQuery();
 		}
 
@@ -166,6 +161,26 @@ public class QueryUtils implements SearchConstants{
 
 		}
 		return andBuilder;
+	}
+
+	/**
+	 * @param search
+	 * @return
+	 */
+	public static HashMap<String, QueryBuilder> buildSuggestQuery(String search) {
+		HashMap<String, QueryBuilder> returnQueries = new HashMap<String, QueryBuilder>();
+		QueryBuilder serviceBuilder = boolQuery().should(
+				queryString(ALL_REGEX + search + ALL_REGEX)
+				.analyzeWildcard(true).field(SERVICES_NAME_FIELD));
+		returnQueries.put(SERVICES_NAME_FIELD, serviceBuilder);
+		QueryBuilder queryBuilder = boolQuery().should(
+					queryString(ALL_REGEX + search + ALL_REGEX)
+					.analyzeWildcard(true).field(NAME_FIELD, 2.0f)
+					.field(LOCALITY_FIELD, 0.5f).field(ADDRESS_FIELD, 0.1f)
+					.field(STATE_FIELD, 2.0f).field(PINCODE_FIELD,2.0f));
+		returnQueries.put(NAME_FIELD, queryBuilder);
+//			queryBuilder = new RegexpQueryBuilder(NAME_FIELD,filter.getSearch() + "."+ALL_REGEX);
+		return returnQueries;
 	}
 
 	

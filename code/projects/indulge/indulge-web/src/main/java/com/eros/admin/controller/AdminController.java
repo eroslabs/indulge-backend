@@ -147,7 +147,7 @@ public class AdminController extends BaseController{
 		return "admin/thanks";
 	}
 	
-	@RequestMapping(value = "/refresh")
+	@RequestMapping(value = "/loadMeta")
 	public String uploadAll(Principal principle,final RedirectAttributes redirectAttributes,
 			HttpServletRequest request) {
 		List<HashMap<String, String>> merchantsStats = null;

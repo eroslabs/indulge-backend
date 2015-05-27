@@ -12,7 +12,7 @@
 
     <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,500,200,600,700' rel='stylesheet' type='text/css'>
-    <link href="${pageContext.servletContext.contextPath }/css/merchant.css" rel="stylesheet" />
+    <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -31,17 +31,17 @@
 <body>
 	<div class="container" id="header">
 		<div class="row row15">
-			<div class="col-sm-3 header-columns">How it Works</div>
-			<div class="col-sm-3 header-columns">Benefits</div>
-			<div class="col-sm-2 header-columns">Pricing</div>
+			<div class="col-sm-3 header-columns"><a  href="${pageContext.servletContext.contextPath }/html/howitwork.html">How it Works</a></div>
+			<div class="col-sm-3 header-columns"><a  href="${pageContext.servletContext.contextPath }/html/benefits.html">Benefits</a></div>
+			<div class="col-sm-2 header-columns"><a  href="${pageContext.servletContext.contextPath }/html/pricing.html">Pricing</a></div>
 			<div class="col-sm-8 header-image">
 				<center>
 				<a  href="${pageContext.servletContext.contextPath }/merchant/home">
 	            <img src="${pageContext.servletContext.contextPath }/images/logo.png" style="height:50px" class="img-responsive" alt="Indulge" /></a></center>
 	        </div>
-			<div class="col-sm-2 header-columns">FAQ's</div>
-			<div class="col-sm-3 header-columns">Login</div>
-			<div class="col-sm-3 header-columns">Join Us</div>
+			<div class="col-sm-2 header-columns"><a  href="${pageContext.servletContext.contextPath }/html/faq.html">FAQ's</a></div>
+			<div class="col-sm-3 header-columns"><a  href="${pageContext.servletContext.contextPath }/merchant/login">Login</a></div>
+			<div class="col-sm-3 header-columns"><a  href="${pageContext.servletContext.contextPath }/register/input">Join Us</a></div>
 		</div>
 	</div>
 	<!--

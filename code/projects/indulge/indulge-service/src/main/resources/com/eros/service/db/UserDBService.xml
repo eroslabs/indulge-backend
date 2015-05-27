@@ -28,16 +28,16 @@
 <insert id="saveReview" parameterType="com.eros.core.model.UserReview"
 		useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO
-		user(user_id,merchant_id,name,rating,service_rating,cleanliness_rating,review_text,image_path,created_date)
+		user_reviews(user_id,merchant_id,name,rating,service_rating,cleanliness_rating,review_text,created_date)
 		VALUES
-		(#{userId},#{merchantId},#{user},#{rating},#{serviceRating},#{cleanlinessRating},#{imagePath},#{text},CURRENT_TIMESTAMP)
+		(#{userId},#{merchantId},#{user},#{rating},#{serviceRating},#{cleanlinessRating},#{text},CURRENT_TIMESTAMP)
 	</insert>
 <insert id="saveReportedError" parameterType="com.eros.core.model.ReportedError"
 		useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO
-		user(user_id,merchant_id,wrong_phone,wrong_address,closed_closed,wrong_pricing,details,created_date)
+		problems_reported(user_id,merchant_id,wrong_phone,wrong_address,closed_closed,wrong_pricing,details,created_date)
 		VALUES
-		(#{userId},#{merchantId},#{wrongPhone},#{wrongAddress},#{closedClosed},#{wrongPricing},#{details},#{CURRENT_TIMESTAMP})
+		(#{userId},#{merchantId},#{wrongPhone},#{wrongAddress},#{closedClosed},#{wrongPricing},#{details},CURRENT_TIMESTAMP)
 	</insert>
 <insert id="saveUser" parameterType="com.eros.core.model.user.User"
 		useGeneratedKeys="true" keyProperty="id">
@@ -48,6 +48,9 @@
 	</insert>
 <select id="fetchUser" parameterType="String" resultType="com.eros.core.model.user.User">
 		select id,name,dob,gender,mobile,passphrase,mail,image_path as imagePath,facebook_auth facebook,profile_photo profilePhoto,status,ref_code refCode from user where mail=#{mail} or id=#{mail}
+	</select>
+	<select id="fetchUserBySocialAuth" parameterType="String" resultType="com.eros.core.model.user.User">
+		select id,name,dob,gender,mobile,passphrase,mail,image_path as imagePath,facebook_auth facebook,profile_photo profilePhoto,status,ref_code refCode from user where facebook_auth=#{value} or google_auth=#{value}
 	</select>	
 	<update id="markLoggedStatus" parameterType="Hashmap">
 		update user set logged_status = #{status} where mail=#{mail}

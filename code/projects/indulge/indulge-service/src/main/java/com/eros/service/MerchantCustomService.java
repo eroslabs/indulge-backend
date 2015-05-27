@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.eros.core.model.DealRequest;
+import com.eros.core.model.Issue;
 import com.eros.core.model.Merchant;
 import com.eros.core.model.MerchantDeal;
 import com.eros.core.model.MerchantImage;
@@ -109,7 +110,8 @@ public interface MerchantCustomService {
 	 * @return
 	 * @throws Exception
 	 */
-	Integer saveForgotPasswordRequest(String email) throws Exception;
+	public String saveForgotPasswordRequest(String email) throws Exception;
+	public Boolean ifMerchantExist(String email, String phone);
 	/**
 	 * @param name
 	 * @return
@@ -130,4 +132,14 @@ public interface MerchantCustomService {
 	 * @return
 	 */
 	public Boolean saveContact(Merchant contextMerchant, Set<String> phones) throws Exception;
+	/**
+	 * @param issue
+	 * @return
+	 */
+	public Boolean saveIssue(Issue issue);
+	/**
+	 * @param identifier
+	 * @param id
+	 */
+	public void verifyMerchant(String identifier, String id) throws Exception;
 }

@@ -6,9 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
       <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
-    <link href="${pageContext.servletContext.contextPath }/css/custom.css" rel="stylesheet" >
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,500,500,200,600,500' rel='stylesheet' type='text/css'>
-    <link href="${pageContext.servletContext.contextPath }/css/merchant.css" rel="stylesheet" />
+    <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -27,36 +26,37 @@
 <body>
  
 <div class="lh20">&nbsp;</div>
-  <div class="container">
-    <!-- Nav tabs -->
-    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 formRightBody">
-      <c:if test="${not empty error_message}">
-        <div class="lh10">&nbsp;</div>
-        <div class="alert alert-danger">${error_message}</div>
-      </c:if>
-      <c:if test="${not empty success_message}">
-        <div class="lh10">&nbsp;</div>
-        <div class="alert alert-success">${success_message}</div>
-      </c:if>
-    </div>
-  </div>
-
   <div class="container-fluid">
     <div class="container-fluid" id="header">
       <div class="row row15">
-        <div class="col-xs-3 header-columns">How it Works</div>
-        <div class="col-xs-3 header-columns">Benefits</div>
-        <div class="col-xs-2 header-columns">Pricing</div>
+        <div class="col-xs-3 header-columns"><a  href="${pageContext.servletContext.contextPath }/html/howitwork.html">How it Works</a></div>
+        <div class="col-xs-3 header-columns"><a  href="${pageContext.servletContext.contextPath }/html/benefits.html">Benefits</a></div>
+        <div class="col-xs-2 header-columns"><a  href="${pageContext.servletContext.contextPath }/html/pricing.html">Pricing</a></div>
         <div class="col-xs-8 header-image">
           <center>
           <a  href="#">
                 <img src="${pageContext.servletContext.contextPath }/images/erosimg/logo1.png" style="height:50px" class="img-responsive" alt="Indulge"/></a></center>
             </div>
-        <div class="col-xs-2 header-columns">FAQ's</div>
-        <div class="col-xs-3 header-columns" data-toggle="modal" data-target=".bs-example-modal-lg">Login</div>
-        <div class="col-xs-3 header-columns">Join Us</div>
+        <div class="col-sm-2 header-columns"><a  href="${pageContext.servletContext.contextPath }/html/faq.html">FAQ's</a></div>
+			<div class="col-sm-3 header-columns"><a  href="${pageContext.servletContext.contextPath }/merchant/login">Login</a></div>
+			<div class="col-sm-3 header-columns"><a  href="${pageContext.servletContext.contextPath }/register/input">Join Us</a></div>
       </div>
-    </div>
+     <div class="row row15">
+		<c:if test="${not empty error_message}">
+			<div class="lh10">&nbsp;</div>
+			<div class="alert alert-danger">${error_message}</div>
+		</c:if>
+		<c:if test="${not empty success_message}">
+			<div class="lh10">&nbsp;</div>
+			<div class="alert alert-success">${success_message}</div>
+		</c:if>
+	<div class="row row15">
+		<c:if test="${not empty SPRING_SECURITY_LAST_EXCEPTION}">
+			<div class="lh10">&nbsp;</div>
+	        <div class="alert alert-danger">Unsuccessful Login : <c:out value="${SPRING_SECURITY_LAST_EXCEPTION.message}"/>.</div>
+		</c:if>
+	</div>
+	</div>
     <div class = "row row15" style="border:1px solid #aea190; margin-top:30px;">
       <div class="col-md-15" style="padding:0px">
         <div style="background: url('${pageContext.servletContext.contextPath }/images/erosimg/front.png') center center no-repeat;background-size:cover;height:480px;width:100%;border-bottom: solid 4px #1fbbad; padding-top:250px">
@@ -78,11 +78,11 @@
                 <input type="password" required="" placeholder="Password" class="form-control sign-in-pass sign-in-place font-size-16" name='password'>
               </div>
               <div class="form-group font-size-16" style="text-align:right">
-                Forgot Password ?
+               <a href="${pageContext.servletContext.contextPath}/register/inputforgot"> Forgot Password ?</a>
               </div>
               <button type="submit" class="btn btn-lg btn-primary btn-block btn-login" name="submit">Login</button>
               <div class="form-group font-size-20" style="text-align:center; margin-top:10px">
-                Don't have an account ? Sign Up.
+                <a href="${pageContext.servletContext.contextPath}/register/input" style="text-decoration:none;">Don't have an account ? Sign Up.</a>
               </div>
         </form>
       </div>

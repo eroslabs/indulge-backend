@@ -8,9 +8,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
       <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
-    <link href="${pageContext.servletContext.contextPath }/css/custom.css" rel="stylesheet" >
+    
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,500,500,200,600,500' rel='stylesheet' type='text/css'>
-    <link href="${pageContext.servletContext.contextPath }/css/merchant.css" rel="stylesheet" />
+    <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -138,6 +138,44 @@
 		</form:form>
 		</div>
 	</div>
+	<div class="modal fade" id="myModalSch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Schedule Details</h4>
+      </div>
+      <div class="modal-body">
+      ..
+      <form:form action="saveDeal" method="post" id="createDealForm" modelAttribute="deal" class="form-horizontal white-bg" style="margin-bottom:20px; margin-top:20px"  >
+      	<c:forEach var="category" items="${categories}" varStatus="stat">
+			<c:forEach var="service" items="${category.services}" varStatus="state">
+				<c:forEach var="serviceCat" items="${uniqueService}" varStatus="status">
+					<c:if test="${serviceCat == service.id}">
+						<option value="${service.name} - All" id="${service.id}"> ${service.name} - All</option>
+						<c:forEach var="serviceType" items="${services}" varStatus="serviceStatus">
+							<c:if test="${service.id==serviceType.serviceId}">
+								${serviceType.name}
+								${serviceType.id}"
+								${serviceType.name}
+								${serviceType.serviceName}
+								${serviceType.name}
+								{serviceType.categoryName}
+							</c:if>
+						</c:forEach>	
+					</c:if>
+				</c:forEach>
+			</c:forEach>
+		</c:forEach>	
+		</form:form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
 	<!--
 	<div class="container">
 		<div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 formRightBody">

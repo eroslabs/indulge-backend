@@ -34,8 +34,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("Username not found.");
         }
  
-        
- 
         Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
  
         return new UsernamePasswordAuthenticationToken(user, password, authorities);

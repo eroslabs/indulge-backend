@@ -8,9 +8,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
       <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
-    <link href="${pageContext.servletContext.contextPath }/css/custom.css" rel="stylesheet" >
+    
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,500,500,200,600,500' rel='stylesheet' type='text/css'>
-    <link href="${pageContext.servletContext.contextPath }/css/merchant.css" rel="stylesheet" />
+    <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -46,7 +46,7 @@
             	<li><a href="${pageContext.servletContext.contextPath }/merchant/home" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/Info-active.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Basic Info</a></li>
             	<li><a href="${pageContext.servletContext.contextPath }/merchant/inputDigitalMenu" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/Service-active.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Services</a></li>
             	<li class="active" style="height:50px;background-color:#f0f0f0"><a href="${pageContext.servletContext.contextPath }/merchant/listDeals" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/Deal.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Deals</a></li>
-            	<li><a href="${pageContext.servletContext.contextPath }/merchant/createMerchantServices" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/account.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Account</a></li>
+            	<li><a href="${pageContext.servletContext.contextPath }/j_spring_security_logout" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/account.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Logout</a></li>
             </ul>
         </div>
     </div>
@@ -85,7 +85,8 @@
 	</div>
 	<div class="container-fluid" id="currentdeals">
 		<div class="row row15">
-			<c:if test="${deals ne null and  not empty deals}">
+		<c:choose>
+			<c:when test="${deals ne null and  not empty deals}">
 				<c:forEach var="deal" items="${deals}" varStatus="status"> 
 				<c:if test="${deal.validTill > now}">
 					<div class="col-lg-6 col-md-6 col-sm-8" style="margin-left:6%; border:1px solid; margin-top:20px;">
@@ -124,7 +125,13 @@
 					</div>
 				</c:if>
 				</c:forEach>	
-			</c:if>
+			</c:when>
+			<c:otherwise>
+			<div class="col-lg-6 col-md-6 col-sm-8" style="margin-left:6%;margin-top:20px;">
+						OOPS!! no deals defined.
+			</div>
+			</c:otherwise>
+			</c:choose>
 		</div>
 	</div>
 	<div class="container-fluid" id="pastdeals" style="display:none">

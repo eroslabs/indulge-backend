@@ -53,7 +53,7 @@ public interface UserDBService {
 	 * @param review
 	 * @return
 	 */
-	public User saveReview(UserReview review);
+	public Integer saveReview(UserReview review);
 
 	/**
 	 * @param param
@@ -75,4 +75,15 @@ public interface UserDBService {
 	 * @param param
 	 */
 	public void updateProfilePic(HashMap<String, String> param);
+
+	/**
+	 * @param param
+	 */
+	public void updateRating(HashMap<String, Object> param);
+
+	/**
+	 * @param string
+	 * @return
+	 */
+	public User fetchUserBySocialAuth(String string);
 }

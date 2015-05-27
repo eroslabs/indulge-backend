@@ -11,7 +11,7 @@ public class UserReview extends BaseModel{
 	private Integer merchantId;
 	private String text;
 	private String user;
-	private String userId;
+	private Integer userId;
 	private Float rating;
 	private Float cleanlinessRating;
 	private Float serviceRating;
@@ -116,6 +116,18 @@ public class UserReview extends BaseModel{
 	 */
 	public Integer getMerchantId() {
 		return merchantId;
+	}
+	/**
+	 * @return the userId
+	 */
+	public Integer getUserId() {
+		return userId;
+	}
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(Integer userId) {
+		this.userId = userId;
 	}
 
 }

@@ -3,19 +3,23 @@ package com.eros.core.model;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * indulge-api
  * author vikas created on Mar 26, 2015
  */
 public class MerchantSchedule extends BaseModel{
-	
+		
 	private static final long serialVersionUID = 1L;
+	private static final String[] weekDays = {" Sun", " Mon", " Tue"," Wed", " Thur", " Fri", " Sat"};
 	private Integer id;
 	private Integer merchantId;
     private String openingTime;
     private String closingTime;
     private String weekSchedule; 	 
 	private Boolean status;
+	private String weekStr;
 	
 	/**
 	 * 
@@ -100,5 +104,27 @@ public class MerchantSchedule extends BaseModel{
 	 */
 	public void setMerchantId(Integer merchantId) {
 		this.merchantId = merchantId;
+	}
+	/**
+	 * @return the weekStr
+	 */
+	public String getWeekStr() {
+		if(StringUtils.isNotBlank(weekSchedule)){
+			String[] days = weekSchedule.split("(?<=.)");
+			StringBuffer returnStr = new StringBuffer();
+			for (int i = 0; i < days.length; i++) {
+				if(StringUtils.isNotBlank(days[i]) && days[i].equals("1")){
+					returnStr.append(weekDays[i]);
+				}
+			}
+			this.weekStr = returnStr.toString();
+		}
+		return weekStr;
+	}
+	/**
+	 * @param weekStr the weekStr to set
+	 */
+	public void setWeekStr(String weekStr) {
+		this.weekStr = weekStr;
 	}
 	}

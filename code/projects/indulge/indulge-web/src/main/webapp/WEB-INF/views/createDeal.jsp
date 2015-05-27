@@ -11,9 +11,9 @@
 
 
     <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
-    <link href="${pageContext.servletContext.contextPath }/css/custom.css" rel="stylesheet" >
+    
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,500,200,600,700' rel='stylesheet' type='text/css'>
-    <link href="${pageContext.servletContext.contextPath }/css/merchant.css" rel="stylesheet" />
+    <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/css/new.css" rel="stylesheet" >
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -182,7 +182,7 @@
 					    </div>
 					</c:if>
 					<center>
-						<input type="button" onclick="submitamount()" class="signup-button font-size-16 font-type" value="Save and Next">
+						<input type="button" onclick="return submitamount();" class="signup-button font-size-16 font-type" value="Save and Next">
 					</center>
 				</div>
 				<div id="entervalidity" style="display:none">
@@ -291,34 +291,17 @@
 		alert(checkedValues);
 	}
 	function submitservice(){
-		/*
-		var inp1 = $('#browser1inp').val();
-		var inp2 = $('#browser2inp').val();
-		var inp3 = $('#browser3inp').val();
-		<c:forEach var="category" items="${categories}" varStatus="status">
-			<c:forEach var="catService" items="${category.services}" varStatus="serviceStatus">
-				if("${catService.name}"== inp1)
-				{
-					var catid1 = "${category.id}";
-					var serid1 = "${catService.id}";
-				}
-				else if("${catService.name}"== inp2 )
-				{
-					var catid2 = "${category.id}";
-					var serid2 = "${catService.id}";	
-				}
-				"${catService.name}"== inp3)
-			</c:forEach>
-		</c:forEach>
-		alert(serid);*/
+		
 			var checkedValues = $('input:checkbox:checked').map(function() {
 			    return this.value;
 			}).get().length;
 			var data = $('#browser');
             var inp1 = $('#browser1inp').val();
+            var value1 = '';
+            if(inp1 != ''){
             var val1 = $(data).find('option[value="' + inp1 + '"]');
             var id1 = val1.attr('id');
-            var value1 = val1.attr('value');
+            value1 = val1.attr('value');
             if(value1 != '')
             {
 	            if(value1.indexOf('-All')!= -1){
@@ -328,23 +311,29 @@
 	            	$("#service1").val(id1);
 	            }
 	        }
+            }
             var inp2 = $('#browser2inp').val();
-            var val2 = $(data).find('option[value="' + inp2 + '"]');
-            var id2 = val2.attr('id');
-            var value2 = val2.attr('value').trim();
-            if(value2 != '')
-            {
-	          	if(value2.indexOf('-All')!= -1){
-	            	$("#servicetype2").val(id2);
-	            }
-	            else{
-	            	$("#service2").val(id2);
-	            }
-	        }
+            var value2 = '';
+            if(inp2 != ''){
+	            var val2 = $(data).find('option[value="' + inp2 + '"]');
+	            var id2 = val2.attr('id');
+	            value2 = val2.attr('value').trim();
+	            if(value2 != '')
+	            {
+		          	if(value2.indexOf('-All')!= -1){
+		            	$("#servicetype2").val(id2);
+		            }
+		            else{
+		            	$("#service2").val(id2);
+		            }
+		        }
+            }
             var inp3 = $('#browser3inp').val();
+            var value3 = '';
+            if(inp3 != ''){
             var val3 = $(data).find('option[value="' + inp3 + '"]');
             var id3 = val3.attr('id');
-            var value3 = val3.attr('value').trim();
+            value3 = val3.attr('value').trim();
             if(value3 != '')
             {
 	           	if(value3.indexOf('-All')!= -1){
@@ -354,6 +343,7 @@
 	            	$("#service3").val(id3);
 	            }
 	        }
+            }
 	        if(value1 == '' && value2 == '' && value3 == '' && checkedValues==0){
 	        	alert("Please enter atleast one service or select one category");
 	        	return false;
@@ -364,7 +354,12 @@
 	function submitamount(){
 		if( $("#flatOff").val().trim() == '' && $("#percentOff").val().trim() == '')
 		{
-			alert("Please enter Flat off or hPercent Off");
+			alert("Please enter flat off or percent off");
+			return false;
+		}
+		if( $("#flatOff").val().trim() != '' && $("#percentOff").val().trim() != '')
+		{
+			alert("Please enter either flat off or percent off");
 			return false;
 		}
 		$("#enteramount").css("display","none");

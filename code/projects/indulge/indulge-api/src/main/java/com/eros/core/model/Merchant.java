@@ -1,6 +1,10 @@
 package com.eros.core.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -74,7 +78,8 @@ public class Merchant extends BaseModel {
     @Field(type = FieldType.Integer, index = FieldIndex.not_analyzed,store=true)
     private Integer luxuryRating;
     private String finalWeekSchedule;
-  
+    private List<Integer> categoryIds;
+    
 	/**
 	 * @return the deals
 	 */
@@ -248,6 +253,26 @@ public class Merchant extends BaseModel {
 	 */
 	public String getLocality() {
 		return locality;
+	}
+	/**
+	 * @return the categoryIds
+	 */
+	public List<Integer> getCategoryIds() {
+		if (services != null) {
+			Set<Integer> cats = new HashSet<Integer>();
+			for (MerchantService service : services) {
+				cats.add(service.getCategoryId());
+			}
+			categoryIds = new ArrayList<Integer>();
+			categoryIds.addAll(cats);
+		}
+		return categoryIds;
+	}
+	/**
+	 * @param categoryIds the categoryIds to set
+	 */
+	public void setCategoryIds(List<Integer> categoryIds) {
+		this.categoryIds = categoryIds;
 	}
 	/**
 	 * @return the luxuryRating
