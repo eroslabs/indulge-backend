@@ -153,12 +153,15 @@ public class AdminServiceImpl implements AdminService {
 		try {
 			Merchant merchant = merchantService.getMerchantById(id);
 			if (merchant != null && merchant.getId() != null) {
-				merchantRepository.save(merchant);
+				merchantRepository.index(merchant);
 			}
 			List<MerchantDeal> deals = merchantService
 					.fetchDealWithMerchant(id);
-			if (deals != null && deals.size() > 0) {
-				dealRepository.save(deals);
+			if (deals != null && deals.size() > 0) { 
+				for (MerchantDeal merchantDeal : deals) {
+					dealRepository.index(merchantDeal);	
+				}
+				
 			}
 		} catch (Exception e) {
 			LOG.error("Error in updating cache while enabling a merchant", e);
@@ -190,6 +193,11 @@ public class AdminServiceImpl implements AdminService {
 							.fetchDealWithMerchant(merchant.getId());
 					if (deals != null && deals.size() > 0) {
 						for (MerchantDeal merchantDeal : deals) {
+							try {
+							    Thread.sleep(1000);                 //1000 milliseconds is one second.
+							} catch(InterruptedException ex) {
+							    Thread.currentThread().interrupt();
+							}
 							dealRepository.index(merchantDeal);
 						}
 						

@@ -11,7 +11,7 @@ import com.eros.core.model.user.User;
  * 
  * @author vikas
  */
-public interface UserService {
+public interface UserService extends Constants {
 
 	public User saveUser(User user)  throws Exception;
 
@@ -53,7 +53,7 @@ public interface UserService {
 	/**
 	 * @param email
 	 */
-	public Integer saveForgotPasswordRequest(String email, Integer type) throws Exception;
+	public void saveForgotPasswordRequest(String email, Integer type) throws Exception;
 
 	/**
 	 * @param email
@@ -74,6 +74,8 @@ public interface UserService {
 	 * @return
 	 */
 	public byte[] fetchResource(String type, Integer id);
-
+	
+	public void forgotPassword(String email, String requestId, String password)
+			throws Exception;
 
 }

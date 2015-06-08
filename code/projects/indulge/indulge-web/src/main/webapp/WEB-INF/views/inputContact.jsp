@@ -8,7 +8,7 @@
    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
+    <link href="${pageContext.servletContext.contextPath }/css/bootstrap.min.css" rel="stylesheet" >
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,500,200,600,700' rel='stylesheet' type='text/css'>
     <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
@@ -17,7 +17,7 @@
     <script src="${pageContext.servletContext.contextPath }/js/jquery-1.11.1.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="${pageContext.servletContext.contextPath }/js/bootstrap.min.js"></script>
-    <script src="${pageContext.servletContext.contextPath }/js/jquery.validate.js"></script>
+    <script src="${pageContext.servletContext.contextPath }/js/jquery.validate-min.js"></script>
   </head>
 <body class="body-bg">
 	<div class="container-fluid">
@@ -42,7 +42,7 @@
 	    		
 	    		<form:form method="POST" action="saveContact" modelAttribute="merchant" class="form-horizontal white-bg" id="creatMerchantForm" style="margin-top:15px; margin-bottom:15px;padding-bottom:30px">
 		    		<div class="row row15 font-size-20 location-head font-type" style="background-color:#1fbbad; margin-bottom:15px">
-			    			Enter Contact Info
+			    			Enter Contact Numbers (Landline/Mobile)
 			    	</div>
 		    		<div style="width:70%">
 		    			<c:if test="${merchant.phones ne null and  not empty merchant.phones}">
@@ -80,10 +80,10 @@
 			  				</div>
 			  				<div class="form-group">
 			    				<label class="sr-only" for="exampleInputAmount">Amount (in dollars)</label>
-			    				<input id="software" placeholder="Software(If Applicable" class="form-control signup-field" type="text" name="software" value="${merchant.software}">
+			    				<input id="software" placeholder="Software Name(If Applicable)" class="form-control signup-field" type="text" name="software" value="${merchant.software}">
 			  				</div>
 					</div>
-					<input type="submit" value="Save and Next" class="signup-button font-size-16 font-type">
+					<input type="submit" value="Save and Next" class="signup-button font-size-16 font-type white-text">
 					<div class="white-bg col-md-22 col-lg-22 col-xs-22 col-sm-22" style="text-align:right">        
 						<a class="font-size-16 font-type" href="inputSchedule"><u>Skip this step<u></a>
 					</div>
@@ -97,15 +97,15 @@
 		jQuery(function(){
 	
 			jQuery("#phone1").validate({
-				expression: "if ((jQuery.trim(VAL)).length == 10 && jQuery.isNumeric(VAL)  ) return true; else {$('div#uploading').hide(); return false;}",
+				expression: "if ((jQuery.trim(VAL)).length == 11 && jQuery.isNumeric(VAL)  ) return true; else {$('div#uploading').hide(); return false;}",
 		        message: "Contact number should be of 10 numeric digits"
 		    });
 			jQuery("#phone2").validate({
-				expression: "if (((jQuery.trim(VAL)).length == 10 && jQuery.isNumeric(VAL)) || jQuery.trim(VAL)).length == 0   ) return true; else {$('div#uploading').hide(); return false;}",
+				expression: "if (((jQuery.trim(VAL)).length == 11 && jQuery.isNumeric(VAL)) || jQuery.trim(VAL)).length == 0   ) return true; else {$('div#uploading').hide(); return false;}",
 		        message: "Contact number should be of 10 numeric digits"
 		    });
 			jQuery("#phone3").validate({
-				expression: "if(((jQuery.trim(VAL)).length == 10 && jQuery.isNumeric(VAL)) || jQuery.trim(VAL)).length == 0   ) return true; else {$('div#uploading').hide(); return false;}",
+				expression: "if(((jQuery.trim(VAL)).length == 11 && jQuery.isNumeric(VAL)) || jQuery.trim(VAL)).length == 0   ) return true; else {$('div#uploading').hide(); return false;}",
 		        message: "Contact number should be of 10 numeric digits"
 		    });
 			

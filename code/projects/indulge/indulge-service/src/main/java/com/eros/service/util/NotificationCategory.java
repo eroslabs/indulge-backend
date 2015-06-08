@@ -10,7 +10,8 @@ package com.eros.service.util;
  */
 public interface NotificationCategory {
 
-	public final String forgotPasswordTemplate = "FORGOT_PASSWORD";
+	public final String forgotPasswordTemplate = "FORGOT_PASSWORD_MERCHANT";
+	public final String forgotPasswordUserTemplate = "FORGOT_PASSWORD_USER";
 	public final String registerNewMerchant = "NEW_MERCHANT";
 	
 }

@@ -4,11 +4,13 @@
  */
 package com.eros.admin.controller;
 
+import static com.eros.constants.RequestConstants.EMAIL;
+
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
@@ -19,11 +21,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.eros.core.BaseController;
-import com.eros.service.AdminService;
-import com.eros.service.MerchantCustomService;
 import com.eros.service.search.SearchResponse;
 
 /**
@@ -36,11 +37,6 @@ public class AdminController extends BaseController{
 	private static final String MERCHANT_STATS = "merchant_stats";
 	protected static Log LOGGER = LogFactory
 			.getLog(AdminController.class);
-	@Resource(name = "merchantService")
-	protected MerchantCustomService merchantService;
-	
-	@Resource(name = "adminService")
-	protected AdminService adminService;
 	
 	@RequestMapping(value = "/home")
 	public String home(ModelMap modelMap, Principal principle,
@@ -71,7 +67,7 @@ public class AdminController extends BaseController{
 		map.put(RESULT, response.getResponse());
 		map.put(STATUS, success);
 		if (!success) {
-			redirectAttributes.addFlashAttribute("error_message",
+			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 					"Error:: in fetching deactive merchant : ");
 			return "redirect:/admin/home";
 		}
@@ -93,7 +89,7 @@ public class AdminController extends BaseController{
 		map.put(RESULT, response.getResponse());
 		map.put(STATUS, success);
 		if (!success) {
-			redirectAttributes.addFlashAttribute("error_message",
+			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 					"Error:: in fetching merchant : "+s);
 			return "redirect:/admin/home";
 		}
@@ -155,11 +151,11 @@ public class AdminController extends BaseController{
 			adminService.uploadAllActiveMerchants();
 		} catch (Exception e) {
 			LOGGER.error("Error in retrieving Stats", e);
-			redirectAttributes.addFlashAttribute("error_message",
+			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 					"Error:: in loading all merchants  ");
 			return "redirect:/admin/home";
 		}
-		redirectAttributes.addFlashAttribute("success_message",
+		redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE,
 				"Loading all merchants : Will take some time ");
 		return "redirect:/admin/home";
 	}
@@ -171,14 +167,65 @@ public class AdminController extends BaseController{
 			adminService.fetchAndUpdateLatLng(id);
 		} catch (Exception e) {
 			LOGGER.error("Error in retrieving lat Long", e);
-			redirectAttributes.addFlashAttribute("error_message",
+			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 					" Some error occured while updating Lat/Lng");
 			return "redirect:/admin/home";
 		}
-		redirectAttributes.addFlashAttribute("success_message",
+		redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE,
 				" Lat Longs updated for all the ids  " + id.toString());
 		return "redirect:/admin/home";
 	}
 	
-	
+	/**
+	 * `
+	 * 
+	 * @param userEmail
+	 * @param dealId
+	 * @return
+	 */
+	@RequestMapping(value = "/loadMerchant", method = RequestMethod.GET)
+	public @ResponseBody
+	Map load(@RequestParam(EMAIL) String email) {
+		Boolean success = true;
+		try {
+			searchService.loadMerchant(email);
+		} catch (Exception e) {
+			success = false;
+			LOGGER.error("Error in uploading merchant ::" + email, e);
+		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put(STATUS, success);
+		if (!success) {
+			map.put(ERROR, "Error in loading Merchant");
+		}
+		return map;
+
+	}
+
+	/**
+	 * `
+	 * 
+	 * @param userEmail
+	 * @param dealId
+	 * @return
+	 */
+	@RequestMapping(value = "/loadDeal", method = RequestMethod.GET)
+	public @ResponseBody
+	Map load(@RequestParam("id") Integer id) {
+		Boolean success = true;
+		try {
+			searchService.loadDeal(id);
+		} catch (Exception e) {
+			success = false;
+			LOGGER.error("Error in uploading deal::" + id, e);
+		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put(STATUS, success);
+		if (!success) {
+			map.put(ERROR, "Error in loading Merchant");
+		}
+		
+		return map;
+
+	}	
 }

@@ -125,7 +125,7 @@ public class QueryUtils implements SearchConstants{
 		ArrayList<FilterBuilder> filterBuilderList = new ArrayList<FilterBuilder>();
 
 		if (filter.getGenderSupport() != null) {
-			filterBuilderList.add(boolFilter().must(
+			filterBuilderList.add(boolFilter().must( 
 					inFilter(GENDER_FIELD, filter.getGenderSupport(),DEFAULT_HOMESERVICE )));
 		}
 		if (filter.getPriceTo() != null) {

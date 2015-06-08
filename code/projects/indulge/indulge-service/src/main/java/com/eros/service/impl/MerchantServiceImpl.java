@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +26,7 @@ import com.eros.core.model.Merchant;
 import com.eros.core.model.MerchantDeal;
 import com.eros.core.model.MerchantImage;
 import com.eros.core.model.MerchantPhone;
+import com.eros.core.model.MerchantSchedule;
 import com.eros.core.model.MerchantService;
 import com.eros.core.model.Reviews;
 import com.eros.core.model.ServiceCategory;
@@ -47,20 +49,6 @@ import com.eros.service.util.TinyUrlUtility;
 @Service("merchantService")
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 public class MerchantServiceImpl implements MerchantCustomService {
-	/**
-	 * 
-	 */
-	private static final String VERIFICATION_URL = "verificationUrl";
-
-	/**
-	 * 
-	 */
-	private static final String FORGOT_PASSWORD_URL_TEMPLATE = "http://justindulge.in/register/inputPassword?identifier=%s&requestId=%s";
-
-	/**
-	 * 
-	 */
-	private static final String VERIFY_MARCHANT_TEMPLATE = "http://justindulge.in/register/verifyMerchant?identifier=%s&id=%s";
 
 	private static final Logger LOG = LoggerFactory
 			.getLogger(MerchantServiceImpl.class);
@@ -81,11 +69,14 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	@Value("${merchant.base.path}")
 	private String MERCHANT_BASE_PATH;
 
+	@Value("${merchant.enable.sms}")
+	private Boolean MERCHANT_ENABLE_SMS;
+
 	public Boolean ifMerchantExist(String email, String phone) {
 		HashMap<String, Object> param = new HashMap<String, Object>(3);
-		param.put("email", email);
-		param.put("phone", phone);
-		param.put("exist", null);
+		param.put(EMAIL, email);
+		param.put(PHONE, phone);
+		param.put(EXIST, null);
 		Merchant merchant = merchantDBService.merchantExist(param);
 
 		return (merchant == null ? false : true);
@@ -120,10 +111,10 @@ public class MerchantServiceImpl implements MerchantCustomService {
 			Integer saved = merchantDBService.registerMerchant(merchant);
 			if (StringUtils.isNotEmpty(merchant.getEmail())) {
 				Map<String, Object> params = new HashMap<String, Object>();
-				params.put("email", merchant.getEmail());
-				params.put("merchant", merchant);
+				params.put(EMAIL, merchant.getEmail());
+				params.put(MERCHANT, merchant);
 				sendNotification(NotificationCategory.registerNewMerchant,
-						merchant);
+						merchant, null);
 			}
 
 			return;
@@ -260,8 +251,17 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	@Override
 	public Boolean saveSchedule(Merchant contextMerchant) {
 		try {
-			merchantDBService.cleanSchedule(contextMerchant);
-			merchantDBService.saveSchedule(contextMerchant);
+			if (contextMerchant.getSchedule() != null
+					&& contextMerchant.getSchedule().size() > 0) {
+				for (Iterator<MerchantSchedule> it = contextMerchant.getSchedule().iterator(); it.hasNext();) {
+					MerchantSchedule schedule = it.next();
+				    if (StringUtils.isBlank(schedule.getOpeningTime()) || StringUtils.isBlank(schedule.getClosingTime()) || StringUtils.isBlank(schedule.getWeekSchedule())) { 
+				        it.remove(); 
+				    }
+				}
+				merchantDBService.cleanSchedule(contextMerchant);
+				merchantDBService.saveSchedule(contextMerchant);
+			}
 			return true;
 		} catch (Exception e) {
 			LOG.error("Error in saving merchant phones: ", e);
@@ -314,9 +314,9 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	public Reviews fetchReviews(Integer merchantId, int i, int j) {
 		try {
 			HashMap<String, Object> params = new HashMap<String, Object>(3);
-			params.put("id", merchantId);
-			params.put("start", i);
-			params.put("rows", j);
+			params.put(ID, merchantId);
+			params.put(START, i);
+			params.put(ROWS, j);
 			Integer total = merchantDBService
 					.fetchTotalMerchantReviews(merchantId);
 			Reviews reviews = null;
@@ -402,9 +402,9 @@ public class MerchantServiceImpl implements MerchantCustomService {
 			Integer start, Integer rows) {
 		try {
 			HashMap<String, Object> params = new HashMap<String, Object>(3);
-			params.put("id", id);
-			params.put("start", start);
-			params.put("rows", rows);
+			params.put(ID, id);
+			params.put(START, start);
+			params.put(ROWS, rows);
 			params.put("coupon", coupon);
 			List<MerchantDeal> merchantDeals = merchantDBService
 					.fetchMerchantDeals(params);
@@ -437,7 +437,7 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	public List<MerchantDeal> fetchDealWithMerchant(Integer id) {
 		try {
 			HashMap<String, Object> params = new HashMap<String, Object>(3);
-			params.put("id", id);
+			params.put(ID, id);
 			List<MerchantDeal> merchantDeals = merchantDBService
 					.fetchDealWithMerchant(id);
 			return merchantDeals;
@@ -496,8 +496,10 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	public Boolean saveDigitalMenus(Merchant contextMerchant) throws Exception {
 		try {
 			Map<String, Object> param = new HashMap<String, Object>(1);
+			if(contextMerchant.getMenus() != null && contextMerchant.getMenus().size() > 0){
 			param.put("list", contextMerchant.getMenus());
 			merchantDBService.saveMerchantMenu(param);
+			}
 			merchantDBService.updateServiceMeta(contextMerchant);
 			return true;
 		} catch (Exception e) {
@@ -522,23 +524,23 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	}
 
 	@Override
-	public String saveForgotPasswordRequest(String merchantIdentifier)
-			throws Exception {
+	public String saveForgotPasswordRequest(String merchantIdentifier,
+			Integer type) throws Exception {
 
 		try {
 			Map<String, Object> param = new HashMap<String, Object>(3);
-			param.put("email", merchantIdentifier);
-			param.put("type", 0);
-			param.put("identifier", RandomStringUtils.random(8, false, true));
+			param.put(EMAIL, merchantIdentifier);
+			param.put(TYPE, type);
+			param.put(IDENTIFIER, RandomStringUtils.random(8, false, true));
 			Merchant merchant = getMerchantByEmailOrPhone(merchantIdentifier);
 			if (merchant == null) {
 				throw new Exception("Merchant doesnt exist with this email");
 			}
 			merchantDBService.saveForgotRequest(param);
-			param.put("merchant", merchant);
+			param.put(MERCHANT, merchant);
 			sendNotification(NotificationCategory.forgotPasswordTemplate,
-					merchant);
-			return param.get("identifier").toString();
+					merchant, param.get(IDENTIFIER).toString());
+			return param.get(IDENTIFIER).toString();
 		} catch (Exception e) {
 			LOG.error("Error in saving User review : ", e);
 			throw new Exception("Forgot request cannot be saved", e);
@@ -549,14 +551,15 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	 * @param string
 	 * @param param
 	 */
-	private void sendNotification(String template, Merchant merchant)
-			throws Exception {
+	private void sendNotification(String template, Merchant merchant,
+			String identifier) throws Exception {
 		try {
 			if (StringUtils.isBlank(template)) {
 				return;
 			}
 			Message message = new Message(NotificationType.BOTH);
-			if (StringUtils.isNotBlank(merchant.getPhone())) {
+			if (MERCHANT_ENABLE_SMS
+					&& StringUtils.isNotBlank(merchant.getPhone())) {
 				message.setPhoneNumbers(new String[] { merchant.getPhone() });
 			}
 
@@ -575,9 +578,9 @@ public class MerchantServiceImpl implements MerchantCustomService {
 				map.put(VERIFICATION_URL, TinyUrlUtility.getTinyUrl(String
 						.format(FORGOT_PASSWORD_URL_TEMPLATE, merchant
 								.getEmail() != null ? merchant.getEmail()
-								: merchant.getPhone(), merchant.getId())));
+								: merchant.getPhone(), identifier)));
 			}
-			map.put("merchant", merchant);
+			map.put(MERCHANT, merchant);
 			message.setDataMap(map);
 			message.setMessageTemplate(template);
 			notificationService.sendNotification(message);
@@ -590,7 +593,7 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	}
 
 	/*
-	 * (non-Javadoc)
+	 * Changes The password for change password request (non-Javadoc)
 	 * 
 	 * @see com.eros.service.UserService#changePassword(java.lang.String,
 	 * java.lang.String, java.lang.String)
@@ -600,9 +603,9 @@ public class MerchantServiceImpl implements MerchantCustomService {
 			throws Exception {
 		try {
 			Map<String, Object> param = new HashMap<String, Object>(3);
-			param.put("email", email);
-			param.put("requestId", requestId);
-			param.put("passphrase", passphrase);
+			param.put(EMAIL, email);
+			param.put(REQUEST_ID, requestId);
+			param.put(PASSPHRASE, passphrase);
 			Integer i = merchantDBService.updatePassword(param);
 			if (i <= 0) {
 				throw new Exception("Error in update password");
@@ -714,25 +717,75 @@ public class MerchantServiceImpl implements MerchantCustomService {
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.eros.service.MerchantCustomService#verifyMerchant(java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.eros.service.MerchantCustomService#verifyMerchant(java.lang.String,
+	 * java.lang.String)
 	 */
 	@Override
 	public void verifyMerchant(String identifier, String id) throws Exception {
-		if(StringUtils.isBlank(id) || StringUtils.isBlank(identifier)){
+		if (StringUtils.isBlank(id) || StringUtils.isBlank(identifier)) {
 			throw new Exception("Invalid verification request");
 		}
-		try{
+		try {
 			Map param = new HashMap<String, String>();
-			param.put("identifier", identifier);
-			param.put("id", id);
+			param.put(IDENTIFIER, identifier);
+			param.put(ID, id);
 			Integer count = merchantDBService.verify(param);
-			if(count == null || count ==0){
+			if (count == null || count == 0) {
 				throw new Exception("Invalid verification request");
 			}
-		}catch (Exception e) {
-			LOG.error("Invalid verification request" ,e);
+		} catch (Exception e) {
+			LOG.error("Invalid verification request", e);
 			throw e;
+		}
+
+	}
+
+	/*
+	 * Replaces the merchant password (non-Javadoc)
+	 * 
+	 * @see
+	 * com.eros.service.MerchantCustomService#updatePassword(java.lang.String,
+	 * java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void updatePassword(String identifier, String oldPassphrase,
+			String passphrase) throws Exception {
+		try {
+			Map<String, Object> param = new HashMap<String, Object>(3);
+			param.put(IDENTIFIER, identifier);
+			param.put(OLD_PASSPHRASE, oldPassphrase);
+			param.put(PASSPHRASE, passphrase);
+			Integer i = merchantDBService.changePassword(param);
+			if (i <= 0) {
+				throw new Exception("Error in update password");
+			}
+		} catch (Exception e) {
+			LOG.error("Error in changing password : ", e);
+			throw new Exception("Change password unsuccessful", e);
+		}
+
+	}
+
+	/* (non-Javadoc)
+	 * @see com.eros.service.MerchantCustomService#deleteImage(java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public void deleteImage(Integer imageId, Integer merchantId) throws Exception {
+		try {
+			Map<String, Object> param = new HashMap<String, Object>(3);
+			param.put(MERCHANT_ID, merchantId);
+			param.put("imageId", imageId);
+			Integer i = merchantDBService.disableImage(param);
+			if (i <= 0) {
+				throw new Exception("Error in disabling Image" + imageId);
+			}
+		} catch (Exception e) {
+			LOG.error("Error in disabling image : ", e);
+			throw new Exception("Error in disabling image", e);
 		}
 		
 	}

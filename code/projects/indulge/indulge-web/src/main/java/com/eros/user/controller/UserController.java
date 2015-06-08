@@ -2,16 +2,16 @@ package com.eros.user.controller;
 
 import static com.eros.constants.RequestConstants.DEAL_ID_PARAM;
 import static com.eros.constants.RequestConstants.EMAIL_PARAM;
+import static com.eros.constants.RequestConstants.ERROR_PARAM;
 import static com.eros.constants.RequestConstants.PASS_PHRASE;
 import static com.eros.constants.RequestConstants.REVIEW_PARAM;
-import static com.eros.constants.RequestConstants.USER_PARAM;
 import static com.eros.constants.RequestConstants.USER_ID;
-import static com.eros.constants.RequestConstants.ERROR_PARAM;
+import static com.eros.constants.RequestConstants.USER_PARAM;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
@@ -27,8 +27,6 @@ import com.eros.core.BaseController;
 import com.eros.core.model.ReportedError;
 import com.eros.core.model.UserReview;
 import com.eros.core.model.user.User;
-import com.eros.service.SearchService;
-import com.eros.service.UserService;
 import com.eros.utils.RequestUtils;
 
 /**
@@ -40,12 +38,6 @@ import com.eros.utils.RequestUtils;
 public class UserController extends BaseController {
 
 	protected static Log LOGGER = LogFactory.getLog(UserController.class);
-
-	@Resource(name = "userServiceImpl")
-	protected UserService userService;
-
-	@Resource(name = "searchService")
-	protected SearchService searchService;
 
 	/**
 	 * 
@@ -60,22 +52,22 @@ public class UserController extends BaseController {
 		Map userMap = (Map) map.get(USER_PARAM);
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		returnMap.put(STATUS, true);
-		User user  = null;
-		try{
+		User user = null;
+		try {
 			user = RequestUtils.populateUserObject(userMap);
 			if (user == null) {
 				throw new Exception("Invalid param map User missing");
 			}
-		}catch (Exception e) {
+		} catch (Exception e) {
 			LOGGER.error("Error in updating user " + map, e);
 			returnMap.put(ERROR, "Invalid User");
 			returnMap.put(STATUS, false);
 			return returnMap;
 		}
-		
+
 		try {
 			User savedUser = userService.saveUser(user);
-			if(savedUser != null){
+			if (savedUser != null) {
 				returnMap.put(USER_ID, savedUser.getId());
 			}
 		} catch (Exception e) {
@@ -234,11 +226,13 @@ public class UserController extends BaseController {
 	}
 
 	@RequestMapping(value = "/reportError", method = RequestMethod.POST)
-	public @ResponseBody Map reportError(@RequestBody Map map) {
-		Map<String , Object> errorObj = (Map<String , Object>)map.get(ERROR_PARAM);
+	public @ResponseBody
+	Map reportError(@RequestBody Map map) {
+		Map<String, Object> errorObj = (Map<String, Object>) map
+				.get(ERROR_PARAM);
 		ReportedError error = null;
 		Map<String, Object> returnMap = new HashMap<String, Object>();
-		returnMap.put(STATUS, true);		
+		returnMap.put(STATUS, true);
 		try {
 			error = RequestUtils.fillError(errorObj);
 			if (error == null) {
@@ -246,11 +240,11 @@ public class UserController extends BaseController {
 			}
 			userService.saveReportedError(error);
 		} catch (Exception e) {
-			LOGGER.error("Error in saving Error ::" , e);
+			LOGGER.error("Error in saving Error ::", e);
 			returnMap.put(ERROR, "Error in saving reported error");
 			returnMap.put(STATUS, false);
 		}
-		
+
 		return returnMap;
 
 	}
@@ -265,7 +259,7 @@ public class UserController extends BaseController {
 		return returnMap;
 
 	}
-	
+
 	/**
 	 * 
 	 * @param userEmail
@@ -275,17 +269,61 @@ public class UserController extends BaseController {
 	 */
 	@RequestMapping(value = "/resource/{type}/{id}", method = RequestMethod.GET)
 	public @ResponseBody
-	byte[] redeemDeal(@PathVariable("type") String type,@PathVariable("id") Integer id) {
+	byte[] redeemDeal(@PathVariable("type") String type,
+			@PathVariable("id") Integer id) {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		try {
 			byte[] imageBytes = userService.fetchResource(type, id);
-			return  imageBytes;
+			return imageBytes;
 		} catch (Exception e) {
-			LOGGER.error("Error in fetching image ::" + id + " of type "
-					+ type, e);
-			
+			LOGGER.error(
+					"Error in fetching image ::" + id + " of type " + type, e);
+
 		}
-				return null;
+		return null;
+
+	}
+
+	/**
+	 * Change password for existing user.
+	 * 
+	 * @param email
+	 * @param requestId
+	 * @param passphrase
+	 * @return
+	 */
+	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+	public @ResponseBody
+	Map changePasword(@RequestParam("userEmail") String email,
+			@RequestParam("oldPassphrase") String oldPassphrase,
+			@RequestParam("passphrase") String passphrase) {
+		Boolean error = false;
+		StringBuilder errorMessage = new StringBuilder();
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		try {
+			if (StringUtils.isBlank(email)
+					|| StringUtils.isBlank(oldPassphrase)
+					|| StringUtils.isBlank(passphrase)) {
+				throw new Exception("Invalid parameters for change password");
+			}
+			userService.changePassword(email, oldPassphrase, passphrase);
+
+		} catch (Exception e) {
+			error = true;
+			errorMessage.append("Error in changing password for ::");
+			errorMessage.append(email);
+			errorMessage.append(" Reason :" + e.getMessage());
+			LOGGER.error("Error in changing password for:::" + email, e);
+		}
+		map.put(STATUS, true);
+		map.put("userEmail", email);
+
+		if (error) {
+			map.put(ERROR, errorMessage.toString());
+			map.put("status", false);
+		}
+		return map;
 
 	}
 

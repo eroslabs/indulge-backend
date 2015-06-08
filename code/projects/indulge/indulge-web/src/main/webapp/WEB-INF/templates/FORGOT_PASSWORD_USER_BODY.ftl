@@ -1,0 +1,1 @@
+Forgot your Indulge Merchant password Dont worry, Just click on the link to reset it:${verificationUrl}

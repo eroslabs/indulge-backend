@@ -86,4 +86,9 @@ public interface UserDBService {
 	 * @return
 	 */
 	public User fetchUserBySocialAuth(String string);
+
+	/**
+	 * @param param
+	 */
+	public Integer changePassword(Map<String, Object> param);
 }

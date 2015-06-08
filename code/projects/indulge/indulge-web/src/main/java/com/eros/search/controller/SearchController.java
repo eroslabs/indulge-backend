@@ -88,58 +88,7 @@ public class SearchController extends BaseController {
 		return map;
 
 	}
-	/**
-	 * `
-	 * 
-	 * @param userEmail
-	 * @param dealId
-	 * @return
-	 */
-	@RequestMapping(value = "/loadMerchant", method = RequestMethod.GET)
-	public @ResponseBody
-	Map load(@RequestParam(EMAIL) String email) {
-		Boolean success = true;
-		try {
-			searchService.loadMerchant(email);
-		} catch (Exception e) {
-			success = false;
-			LOGGER.error("Error in uploading merchant ::" + email, e);
-		}
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put(STATUS, success);
-		if (!success) {
-			map.put(ERROR, "Error in loading Merchant");
-		}
-		return map;
 
-	}
-
-	/**
-	 * `
-	 * 
-	 * @param userEmail
-	 * @param dealId
-	 * @return
-	 */
-	@RequestMapping(value = "/loadDeal", method = RequestMethod.GET)
-	public @ResponseBody
-	Map load(@RequestParam("id") Integer id) {
-		Boolean success = true;
-		try {
-			searchService.loadDeal(id);
-		} catch (Exception e) {
-			success = false;
-			LOGGER.error("Error in uploading deal::" + id, e);
-		}
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put(STATUS, success);
-		if (!success) {
-			map.put(ERROR, "Error in loading Merchant");
-		}
-		
-		return map;
-
-	}
 
 	/**
 	 * 

@@ -19,7 +19,7 @@ import com.eros.core.model.State;
  * 
  * @author vikas
  */
-public interface MerchantCustomService {
+public interface MerchantCustomService extends Constants{
 
 	public Merchant getMerchantByEmail(String Email);
 	public void registerMerchant(Merchant merchant) throws Exception;
@@ -107,10 +107,11 @@ public interface MerchantCustomService {
 			throws Exception;
 	/**
 	 * @param email
+	 * @param i 
 	 * @return
 	 * @throws Exception
 	 */
-	public String saveForgotPasswordRequest(String email) throws Exception;
+	public String saveForgotPasswordRequest(String email, Integer i) throws Exception;
 	public Boolean ifMerchantExist(String email, String phone);
 	/**
 	 * @param name
@@ -142,4 +143,16 @@ public interface MerchantCustomService {
 	 * @param id
 	 */
 	public void verifyMerchant(String identifier, String id) throws Exception;
+	/**
+	 * @param string
+	 * @param oldPassphrase
+	 * @param passphrase
+	 */
+	public void updatePassword(String string, String oldPassphrase,
+			String passphrase)  throws Exception;
+	/**
+	 * @param id
+	 * @param merchantId 
+	 */
+	public void deleteImage(Integer imageId, Integer merchantId)  throws Exception;
 }

@@ -7,7 +7,7 @@
    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
+    <link href="${pageContext.servletContext.contextPath }/css/bootstrap.min.css" rel="stylesheet" >
     <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,500,200,600,700' rel='stylesheet' type='text/css'>
     <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
     <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
@@ -16,7 +16,7 @@
     <script src="${pageContext.servletContext.contextPath }/js/jquery-1.11.1.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="${pageContext.servletContext.contextPath }/js/bootstrap.min.js"></script>
-    <script src="${pageContext.servletContext.contextPath }/js/jquery.validate.js"></script>
+    <script src="${pageContext.servletContext.contextPath }/js/jquery.validate-min.js"></script>
 	<link href="${pageContext.servletContext.contextPath }/css/new.css" rel="stylesheet" >
   </head>
 
@@ -56,7 +56,7 @@
 		  				</div>
 		  				<div class="form-group">
 		    				<label class="sr-only" for="exampleInputAmount">Establishment</label>
-		    				<input id="establishment" class="form-control signup-field" type="text" name="establishment" placeholder="Establishment" value="${merchant.establishment }">
+		    				<input id="establishment" class="form-control signup-field" type="text" name="establishment" placeholder="Mall/Market/Hotel" value="${merchant.establishment }">
 		  				</div>
 		  				<div class="form-group">
 		    				<label class="sr-only" for="exampleInputAmount">Pincode</label>
@@ -68,7 +68,7 @@
 			  				</div>
 			  				<div class="col-xs-8">
 				  				<label>
-								    <input type="radio" name="ccAccepted" value="1" checked>
+								    <input type="radio" name="ccAccepted" value="1" >
 								    <span>Yes</span>
 								</label>
 								<label>
@@ -83,7 +83,7 @@
 			  				</div>
 			  				<div class="col-xs-8">
 				  				<label>
-								    <input type="radio" name="acFacility" value="1" checked>
+								    <input type="radio" name="acFacility" value="1" >
 								    <span>Yes</span>
 								</label>
 								<label>
@@ -97,7 +97,7 @@
 	    				<input id="state" class="form-control signup-field" type="hidden" name="state" placeholder="State" value="${merchant.state }">
 	    				<input id="country" class="form-control signup-field" type="hidden" name="country" placeholder="Country" value="${merchant.country }">
 					</div>
-					<input type="submit" value="Save and Next" class="signup-button font-size-16 font-type">
+					<input type="submit" value="Save and Next" class="signup-button font-size-16 font-type white-text">
 					<div class="white-bg col-md-22 col-lg-22 col-xs-22 col-sm-22" style="text-align:right">        
 						<a class="font-size-16 font-type" href="inputContact"><u>Skip this step<u></a>
 					</div>

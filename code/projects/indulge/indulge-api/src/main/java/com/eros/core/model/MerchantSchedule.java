@@ -12,7 +12,7 @@ import org.apache.commons.lang.StringUtils;
 public class MerchantSchedule extends BaseModel{
 		
 	private static final long serialVersionUID = 1L;
-	private static final String[] weekDays = {" Sun", " Mon", " Tue"," Wed", " Thur", " Fri", " Sat"};
+	private static final String[] weekDays = {" Sun", " Mon", " Tue"," Wed", " Thu", " Fri", " Sat"};
 	private Integer id;
 	private Integer merchantId;
     private String openingTime;
@@ -20,6 +20,9 @@ public class MerchantSchedule extends BaseModel{
     private String weekSchedule; 	 
 	private Boolean status;
 	private String weekStr;
+	private String openTime12Hrs;
+    private String closeTime12Hrs;
+    
 	
 	/**
 	 * 
@@ -127,4 +130,38 @@ public class MerchantSchedule extends BaseModel{
 	public void setWeekStr(String weekStr) {
 		this.weekStr = weekStr;
 	}
+	/**
+	 * @return the openTime12Hrs
+	 */
+	public String getOpenTime12Hrs() {
+		StringBuilder sb = new StringBuilder();
+		if(StringUtils.isNotBlank(openingTime)){
+			String[] arr = openingTime.split(":");
+			Integer hr = Integer.parseInt(arr[0]);
+			if(hr > 12){
+				hr=hr-12;
+				sb.append(hr).append(":").append(arr[1]).append( " PM");
+			}else{
+				sb.append(hr).append(":").append(arr[1]).append( " AM");
+			}
+		}
+		return sb.toString();
 	}
+	/**
+	 * @return the closeTime12Hrs
+	 */
+	public String getCloseTime12Hrs() {
+		StringBuilder sb = new StringBuilder();
+		if(StringUtils.isNotBlank(closingTime)){
+			String[] arr = closingTime.split(":");
+			Integer hr = Integer.parseInt(arr[0]);
+			if(hr > 12){
+				hr=hr-12;
+				sb.append(hr).append(":").append(arr[1]).append( " PM");
+			}else{
+				sb.append(hr).append(":").append(arr[1]).append( " AM");
+			}
+		}
+		return sb.toString();
+	}
+}

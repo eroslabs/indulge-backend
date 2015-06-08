@@ -3,66 +3,11 @@
 <%@taglib  prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
-    
-    <link href='http://fonts.googleapis.com/css?family=Raleway:400,500,500,200,600,500' rel='stylesheet' type='text/css'>
-    <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
-    <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
-    
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="${pageContext.servletContext.contextPath }/js/jquery-1.11.1.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="${pageContext.servletContext.contextPath }/js/bootstrap.min.js"></script>
-    <script src="${pageContext.servletContext.contextPath }/js/jquery.validate.js"></script>
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+ <head>
+    <jsp:include page="../views/globalhead.jsp" />
   </head>
-<body style="background-color:#f0f0f0">
-	<nav class="navbar navbar-default navbar-custom navbar-fixed-top nav-top" style="background-color:#735E56">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header page-scroll">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-           <a  class="navbar-brand" style="padding:0px 0px" href="${pageContext.servletContext.contextPath }/merchant/home">
-          		<img src="${pageContext.servletContext.contextPath }/images/logo.png" class="img-responsive" alt="Indulge" style="height:50px" /></a>
-        </div>
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav navbar-right">
-              <li><a href="${pageContext.servletContext.contextPath }/merchant/reviews" style="line-height:35px; margin-top:-5px;"><img src="${pageContext.servletContext.contextPath }/images/Stats-active.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp; Stats</a></li>
-            	<li><a href="${pageContext.servletContext.contextPath }/merchant/home" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/Info-active.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Basic Info</a></li>
-            	<li  class="active" style="height:50px;background-color:#f0f0f0"><a href="${pageContext.servletContext.contextPath }/merchant/inputDigitalMenu" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/service.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Services</a></li>
-            	<li><a href="${pageContext.servletContext.contextPath }/merchant/listDeals" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/Deal-active.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Deals</a></li>
-            	<li><a href="${pageContext.servletContext.contextPath }/merchant/createMerchantServices" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/account.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Account</a></li>
-            </ul>
-        </div>
-    </div>
-  </nav>
-	<nav class="navbar navbar-default navbar-fixed-bottom nav-bot">
-  		<div class="container-fluid">
-  			<center>
-  			<div class="col-xs-5" style="font:14px; padding-left:0px; padding-right:0px">Stats</div>
-  			<div class="col-xs-5 act" style="font:14px; padding-left:0px; padding-right:0px">Basic Info</div>
-  			<div class="col-xs-4" style="font:14px;padding-left:0px; padding-right:0px">Services</div>
-  			<div class="col-xs-5" style="font:14px;padding-left:0px; padding-right:0px">Deals</div>
-  			<div class="col-xs-5" style="font:14px;padding-left:0px; padding-right:0px">Account</div>
-  			</center>
-  		</div>
-	</nav>
-	<div class="lh20">&nbsp;</div>
+<body style="background-color:#fff">
+	<jsp:include page="../views/postmerchantHeader.jsp" />
 	<div class="container">
 		<!-- Nav tabs -->
 		<div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 formRightBody">
@@ -80,98 +25,127 @@
 		<div class="row row15">
 		<form:form method="POST" action="saveDigitalMenu" modelAttribute="merchant" enctype="multipart/form-data"  class="form-horizontal" id="uploadMerchantPhoto" >
 			<div class="col-lg-16 col-lg-push-4 col-md-18 col-md-push-3 col-sm-20 col-sm-push-2 col-xs-24">
-				<div class="row row15 font-size-20" style="padding-left:15px;padding-top:5px; padding-bottom:5px;background-color:#ddcbbd">Menu of services</div>
-
-
-
-				<div class="row row15" style="margin-top:15px">
-						<div class="col-md-4 col-sm-8 col-xs-12" style="padding-left:0px;padding-right:0px;">
-			    			<div id="file-upload-cont">
-							    <input id="file" type="file" name="files[]" multiple/>
-							    <div id="my-button1"></div>
-							    <input id="overlay" name="file"/>
-							</div>
-						</div>
-						<output id="list"></output>
-		    	</div><br>
-		    	<div class="row row15 font-size-20" style="padding-left:15px;padding-top:5px; padding-bottom:5px;background-color:#ddcbbd">Enter digital menu</div>
-			    <div class="row row15 font-size-16" style="padding-left:15px;margin-top:15px; padding-bottom:15px">
-			    	Create a digital menu and take advantage of our advanced filters.<a href="${pageContext.servletContext.contextPath}/merchant/inputServices"><br>
-			    	Define Services.</a>
-
-			    	<a style="float:right" data-toggle="modal" data-target="#myModalSch">View Digital Menu</a>
-		    	</div>
-
-		    	<div class="row row15 font-size-20" style="padding-left:15px;padding-top:5px; padding-bottom:5px;background-color:#ddcbbd">Home Services</div>
-		    	<div class="col-sm-16 font-size-16" style="padding-left:15px; padding-top:15px">
+			<div class="row row15 font-size-20" style="padding-left:15px;padding-top:5px; padding-bottom:5px;background-color:#f0f0f0;">Home Services</div>
+		    	<div class="col-sm-16 font-size-16" style="padding-left:15px; padding-top:20px">
 			    	<div class="form-group">
-			    		<div class="col-xs-14" style="padding-top:15px">
-						Go to customer home
-						</div>
+			    		<label  class="col-xs-9 control-label font-size-16" style="text-align:left;">Go to customer home</label>
 						<div class="col-xs-10">
 							<label>
 							    <input type="radio" name="homeService" value="1" <c:if test="${not empty merchant.homeService and merchant.homeService}">
 							    	checked
 							    	</c:if>>
-							    <span onclick="toggle()">Yes</span>
+							    <span onclick="toggle(true)">Yes</span>
 							</label>
 							<label>
-							    <input type="radio" name="homeService" value="0" <c:if test="${not empty merchant.homeService and merchant.homeService}">
+							    <input type="radio" name="homeService" value="0" <c:if test="${not empty merchant.homeService and not merchant.homeService}">
 							    	checked
 							    	</c:if>>
-							    <span>No</span>
+							    <span onclick="toggle(false)">No</span>
 							</label>
 						</div>
 				   	</div>
-				   	<div class="form-group" id="rad" style="display:none">
-			            <label  class="col-xs-14 control-label font-type font-size-16">Service Radius</label>
+				   	<div class="form-group" id="rad" <c:if test="${empty merchant.homeService or not merchant.homeService}">
+							    	style="display:none"
+							    	</c:if>>
+			            <label  class="col-xs-9 control-label font-size-16" style="text-align:left;">Service Radius</label>
 			            <div class="col-xs-10">
-							<input id="serviceRadius" class="form-control entry-field-service" type="text" name="serviceRadius" value="${merchant.serviceRadius}" placeholder="Distance in K.M.">
+							<input id="serviceRadius" class="form-control entry-field-service" type="text" name="serviceRadius" value="<c:if test='${merchant.serviceRadius ne 0}' >${merchant.serviceRadius}</c:if>" placeholder="Distance in K.M.">
 						</div>
 				   	</div>
 				</div>
-				<div class="col-sm-8" style="padding-top:15px">
-					<center><input type="submit" value="Save" class="save-button font-size-16 font-type"></center>
+				<div class="col-sm-8" style="padding-top:20px">
+					<center><input type="submit" value="Save Changes" class="btn btn-lg btn-green" style="width:100%;"></center>
 				</div>
+			</div>
+			<div class="col-lg-16 col-lg-push-4 col-md-18 col-md-push-3 col-sm-20 col-sm-push-2 col-xs-24">
+
+
+
+
+
+				<div class="row row15 font-size-20" style="padding-left:15px;padding-top:5px; padding-bottom:5px;background-color:#f0f0f0;">Menu of services</div>
+
+
+
+				<div class="row row15" style="margin-top:20px">
+						<div class="col-md-4 col-sm-8 col-xs-12" style="padding-left:0px;padding-right:0px;">
+			    			<div id="file-upload-cont">
+							    <input id="file" type="file" name="file" multiple/>
+							    <div id="my-button1"></div>
+							    <input id="overlay" name="file"/>
+							</div>
+						</div>
+						<output id="list"></output>
+			<c:forEach var="menu" items="${merchant.menus}" varStatus="state">
+							<c:forEach var="banner" items="${menu.image}" varStatus="status">
+								<div class="col-md-8 col-lg-6 col-sm-12 col-xs-24">
+									<img src="${pageContext.servletContext.contextPath }/images/merchant/${menu.image}" style="height:150px; width:150px">
+								</div>
+							</c:forEach>
+			</c:forEach>			
+		    	</div><br>
+		    	<div class="row row15 font-size-20" style="padding-left:15px;padding-top:5px; padding-bottom:5px;background-color:#f0f0f0;">Enter digital menu</div>
+			    <div class="row row15 font-size-16" style="padding-left:15px;margin-top:20px; padding-bottom:15px">
+			    	Create a digital menu and take advantage of our advanced filters.<a href="${pageContext.servletContext.contextPath}/merchant/inputServices"><br>
+			    	Define Services.</a>
+					<c:if test="${not empty merchant.services}">
+			    	<a style="float:right" data-toggle="modal" data-target="#myModalSch">View Digital Menu</a>
+			    	</c:if>
+		    	</div>
 
 			</div>
 		</form:form>
 		</div>
 	</div>
 	<div class="modal fade" id="myModalSch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" style="background-color:#1fbbad">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Schedule Details</h4>
+        <h4 class="modal-title white-text text-center text-uppercase font-size-24" id="myModalLabel" style="  padding: 15px;"><i style="font-weight:bold">${merchant.name} Rate Card</i></h4>
       </div>
-      <div class="modal-body">
-      ..
-      <form:form action="saveDeal" method="post" id="createDealForm" modelAttribute="deal" class="form-horizontal white-bg" style="margin-bottom:20px; margin-top:20px"  >
-      	<c:forEach var="category" items="${categories}" varStatus="stat">
-			<c:forEach var="service" items="${category.services}" varStatus="state">
-				<c:forEach var="serviceCat" items="${uniqueService}" varStatus="status">
-					<c:if test="${serviceCat == service.id}">
-						<option value="${service.name} - All" id="${service.id}"> ${service.name} - All</option>
-						<c:forEach var="serviceType" items="${services}" varStatus="serviceStatus">
-							<c:if test="${service.id==serviceType.serviceId}">
-								${serviceType.name}
-								${serviceType.id}"
-								${serviceType.name}
-								${serviceType.serviceName}
-								${serviceType.name}
-								{serviceType.categoryName}
-							</c:if>
-						</c:forEach>	
-					</c:if>
-				</c:forEach>
+      <div class="modal-body menu-gradient" style="border:15px double #757474;">
+      		<div class="row text-uppercase hidden-xs">
+      			<label class="col-sm-3">Category</label>
+	      		<label class="col-sm-5">Service Name</label>
+	      		<label class="col-sm-6">Service Type</label>
+	      		<label class="col-sm-4">Home Service</label>
+	      		<label class="col-sm-3">Gender</label>
+	      		<label class="col-sm-3">Price</label>
+      		</div>
+      		<c:forEach var="service" items="${merchant.services}" varStatus="state">
+      		<div class="row hidden-xs" style="padding:10px 0;border-bottom: 1px solid #ccc;">
+      		<div class="col-sm-3">${service.categoryName}</div>
+      		<div class="col-sm-5">${service.serviceName}</div>
+      		<div class="col-sm-6">${service.name}</div>
+      		<div class="col-sm-4 text-center"><c:if test="${service.homeService==1 or service.homeService==2}"><i class="icon-check"></i></c:if><c:if test="${service.homeService==0}"><i class="icon-remove"></i></c:if></div>
+      		<div class="col-sm-3 text-center"><c:if test="${service.gender==1}"><i class="icon-female"></i></c:if><c:if test="${service.gender==0}"><i class="icon-male"></i></c:if><c:if test="${service.gender==2}"><i class="icon-male"></i> <i class="icon-female"></i></c:if></div>
+      		<div class="col-sm-3">INR ${service.price}/-</div>
+      		</div>
 			</c:forEach>
-		</c:forEach>	
-		</form:form>
+			<c:forEach var="service" items="${merchant.services}" varStatus="state">
+      		<div class="row visible-xs" style="padding:10px 0;border-bottom: 1px solid #979797;">
+      		<label class="col-xs-12">Service Type</label>
+      		<div class="col-sm-6 col-xs-12">${service.name}</div>
+      		</div>
+      		<div class="row visible-xs" style="padding:10px 0;border-bottom: 1px solid #979797;">
+      		<label class="col-xs-12">Home Service</label>
+      		<div class="col-sm-4 col-xs-12 text-center"><c:if test="${service.homeService==1 or service.homeService==2}"><i class="icon-check"></i></c:if><c:if test="${service.homeService==0}"><i class="icon-remove"></i></c:if></div>
+      		</div>
+      		<div class="row visible-xs" style="padding:10px 0;border-bottom: 1px solid #979797;">
+      		<label class="col-xs-12">Gender</label>
+      		<div class="col-sm-3 col-xs-12 text-center"><c:if test="${service.gender==1}"><i class="icon-female"></i></c:if><c:if test="${service.gender==0}"><i class="icon-male"></i></c:if><c:if test="${service.gender==2}"><i class="icon-male"></i> <i class="icon-female"></i></c:if></div>
+      		</div>
+      		<div class="row visible-xs" style="padding:10px 0;border-bottom: 2px solid #333;">
+      		<label class="col-xs-12">Price</label>
+      		<div class="col-sm-3 col-xs-12">INR ${service.price}/-</div>
+      		</div>
+			</c:forEach>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+      <div class="modal-footer nopadding" style="background-color:#1fbbad; color: #fff;" >
+      <center>
+        <button type="button" class="signup-button font-size-16 font-type" data-dismiss="modal">Close</button>
+       </center>
       </div>
     </div>
   </div>
@@ -264,10 +238,18 @@
   document.getElementById('file').addEventListener('change', handleFileSelect, false);
 </script>
 <script type="text/javascript">
-	function toggle(){
-		document.getElementById("rad").style.cssText = "visibility:visible !important;";
+	function toggle(stat){
+		if(stat){
+			document.getElementById("rad").style.cssText = "visibility:visible !important;";
+		}else{
+			document.getElementById("rad").style.cssText = "display:none";
+			document.getElementById("serviceRadius").value='';
+		}
+		
 	}
 </script>
-	
+	  <script>
+    $('.header-services').addClass('active');
+  </script>
 </body>
 </html>

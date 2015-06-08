@@ -18,6 +18,7 @@ import org.springframework.data.elasticsearch.annotations.FieldIndex;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.GeoPointField;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * @author vikas
@@ -34,7 +35,9 @@ public class MerchantDeal extends BaseModel {
 	private Integer id;
 	private Integer merchantId;
 	private String finalWeekSchedule;
+	@DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
 	private Date validFrom;
+	@DateTimeFormat(pattern = "dd/MM/yyyy HH:mm")
 	private Date validTill;
 	private Integer percentOff;
 	private Integer flatOff;
@@ -58,7 +61,6 @@ public class MerchantDeal extends BaseModel {
 	private Boolean acFacility;
 	@Field(type = FieldType.Integer, index = FieldIndex.not_analyzed,store=true)
     private Integer luxuryRating;
-	
 	@GeoPointField
 	private GeoPoint geo;
 	@Field(type = FieldType.Boolean, index = FieldIndex.no, store = true)
@@ -74,7 +76,7 @@ public class MerchantDeal extends BaseModel {
 	@Field(type = FieldType.Integer, index = FieldIndex.no, store = true)
 	private Integer serviceRadius;
 	private List<String> serviceNames;
-
+	
 	/**
 	 * @return the id
 	 */

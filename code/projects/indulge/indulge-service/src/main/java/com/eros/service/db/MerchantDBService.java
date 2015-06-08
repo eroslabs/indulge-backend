@@ -142,5 +142,16 @@ public interface MerchantDBService {
 	 * @return
 	 */
 	public Integer verify(Map param);
+	/**
+	 * Replaces the old password if old password is correct
+	 * @param param
+	 * @return
+	 */
+	public Integer changePassword(Map<String, Object> param);
+	/**
+	 * @param param
+	 * @return
+	 */
+	public Integer disableImage(Map<String, Object> param);
 	
 }

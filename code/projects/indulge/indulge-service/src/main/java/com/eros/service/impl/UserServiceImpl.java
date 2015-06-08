@@ -22,9 +22,14 @@ import com.eros.core.model.Merchant;
 import com.eros.core.model.ReportedError;
 import com.eros.core.model.UserReview;
 import com.eros.core.model.user.User;
+import com.eros.notification.utils.Message;
+import com.eros.notification.utils.NotificationService;
+import com.eros.notification.utils.NotificationType;
 import com.eros.service.MerchantCustomService;
 import com.eros.service.UserService;
 import com.eros.service.db.UserDBService;
+import com.eros.service.util.NotificationCategory;
+import com.eros.service.util.TinyUrlUtility;
 
 /**
  * 
@@ -36,14 +41,17 @@ public class UserServiceImpl implements UserService {
 	/**
 	 * 
 	 */
-	private static final int LOGGEDIN = 1;
-	private static final int LOGGEDOUT = 0;
+	
+
 	private static final Logger LOG = LoggerFactory
 			.getLogger(UserServiceImpl.class);
 
 	@Autowired
 	protected UserDBService userDBService;
 
+	@Autowired
+	protected NotificationService notificationService;
+	
 	@Autowired
 	protected MerchantCustomService merchantService;
 
@@ -76,8 +84,8 @@ public class UserServiceImpl implements UserService {
 			if(user.getImage() != null){
 				String profilePhoto = saveUserImage(user.getImage(), savedUser.getId(), savedUser.getId()+".png");
 				HashMap<String, String> param = new HashMap<String, String>();
-				param.put("userId", savedUser.getId().toString());
-				param.put("path", profilePhoto);
+				param.put(USER_ID, savedUser.getId().toString());
+				param.put(PATH, profilePhoto);
 				userDBService.updateProfilePic(param);
 			}
 			return savedUser;
@@ -108,8 +116,8 @@ public class UserServiceImpl implements UserService {
 					Boolean login = passPhrase.trim().equalsIgnoreCase(
 							passString.trim());
 					Map<String, Object> param = new HashMap<String, Object>();
-					param.put("mail", userEmail);
-					param.put("status", LOGGEDIN);
+					param.put(MAIL, userEmail);
+					param.put(STATUS, LOGGEDIN);
 					userDBService.markLoggedStatus(param);
 					User user = userDBService.fetchUser(userEmail);
 					return user;
@@ -157,12 +165,15 @@ public class UserServiceImpl implements UserService {
 	public String redeemDeal(String userEmail, String dealId) throws Exception {
 		try {
 			User user = userDBService.fetchUser(userEmail);
+			if(user == null){
+				throw new Exception("Invalid user : "+userEmail);
+			}
 			Map<String, Object> param = new HashMap<String, Object>(3);
-			param.put("userId", user.getId());
-			param.put("dealId", dealId);
+			param.put(USER_ID, user.getId());
+			param.put(DEAL_ID, dealId);
 			String coupon = RandomStringUtils.randomAlphanumeric(20)
 					.toUpperCase();
-			param.put("couponCode", coupon);
+			param.put(COUPON_CODE, coupon);
 			userDBService.redeemDeal(param);
 			return coupon;
 		} catch (Exception e) {
@@ -181,15 +192,18 @@ public class UserServiceImpl implements UserService {
 			throws Exception {
 		try {
 			User user = userDBService.fetchUser(userEmail);
+			if(user == null){
+				throw new Exception("Invalid user : "+userEmail);
+			}
 			Map<String, Object> param = new HashMap<String, Object>(3);
-			param.put("userId", user.getId());
-			param.put("dealId", dealId);
-			param.put("confirmStatus", null);
+			param.put(USER_ID, user.getId());
+			param.put(DEAL_ID, dealId);
+			param.put(CONFIRM_STATUS, null);
 			userDBService.confirmDeal(param);
-			if (param.containsKey("confirmStatus")
-					&& StringUtils.isNotBlank(param.get("confirmStatus")
+			if (param.containsKey(CONFIRM_STATUS)
+					&& StringUtils.isNotBlank(param.get(CONFIRM_STATUS)
 							.toString())) {
-				return (Boolean) param.get("confirmStatus");
+				return (Boolean) param.get(CONFIRM_STATUS);
 			}
 		} catch (Exception e) {
 			throw new Exception("Error in confirming Deal Id " + dealId, e);
@@ -211,7 +225,7 @@ public class UserServiceImpl implements UserService {
 		try {
 			userDBService.saveReview(review);
 			HashMap<String, Object> param = new HashMap<String, Object>();
-			param.put("merchantId", review.getMerchantId());
+			param.put(MERCHANT_ID, review.getMerchantId());
 			userDBService.updateRating(param);
 			return;
 		} catch (Exception e) {
@@ -229,7 +243,7 @@ public class UserServiceImpl implements UserService {
 		}
 		try {
 			Map<String, Object> param = new HashMap<String, Object>(3);
-			param.put("merchantId", review.getMerchantId());
+			param.put(MERCHANT_ID, review.getMerchantId());
 			userDBService.updateReview(param);
 			return;
 		} catch (Exception e) {
@@ -279,17 +293,17 @@ public class UserServiceImpl implements UserService {
 	 * java.lang.Integer)
 	 */
 	@Override
-	public Integer saveForgotPasswordRequest(String email, Integer type)
+	public void saveForgotPasswordRequest(String email, Integer requestType)
 			throws Exception {
 
 		try {
 			Map<String, Object> param = new HashMap<String, Object>(3);
-			param.put("email", email);
-			param.put("type", type);
-			param.put("id", 0);
+			param.put(EMAIL_PARAM, email);
+			param.put(TYPE, requestType);
+			param.put(IDENTIFIER, RandomStringUtils.random(8, false, true));
 			userDBService.saveForgotRequest(param);
-
-			return (Integer) param.get("id");
+			sendNotification(NotificationCategory.forgotPasswordUserTemplate,
+					param);
 		} catch (Exception e) {
 			LOG.error("Error in saving User review : ", e);
 			throw new Exception("Forgot request cannot be saved", e);
@@ -309,6 +323,27 @@ public class UserServiceImpl implements UserService {
 			throw new Exception("Error in saving error reported", e);
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.eros.service.UserService#changePassword(java.lang.String,
+	 * java.lang.String, java.lang.String)
+	 */
+	@Override
+	public void forgotPassword(String email, String requestId, String password)
+			throws Exception {
+		try {
+			Map<String, Object> param = new HashMap<String, Object>(3);
+			param.put(EMAIL_PARAM, email);
+			param.put(REQUEST_ID, requestId);
+			param.put(PASSPHRASE, password);
+			userDBService.updatePassword(param);
+		} catch (Exception e) {
+			LOG.error("Error in changing password : ", e);
+			throw new Exception("Change password unsuccessful", e);
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -317,14 +352,17 @@ public class UserServiceImpl implements UserService {
 	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void changePassword(String email, String requestId, String passphrase)
+	public void changePassword(String email, String oldPassphrase, String passphrase)
 			throws Exception {
 		try {
 			Map<String, Object> param = new HashMap<String, Object>(3);
-			param.put("email", email);
-			param.put("requestId", requestId);
-			param.put("passphrase", passphrase);
-			userDBService.updatePassword(param);
+			param.put(EMAIL_PARAM, email);
+			param.put(OLD_PASSPHRASE, oldPassphrase);
+			param.put(PASSPHRASE, passphrase);
+			Integer updatedRows = userDBService.changePassword(param);
+			if(updatedRows == null || updatedRows ==0){
+				throw new Exception("Invalid email/ old password");
+			}
 		} catch (Exception e) {
 			LOG.error("Error in changing password : ", e);
 			throw new Exception("Change password unsuccessful", e);
@@ -340,14 +378,14 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public byte[] fetchResource(String type, Integer id) {
 		if (StringUtils.isNotBlank(type) && id != null) {
-			if (type.equalsIgnoreCase("merchant")) {
+			if (type.equalsIgnoreCase(MERCHANT)) {
 				Merchant merchant = merchantService.getMerchantById(id);
 				if (merchant != null
 						&& StringUtils.isNotBlank(merchant.getImage())) {
 					return fetchImage(MERCHANT_BASE_PATH + File.separator
 							+ merchant.getImage());
 				}
-			} else if (type.equalsIgnoreCase("user")) {
+			} else if (type.equalsIgnoreCase(USER)) {
 				// we can fetch by id and email both
 				User user = userDBService.fetchUser(id.toString());
 				if (user != null && StringUtils.isNotBlank(user.getImagePath())) {
@@ -388,6 +426,39 @@ public class UserServiceImpl implements UserService {
 			LOG.error("Error in fetching image: ", e);
 		}
 		return null;
+
+	}
+
+	/**
+	 * @param string
+	 * @param param
+	 */
+	private void sendNotification(String template, Map<String, Object> param)
+			throws Exception {
+		try {
+			if (StringUtils.isBlank(template)) {
+				return;
+			}
+			Message message = new Message(NotificationType.MAIL);
+			
+
+			if (param.get(EMAIL_PARAM) == null) {
+				return;
+			}
+			message.setToEmails(new String[] { param.get(EMAIL_PARAM).toString() });
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put(VERIFICATION_URL, TinyUrlUtility.getTinyUrl(String
+						.format(CHANGE_USER_PASSWORD_TEMPLATE,param.get(EMAIL_PARAM),param.get(IDENTIFIER))));
+			
+			map.putAll(param);
+			message.setDataMap(map);
+			message.setMessageTemplate(template);
+			notificationService.sendNotification(message);
+		} catch (Exception e) {
+			LOG.error(
+					"Please check : There is some error in sending notification ",
+					e);
+		}
 
 	}
 

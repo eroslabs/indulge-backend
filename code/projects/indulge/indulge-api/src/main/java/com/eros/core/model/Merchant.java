@@ -72,12 +72,15 @@ public class Merchant extends BaseModel {
 	private List<MerchantSchedule> schedule;
     private List<MerchantService> services  ;
     private List<DigitalMenuImage> menus;
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed,store=true)
+	private String recommended;
     private Integer totalReviews;
     private List<MerchantDeal> deals;
     private List<UserReview> reviews;
     @Field(type = FieldType.Integer, index = FieldIndex.not_analyzed,store=true)
     private Integer luxuryRating;
     private String finalWeekSchedule;
+    private String refer;
     private List<Integer> categoryIds;
     
 	/**
@@ -219,6 +222,18 @@ public class Merchant extends BaseModel {
 		return ccAccepted;
 	}
 	/**
+	 * @return the recommended
+	 */
+	public String getRecommended() {
+		return recommended;
+	}
+	/**
+	 * @param recommended the recommended to set
+	 */
+	public void setRecommended(String recommended) {
+		this.recommended = recommended;
+	}
+	/**
 	 * @param ccAccepted the ccAccepted to set
 	 */
 	public void setCcAccepted(Boolean ccAccepted) {
@@ -235,6 +250,18 @@ public class Merchant extends BaseModel {
 	 */
 	public void setAddress(String address) {
 		this.address = address;
+	}
+	/**
+	 * @return the refer
+	 */
+	public String getRefer() {
+		return refer;
+	}
+	/**
+	 * @param refer the refer to set
+	 */
+	public void setRefer(String refer) {
+		this.refer = refer;
 	}
 	/**
 	 * @return the establishment
@@ -586,6 +613,9 @@ public class Merchant extends BaseModel {
 		for(int i = 0; i < s1.getWeekSchedule().length(); i++)
 		    sb.append((int)(s1.getWeekSchedule().charAt(i) ^ s2.getWeekSchedule().charAt(i % s2.getWeekSchedule().length())));
 		finalWeekSchedule = sb.toString();
+		}else if(schedule.size() ==1){
+			MerchantSchedule s1 = schedule.get(0);
+			finalWeekSchedule = s1.getWeekSchedule();
 		}
 		}
 		return finalWeekSchedule;

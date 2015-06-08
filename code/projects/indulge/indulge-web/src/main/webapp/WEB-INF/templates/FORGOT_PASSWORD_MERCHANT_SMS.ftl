@@ -1,0 +1,1 @@
+ 	Dear Merchant reset your Indulge login password by clicking ${verificationUrl}

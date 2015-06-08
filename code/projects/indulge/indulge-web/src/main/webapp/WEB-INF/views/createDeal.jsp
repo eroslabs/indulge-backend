@@ -2,59 +2,17 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib  prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-
-    <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
-    
-    <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,500,200,600,700' rel='stylesheet' type='text/css'>
-    <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
-    <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="${pageContext.servletContext.contextPath }/css/new.css" rel="stylesheet" >
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="${pageContext.servletContext.contextPath }/js/jquery-1.11.1.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="${pageContext.servletContext.contextPath }/js/bootstrap.min.js"></script>
-    <script src="${pageContext.servletContext.contextPath }/js/jquery.validate.js"></script>
-
-
+ <head>
+    <jsp:include page="../views/globalhead.jsp" />
     <script src="${pageContext.servletContext.contextPath }/js/jquery.nouislider.all.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <link href="${pageContext.servletContext.contextPath }/css/new.css" rel="stylesheet" >
 	<link href="${pageContext.servletContext.contextPath }/css/jquery.nouislider.css" rel="stylesheet">
 	<link href="${pageContext.servletContext.contextPath }/css/jquery.nouislider.pips.min.css" rel="stylesheet">
-
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
   </head>
 <body style="background-color:#f0f0f0">
-	<nav class="navbar navbar-default navbar-custom navbar-fixed-top nav-top" style="background-color:#735E56">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header page-scroll">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-           <a  class="navbar-brand" style="padding:0px 0px" href="${pageContext.servletContext.contextPath }/merchant/home">
-          		<img src="${pageContext.servletContext.contextPath }/images/logo.png" class="img-responsive" alt="Indulge" style="height:50px" /></a>
-        </div>
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav navbar-right">
-              <li><a href="${pageContext.servletContext.contextPath }/merchant/reviews" style="line-height:35px; margin-top:-5px;"><img src="${pageContext.servletContext.contextPath }/images/Stats-active.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp; Stats</a></li>
-            	<li><a href="${pageContext.servletContext.contextPath }/merchant/home" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/Info-active.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Basic Info</a></li>
-            	<li><a href="${pageContext.servletContext.contextPath }/merchant/inputDigitalMenu" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/Service-active.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Services</a></li>
-            	<li class="active" style="height:50px;background-color:#f0f0f0"><a href="${pageContext.servletContext.contextPath }/merchant/listDeals" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/Deal.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Deals</a></li>
-            	<li><a href="${pageContext.servletContext.contextPath }/merchant/createMerchantServices" style="line-height:35px; margin-top:-5px"><img src="${pageContext.servletContext.contextPath }/images/account.png" class="img-responsive" alt="Indulge" style="height:40px; float:left" />&nbsp;&nbsp;Account</a></li>
-            </ul>
-        </div>
-    </div>
-  </nav>
+	<jsp:include page="../views/postmerchantHeader.jsp" />
 	
 	<div class="container">
 		<!-- Nav tabs -->
@@ -71,8 +29,8 @@
 	</div>
 
 	<div class="col-xs-22 col-sm-20 col-md-16 col-lg-14 col-xs-push-1 col-sm-push-2 col-md-push-4 col-lg-push-5">
-    	<div class="row font-type sign-up font-size-24 location-header">Post A New Deal</div>
-    		<form:form action="saveDeal" method="post" id="createDealForm" modelAttribute="deal" class="form-horizontal white-bg" style="margin-bottom:20px; margin-top:20px"  >
+    	<div class="row font-type sign-up font-size-24" style="color:#8B7973;">Post A New Deal</div>
+    		<form:form action="saveDeal" method="post" id="createDealForm" modelAttribute="deal" class="form-horizontal" style="margin-bottom:10px; margin-top:20px"  >
     			<div id="viewservices">
 	    			<center>
 			    		<ol class="progress-meter">
@@ -80,40 +38,41 @@
 			    		</ol>
 			    	</center>
 	    			<c:if test="${categories ne null and not empty categories}">
-						<div class="row row15">
+						<div class="row row15" style="margin-top:35px;">
 							<center>
 								<div class="row row15 font-size-24" style="padding:10px;text-align:center; color:#fff; background-color:#1fbbad">
 								Select Services
 								</div>
 							</center>
 						</div>
-						<div class="row row15">
+						<div class="row row15 services_input white-bg">
 							<div class="col-xs-12 font-size-20" style="padding:0px">
-								<input type="button" style="text-align:center; padding:10px 0px 10px 0px; border:1px solid #1fbbad; width:100%" onclick="showcategories()" value="Category">
+								<input type="button" id="Choose_cat" onclick="showcategories()" value="Choose complete categories" class="active">
 							</div>
 							<div class="col-xs-12 font-size-20" style="padding:0px">
-								<input type="button" style="text-align:center; padding:10px 0px 10px 0px; border:1px solid #1fbbad; width:100%" onclick="showservices()" value="Service or Service Type">
+								<input type="button" id="Choose_serve" onclick="showservices()" value="Choose individual services">
 								
 							</div>
 						</div>
-						<div class="row row15" id="categories">
+						<div class="row row15 white-bg" id="categories" style="min-height: 200px">
 							<c:forEach var="category" items="${categories}" varStatus="stats">
 								<c:forEach var="serviceCat" items="${uniqueCategory}" varStatus="status">
 									<c:if test="${serviceCat == category.id}">
 
-										<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-										<center>
-											<input type='checkbox' value="${category.id}" name="categoryId"/>
-											<img src="../images/${category.image}" height="50px" style="border-radius:30px; margin-top:5px; margin-bottom:5px; border:1px solid">
-										</center>
+										<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 text-center" style="margin: 10px 0;">
+											<div class="btn-group" id="cats" data-toggle="buttons" style="width: 100%">
+											   <label class="btn btn-default" style="width: 30%; padding: 0px; height: 60px; vertical-align: middle; border:none; margin-left: 34%; border-radius: 50px !important" > <input type="checkbox" value="0"><img src="../images/${category.image}" height="50px" style="margin-top:5px; margin-bottom:5px;">
+											   </label> 
+											   <input value="${category.id}" name="categoryId" type="hidden">
+											</div>
+											   <span class="text-uppercase brown-text">${category.name}</span>
 										</div>
-										
 									</c:if>
 								</c:forEach>
 							</c:forEach>
 						</div>
 
-						<div class="row row15" id="services" style="display:none">
+						<div class="row row15 white-bg" id="services" style="display:none">
 							<datalist id="browser">
 								<c:forEach var="category" items="${categories}" varStatus="stat">
 									<c:forEach var="service" items="${category.services}" varStatus="state">
@@ -133,19 +92,19 @@
 									</c:forEach>
 								</c:forEach>	
 							</datalist>	
-							<div class="col-md-18 col-md-push-3">
-								<input id="browser1inp" list="browser" class="form-control postdeal-field" placeholder="Enter Service or Service Type">
+							<div class="col-md-18 col-md-push-3 ptb-10">
+								<input id="browser1inp" list="browser" type="text" class="form-control postdeal-field" placeholder="Enter Service or Service Type">
 							</div>
-							<div class="col-md-18 col-md-push-3">
-								<input id="browser2inp" list="browser" class="form-control postdeal-field" placeholder="Enter Service or Service Type">
+							<div class="col-md-18 col-md-push-3 ptb-10">
+								<input id="browser2inp" list="browser" type="text" class="form-control postdeal-field" placeholder="Enter Service or Service Type">
 							</div>	
-							<div class="col-md-18 col-md-push-3">
-								<input id="browser3inp" list="browser" class="form-control postdeal-field" placeholder="Enter Service or Service Type">
+							<div class="col-md-18 col-md-push-3 ptb-10">
+								<input id="browser3inp" list="browser" type="text" class="form-control postdeal-field" placeholder="Enter Service or Service Type">
 							</div>
 						</div>
 					</c:if>
-					<center>
-						<input type="button" onclick="submitservice()" class="signup-button font-size-16 font-type" value="Save and Next">
+					<center style="padding:20px 0;" class=" white-bg">
+						<input type="button" onclick="submitservice()" class="btn btn-lg btn-green text-uppercase" value="Save and Next">
 					</center>
 					<input type="hidden" id="servicetype1" name="serviceTypeId">
 					<input type="hidden" id="servicetype2" name="serviceTypeId">
@@ -168,21 +127,23 @@
 								</div>
 							</center>
 						</div>
-						<div class="form-group">
-						    <label class="col-sm-9 col-sm-push-1 control-label">Flat Off*</label>
-						    <div class="col-sm-14">
+						<div class="col-sm-24 white-bg" style="min-height: 200px;">
+						<div class="form-group ptb-10">
+						    <label class="col-sm-7 control-label">Flat Off (in Rs)*</label>
+						    <div class="col-sm-15">
 						      <input id="flatOff" class="form-control signup-field" type="text" name="flatOff">
 						    </div>
 						</div>
-						<div class="form-group">
-						    <label class="col-sm-9 col-sm-push-1 control-label">Percent Off*</label>
-						    <div class="col-sm-14">
+						<div class="form-group ptb-10">
+						    <label class="col-sm-7 control-label">Percent Off (in %)*</label>
+						    <div class="col-sm-15">
 						      <input id="percentOff" class="form-control signup-field" type="text" name="percentOff">
 						    </div>
 					    </div>
+					    </div>
 					</c:if>
-					<center>
-						<input type="button" onclick="return submitamount();" class="signup-button font-size-16 font-type" value="Save and Next">
+					<center class="white-bg" style="padding-bottom: 25px;">
+						<input type="button" onclick="return submitamount();" class="btn btn-lg btn-green text-uppercase" value="Save and Next">
 					</center>
 				</div>
 				<div id="entervalidity" style="display:none">
@@ -191,6 +152,7 @@
 			    			<li class="progress-point done">Services</li><li class="progress-point done">Price</li><li class="progress-point doing">Validity</li><li class="progress-point todo">Confirmation</li>
 			    		</ol>
 			    	</center>
+					<div class="white-bg">
 	    			<c:if test="${categories ne null and not empty categories}">
 						<div class="row row15">
 							<center>
@@ -199,19 +161,25 @@
 								</div>
 							</center>
 						</div>
-						<div class="form-group">
-							<div class="col-xs-12">
-								<label for="onetime" class="form-control font-size-20" style="text-align:center">One - Time</label>
-								<input type="radio" class="form-control" name="recurring" value="false" id="onetime" onclick="hidedaypill()">
+						<div class="row" style="border-bottom: 1px dashed #333; margin: 0; padding-bottom: 15px;">
+							<div class="form-group col-sm-12 ptb-10" style="margin:0;">
+								<div class="col-xs-8">
+									<input type="radio" class="form-control" style="box-shadow:none;" name="recurring" value="false" id="onetime" onclick="hidedaypill()">
+								</div>
+								<label for="onetime" class="control-label col-sm-14 font-size-20 brown-text" style="text-align:left">One - Time</label>
 							</div>
-							<div class="col-xs-12">
-								<label for="everytime" class="form-control font-size-20" style="text-align:center">Recurring</label>
-								<input type="radio" class="form-control" name="recurring" value="true" id="everytime" onclick="showdaypill()" selected>
+							<div class="form-group col-sm-12 ptb-10" style="margin:0;">
+								<div class="col-xs-8">
+									<input type="radio" class="form-control" style="box-shadow:none;" name="recurring" value="true" id="everytime" onclick="showdaypill()" checked="checked" >
+								</div>
+								<label for="everytime" class="control-label col-sm-14 font-size-20 brown-text" style="text-align:left">Recurring</label>
 							</div>
+							<div class="col-sm-12 text-center text-green font-size-16">Single time period<br> eg dec 24 2-4pm</div>
+							<div class="col-sm-12 text-center text-green font-size-16">Multiple time slots<br> eg thur 2-4pm</div>
 						</div>
-						<div class="row row15" style="border:1px solid #1fbbad; margin-top:10px">
+						<div class="row row15">
 							<center>
-				   				<div class="btn-group" id="weekdays" data-toggle="buttons" style="margin-top:10px; margin-bottom:10px">
+				   				<div class="btn-group" id="weekdays" data-toggle="buttons" style="margin-top:30px; margin-bottom:30px">
 								    <label class="btn btn-default day-pill font-size-20">
 								        <input type="checkbox">Sun</label>
 								    <label class="btn btn-default day-pill font-size-20">
@@ -231,14 +199,14 @@
 							</center>
 						</div>
 						<div class="row row-15">
-							<div class="col-xs-9 col-xs-push-2 font-size-24" style="text-align:center">
+							<div class="col-xs-9 col-xs-push-2 font-size-20 ptb-10" style="text-align:center">
 								<div class="row row15">
 									Opening Time
 								</div>
 								<div class="row row15" id="lower-value">
 								</div>
 							</div>
-							<div class="col-xs-9 col-xs-push-5 font-size-24" style="text-align:center">
+							<div class="col-xs-9 col-xs-push-5 font-size-20 ptb-10" style="text-align:center">
 								<div class="row row15">
 									Closing Time
 								</div>
@@ -248,39 +216,45 @@
 						</div>
 						<input type="hidden" id="openingtime" value="10:00">
 						<input type="hidden" id="closingtime" value="20:00">
-						<div class="col-md-18 col-md-push-3" id="slide">
+						<div class="col-md-18 col-md-push-3 ptb-10" id="slide" style="margin-bottom: 25px;">
 							<div id="behaviour" style="margin-bottom:40px;"></div>
 						</div>
 
-						<div class="form-group">
-						    <label class="col-sm-9 col-sm-push-1 control-label">Valid From*</label>
+						<div class="form-group ptb-10">
+						    <label class="col-sm-9 control-label">Valid From*</label>
 						    <div class="col-sm-14">
-						    	<input type='text' id='fromDate' class="form-control signup-field" readonly/>
+						    	<input type='text' style="width: 50%;margin-right:15px;" id='fromDate' class="form-control pull-left signup-field" style="margin-right:15px" readonly/>
 						    	<input type="hidden" name="validFrom" id="validFrom">
 						    </div>
 						</div>
 						<div class="form-group">
-						    <label class="col-sm-9 col-sm-push-1 control-label">Valid Till*</label>
+						    <label class="col-sm-9 control-label">Valid Till*</label>
 						    <div class="col-sm-14">
-						      <input id="tillDate" class="form-control signup-field" type="text" readonly/>
+						      <input id="tillDate" style="width: 50%;margin-right:15px;" class="form-control pull-left signup-field" type="text" readonly/>
 						      <input type="hidden" name="validTill" id="validTill">
 						    </div>
 						</div>
 					</c:if>
-					<center>
-						<input type="submit" onclick="return appendtry();" class="signup-button font-size-16 font-type" value="Save and Next">
+					<center style="padding-bottom:25px; padding-top: 20px;">
+						<input type="submit" onclick="return appendtry();" class="btn btn-lg btn-green text-uppercase" value="Save and Next">
 					</center>
+					</div>
 				</div>
 			</form:form>
 	</div>
 	<script type="text/javascript">
 	function showcategories(){
 		$("#categories").css("display","block");
+		$("#Choose_cat").addClass("active");
 		$("#services").css("display","none");
+		$("#Choose_serve").removeClass("active");
+
 
 	}
 	function showservices(){
 		$("#categories").css("display","none");
+		$("#Choose_serve").addClass("active");
+		$("#Choose_cat").removeClass("active");
 		$("#services").css("display","block");
     	$('#categories input[type=checkbox]').attr('checked',false);
 	}
@@ -384,11 +358,13 @@
 		    );
 		});
 		function showdaypill(){
-			$("#weekdays").removeClass("display");
+			alert();
+			$("#weekdays").show();
 		}
 
 		function hidedaypill(){
-			$("#weekdays").addClass("display");
+			alert();
+			$("#weekdays").hide();
 		}
 	</script>
 	<script type="text/javascript">

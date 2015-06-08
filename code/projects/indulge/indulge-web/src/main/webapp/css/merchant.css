@@ -36,12 +36,62 @@
 		font-size: 16px;
 	}
 }
+a{
+	color: #1fbbad;
+	text-decoration: none;
+	cursor: pointer;
+}
+a:hover{
+	color: #19A699;
+	text-decoration: none;
+}
 .body-bg{
 	background: #f0f0f0;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
+}
+.nopadding{
+	padding: 0 !important;
+}
+.navbar-default{
+	background-color: #fff;
+	border: none;
+}
+.navbar-default .navbar-nav>li>a{
+	color: #715f58;
+	font-size: 18px;
+	padding: 10px 60px 10px 15px;
+}
+.navbar-default.header2 .navbar-nav>li>a{
+	color: #fff;
+	font-size: 18px;
+	padding: 15px 20px;
+	height: 52px;
+}
+.navbar-default.header2 .navbar-nav>li{
+	border-right: 1px solid #efe7de;
+}
+.navbar-default.header2 .navbar-nav>li>a:hover,
+.navbar-default.header2 .navbar-nav>li.active>a{
+	color: #735E56;
+	background-color: #f0f0f0;
+}
+.navbar-default .navbar-nav>li>a:hover{
+	color:#5D4F49;
+}
+.navbar-default .navbar-nav>li>a.nav-link{
+	padding: 10px 15px;
+}
+.navbar {
+    position: relative;
+}
+.navbar>.container-fluid .brand {
+    position: absolute;
+    left: 50%;
+    margin-left: -50px !important;  /* 50% of your logo width */
+    display: block;
 }
 .location-header{
 	color:#ddcbbd; 
@@ -77,14 +127,6 @@
 .sign-up{
 	text-align:center; 
 	margin-top:20px;
-}
-.signup-field{
-  border: none !important;
-  border-radius: 0px !important;
-  border-bottom: 1px solid #1fbbad !important;
-}
-.signup-field:focus{
-	border:1px solid #1fbbad !important;
 }
 .location-field{
   border: 1px solid white !important;
@@ -136,9 +178,42 @@
 	padding-bottom:5px;
 	width:70%;
 }
-input:focus
-{
-	outline:1 !important;
+.registration-page .input-group{
+	padding: 10px 0;
+}
+.header-account.dropdown{
+	border: none;
+	background-color: #735E56;
+	padding: 0;
+	width: inherit;
+}
+input[type='text'], input[type='email'], input[type='password']{
+  border: none !important;
+  border-bottom: 2px solid #f0f0f0 !important;
+  box-shadow: none;
+  border-radius: 0;
+}
+input[type='text']:focus, input[type='email']:focus, input[type='password']:focus{
+	outline: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    -moz-box-shadow: none;
+}
+select:focus{
+	outline: 0;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    -moz-box-shadow: none;
+}
+select{
+  border: none !important;
+  border-bottom: 2px solid #f0f0f0 !important;
+  box-shadow: none !important;
+  border-radius: 0;
+}
+.col-centered{
+    float: none;
+    margin: 0 auto;
 }
 
 .signup-fa{
@@ -170,6 +245,15 @@ input:focus
 .white-bg{
 	background-color:white;
 }
+.white-text{
+	color:white !important;
+}
+.brown-text{
+	color: #B4978D;
+}
+.footer-new li{
+	padding: 5px 0;
+}
 .header-columns{
 	padding-top:16px;
 	padding-bottom: 16px;
@@ -178,6 +262,28 @@ input:focus
 }
 .header-image{
 	min-height:50px;
+}
+.services_input input,
+.services_input{
+	text-align:center;
+	padding:10px 0px 10px 0px;
+	width:100%; 
+	border: none;
+	background-color: #f1f1f1;
+}
+.services_input input.active{
+	text-align:center;
+	padding:10px 0px 5px 0px; 
+	border-top: none;
+	border-right: none;
+	border-left: none;
+	border-bottom:5px solid #1fbbad; 
+	width:100%; 
+	background-color: #fff;
+}
+.ptb-10{
+	padding-top: 10px;
+	padding-bottom: 10px; 
 }
 @media(max-width: 768px){
 	#header{
@@ -201,7 +307,7 @@ input:focus
 		display:none;
 	}
 	#merchant-home-body{
-		margin-top: 80px;
+		margin-top: 50px;
 	}
 }
 .act{
@@ -213,13 +319,12 @@ input:focus
 .location-head{
 	padding-top: 10px;
 	padding-bottom: 10px;
-	border-bottom: 1px solid #fff;
 	color: white;
 }
 #my-button{
     position: absolute;
     border: none;
-    background: url('../images/location-header.png') center center no-repeat;;
+    background: url('../images/inputDigitalMenu.png') center center no-repeat;;
     width: 150px;
     height: 150px;
     top: 0px;
@@ -259,8 +364,14 @@ left: 0;
 	background:#fff;
 	line-height: 200%;
 	width: 100%;
-	padding-left: 20px;
-	border:1px solid #b4978d;
+	padding: 20px;
+	border:1px solid #c8c8c8;
+}
+.merchant-home-img{
+	background:#fff;
+	line-height: 200%;
+	width: 100%;
+	border:1px solid #c8c8c8;
 }
 .disable
 {
@@ -288,9 +399,28 @@ label [type="radio"] {
 	padding-bottom: 30px;
 	background-color: #735E56;
 	margin-top: 70px;
-	border-radius: 10px;
 	text-align: center;
 	color: #fff;
+}
+.post-deal-input{
+  background-color: #1FBBAD;
+  padding: 15px 15px;
+  margin-top: 70px;
+}
+::-webkit-input-placeholder {
+   color: #A5E4DE;
+}
+
+:-moz-placeholder {
+   color: #A5E4DE;  
+}
+
+::-moz-placeholder {
+   color: #A5E4DE;  
+}
+
+:-ms-input-placeholder {  
+   color: #A5E4DE;  
 }
 .deal-tabs{
 	padding-top: 10px;
@@ -400,6 +530,32 @@ label [type="radio"] {
     color: #1fbbad;
     text-align: center;
 }
+.light-opacity{
+	opacity: 0.6;
+}
+.text-green{
+	color: #1fbbad;
+}
+.btn-green{
+	background-color: #1fbbad !important;
+	color: #fff !important;
+}
+.btn-green:hover{
+	background-color: #19A699 !important;
+	color: #fff !important;
+}
+.btn-blue{
+	background-color: #00B6BA !important;
+	color: #fff !important;
+}
+.btn-blue:hover{
+	background-color: #019FA2 !important;
+	color: #fff !important;
+}
+.btn-lg,
+.btn{
+	border-radius: 2px !important;
+}
 .btn-login{
 	background-color: #1fbbad;
 	border-radius: 0px;
@@ -409,10 +565,7 @@ label [type="radio"] {
 .btn-login:hover{
 	background-color: #aea190;
 }
-.thumb-home{
-	height:180px;
-	margin-top: 0px;
-}
+
 .star-ratings-sprite {
 	background: url("../images/star.png") repeat-x;
 	font-size: 0;
@@ -449,7 +602,6 @@ label [type="radio"] {
     border: 1px solid #1fbbad;
     border-radius: 1px;
     overflow: hidden;
-    background: #fff url("img/icon-select.png") no-repeat 90% 50%;
     height: 40px;
 }
 
@@ -475,6 +627,25 @@ label [type="radio"] {
   text-align: center;
   margin-top: 10px;
 }
-.active{
-	z-index: 0 !important;
+.select-time select{
+	padding: 10px;
+	background: transparent;
+	border-bottom: 1px solid #c8c8c8 !important;
 }
+.day-pill.active,
+.day-pill:hover{
+	background-color: #1fbbad;
+	color: #fff;
+}
+.menu-gradient{
+	  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#000), to(transparent));
+	  background-image: -webkit-linear-gradient(#000, transparent);
+	  background-image: -moz-linear-gradient(#000, transparent);
+	  background-image: -o-linear-gradient(#000, transparent);
+	  background-image: linear-gradient(#E6C2A7, rgba(249, 222, 68, 0.15));
+}
+/*.active{
+	z-index: 0 !important;
+	background-color:#1fbbad !important
+}*/
+.ValidationErrors{color:red;}

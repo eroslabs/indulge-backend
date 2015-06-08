@@ -1,33 +1,22 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@taglib  prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="${pageContext.servletContext.contextPath }/css/bootstrap.css" rel="stylesheet" >
-    <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,500,200,600,700' rel='stylesheet' type='text/css'>
-    <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />
-    <link href="${pageContext.servletContext.contextPath }/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="${pageContext.servletContext.contextPath }/css/new.css" rel="stylesheet" >
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="${pageContext.servletContext.contextPath }/js/jquery-1.11.1.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="${pageContext.servletContext.contextPath }/js/bootstrap.min.js"></script>
-    <script src="${pageContext.servletContext.contextPath }/js/jquery.validate.js"></script>
+<head>
+<jsp:include page="../views/globalhead.jsp" />
+<link href="${pageContext.servletContext.contextPath }/css/new.css"
+	rel="stylesheet">
+</head>
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-
-  </head>
 <body>
+	<div id="loading">
+		<img
+			src="${pageContext.servletContext.contextPath }/images/ajax-loader.gif"
+			id="loading-image" />
+	</div>
+
 <div class="container-fluid body-bg">
 	<div class="row">
 	<center>
@@ -53,8 +42,9 @@
 	    		<div class="row location-file-upload">
 	    			<div id="file-upload-cont" title="click to load profile image.">
 					    <input id="file" type="file" name="file" title="click to load profile image."/>
-					    <div id="my-button"></div>
+					    <div id="my-button"><img id="sampler" style="width:100%;" src="${pageContext.servletContext.contextPath }/images/1px.png"/></div>
 					    <input id="overlay" name="file"/>
+					    
 					</div>
 	    		</div><br>
 	    		<div class="row row15">
@@ -78,8 +68,9 @@
                	<div class="row row15 white-bg">
                		<div class="form-group row15">
                			<div class="input-group" style="width:80%">
-	               			<input type="button" onclick="codeAddress()" value="Pick Location" class="geocode-button" title="click to select location">
-	      					<input id="address" class="form-control signup-form geocode-text" type="textbox" value="New Delhi, India">
+	               			<input id="address" class="form-control signup-form geocode-text" type="textbox" placeholder="Enter Location & click Find Location" value="${merchant.locality} ${merchant.city}">
+	               			<input type="button" onclick="codeAddress()" value="Find Location" class="geocode-button" title="click to select location">
+	      					
       					</div>
       					<input id="lat" class="form-control" type="hidden" name="lat">
       					<input id="lng" class="form-control" type="hidden" name="lng" >
@@ -87,7 +78,7 @@
 
 					<div class="form-group">
 			    		<div class="row">
-			      			<input type="submit" value="Save and Next" class="signup-button font-size-16 font-type" />
+			      			<input type="submit" value="Save and Next" class="signup-button font-size-16 font-type white-text" />
 			    		</div>
 			  		</div> 
 			  		<div class="col-md-22 col-lg-22 col-xs-22 col-sm-22" style="text-align:right">        
@@ -99,76 +90,176 @@
   	</center>
   	</div>
 </div>
-	
 	<script type="text/javascript">
-	$("input[type='image']").click(function() {
-    $("input[id='file']").click();
-});</script>
+		$("input[type='image']").click(function() {
+			$("input[id='file']").click();
+		});
+
+		function showImage() {
+			var fr = new FileReader();
+			// when image is loaded, set the src of the image where you want to display it
+			fr.onload = function(e) {
+				document.getElementById('sampler').className = "col-md-8 thumb";
+				document.getElementById('sampler').src = this.result;
+			};
+			var src = document.getElementById("file");
+			fr.readAsDataURL(src.files[0]);
+
+		}
+		document.getElementById('file').addEventListener('change', showImage,
+				false);
+	</script>
 	<script type="text/javascript">
-	 $( document.body ).on( 'click', '.dropdown-menu li', function( event ) {
+		$(document.body).on(
+				'click',
+				'.dropdown-menu li',
+				function(event) {
 
-      var $target = $( event.currentTarget );
+					var $target = $(event.currentTarget);
 
-      $target.closest( '.btn-group' )
-         .find( '[data-bind="label"]' ).text( $target.text() )
-            .end()
-         .children( '.dropdown-toggle' ).dropdown( 'toggle' );
+					$target.closest('.btn-group').find('[data-bind="label"]')
+							.text($target.text()).end().children(
+									'.dropdown-toggle').dropdown('toggle');
 
-      return false;
+					return false;
 
-   });</script>
+				});
+	</script>
 
-     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
-    <script>
-var geocoder;
-var map;
-function initialize() {
-  geocoder = new google.maps.Geocoder();
-  var latlng = new google.maps.LatLng(28.6139391, 77.20902120000005);
-  var mapOptions = {
-    zoom: 8,
-    center: latlng
-  }
-  map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-}
-
-function validateForm(){
-	if(document.getElementById('lat').value == '' || document.getElementById('lng').value == ''){
-		alert("Please select geo code location for easy discovery.");
-		return false;
-	}
-	return true;
-}
-function codeAddress() {
-  var address = document.getElementById('address').value;
-  geocoder.geocode( { 'address': address}, function(results, status) {
-    if (status == google.maps.GeocoderStatus.OK) {
-      map.setCenter(results[0].geometry.location);
-      document.getElementById('lat').value=results[0].geometry.location.lat();
-      document.getElementById('lng').value=results[0].geometry.location.lng();
-      var marker = new google.maps.Marker({
-          map: map,
-          position: results[0].geometry.location
-      });
-    } else {
-      alert('Geocode was not successful for the following reason: ' + status);
-    }
-  });
-}
-jQuery(document).ready(function(){
-	jQuery("#file-upload-cont").hover(
-		function(){
-		jQuery("#my-button").css("background","url('../images/location-header-hover.png') center center no-repeat");},
-		function(){
-		jQuery("#my-button").css("background","url('../images/location-header.png') center center no-repeat");
+	<script
+		src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
+	<script>
+		$('#loading').hide();
+		function showLoader() {
+			$('#loading').show();
 		}
 
-	);
-});
+		var geocoder;
+		var map;
+		var marker;
+		function initialize() {
+			geocoder = new google.maps.Geocoder();
+			var latlng = new google.maps.LatLng(28.6139391, 77.20902120000005);
+			var mapOptions = {
+				zoom : 8,
+				center : latlng
+			}
+			map = new google.maps.Map(document.getElementById('map-canvas'),
+					mapOptions);
+			addDefaultLocation();
+			google.maps.event.addListener(map, 'click', function(event) {
+				placeMarker(event.latLng);
+			});
+		}
 
-google.maps.event.addDomListener(window, 'load', initialize);
+		function validateForm() {
+			if (document.getElementById('lat').value == ''
+					|| document.getElementById('lng').value == '') {
+				alert("Please select geo code location for easy discovery.");
+				return false;
+			}
+			showLoader();
+			return true;
+		}
+		function addDefaultLocation() {
+			var latlng;
+			if (navigator.geolocation) {
+				// Get current position
+				navigator.geolocation.getCurrentPosition(function(position) {
+					if (!marker) {
+						marker = new google.maps.Marker({
+							map : map,
+							position : {
+								lat : position.coords.latitude,
+								lng : position.coords.longitude
+							}
+						});
+					} else {
+						marker.setPosition(new google.maps.LatLng(
+								position.coords.latitude,
+								position.coords.longitude));
+						map.setCenter(marker.getPosition());
+					}
+				}, function() {
+					codeAddress();
+				});
+			}
+			if (!latlng) {
+				codeAddress();
+			}
+		}
 
+		function codeAddress() {
 
-    </script>
+			var address = document.getElementById('address').value;
+			geocoder
+					.geocode(
+							{
+								'address' : address
+							},
+							function(results, status) {
+								if (status == google.maps.GeocoderStatus.OK) {
+									map.setCenter(results[0].geometry.location);
+									document.getElementById('lat').value = results[0].geometry.location
+											.lat();
+									document.getElementById('lng').value = results[0].geometry.location
+											.lng();
+									if (!marker) {
+										marker = new google.maps.Marker(
+												{
+													map : map,
+													position : results[0].geometry.location
+												});
+									} else {
+										marker
+												.setPosition(results[0].geometry.location);
+									}
+								} else {
+									alert('Geocode was not successful for the following reason: '
+											+ status);
+								}
+							});
+		}
+
+		function placeMarker(location) {
+
+			if (marker == undefined) {
+				marker = new google.maps.Marker({
+					position : location,
+					map : map,
+					animation : google.maps.Animation.DROP
+				});
+
+			} else {
+				marker.setPosition(location);
+				document.getElementById('lat').value = location.lat();
+				document.getElementById('lng').value = location.lng();
+			}
+			map.setCenter(location);
+
+		}
+
+		jQuery(document)
+				.ready(
+						function() {
+							jQuery("#file-upload-cont")
+									.hover(
+											function() {
+												jQuery("#my-button")
+														.css("background",
+																"url('../images/inputDigitalMenu.png') center center no-repeat");
+											},
+											function() {
+												jQuery("#my-button")
+														.css("background",
+																"url('../images/inputDigitalMenu.png') center center no-repeat");
+											}
+
+									);
+
+						});
+
+		google.maps.event.addDomListener(window, 'load', initialize);
+	</script>
 </body>
 </html>

@@ -1,1 +1,1 @@
-Welcome to Indulge Merchant Activate your account by clicking on the link :${verificationUrl}
+Dear Merchant thanks for registering. Activate your account by clicking ${verificationUrl}
