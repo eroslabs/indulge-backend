@@ -32,6 +32,7 @@
 	.font-size-20{
 		font-size:16px;
 	}
+	
 	.font-size-24{
 		font-size: 16px;
 	}
@@ -353,7 +354,7 @@ left: 0;
     opacity:0;
 }
 
-#file{
+#file1,#file{
     opacity: 0;
     position: relative;
     z-index: 100;
@@ -387,12 +388,17 @@ label [type="radio"] {
 }
 [type="radio"] + span {
     display:inline-block;
-    padding:1em;
+    padding:10px;
 }
 :checked + span {
     background:#1fbbad;
     display:inline-block;
-    border-radius: 100px;   
+    border-radius: 50%;   
+    color: #fff;
+}
+.work-text{
+  top: 140px;
+  position:relative;
 }
 .post-deal-btn{
 	padding-top: 30px;
@@ -466,11 +472,6 @@ label [type="radio"] {
 .row15 {
 	margin-left: 0px;
 	margin-right: 0px;
-}
-
-.MerchantIcons div div{
-	border: white 1px solid;
-	border-radius: 400px;
 }
 
 .circle {
@@ -649,3 +650,23 @@ label [type="radio"] {
 	background-color:#1fbbad !important
 }*/
 .ValidationErrors{color:red;}
+img {image-orientation: from-image;}
+#loading {
+   width: 100%;
+   height: 100%;
+   top: 0px;
+   left: 0px;
+   position: fixed;
+   display: block;
+   opacity: 0.7;
+   background-color: white;
+   z-index: 99;
+   text-align: center;
+}
+
+#loading-image {
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  z-index: 100;
+}

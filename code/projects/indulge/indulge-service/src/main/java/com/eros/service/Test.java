@@ -24,7 +24,9 @@ import org.json.simple.parser.JSONParser;
 public class Test {
 	
 	public static void main(String[] args) {
-		String  s = "0110111";
+		
+		String  s = "0110.111";
+		System.out.println(s.substring(s.indexOf(".")));
 		String  key = "1000000";
 		
 		StringBuilder sb = new StringBuilder();

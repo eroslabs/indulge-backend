@@ -10,6 +10,8 @@ package com.eros.service;
  */
 public interface Constants {
 
+	
+	public static final String IMAGE_ID = "imageId";
 	/**
 	 * 
 	 */
@@ -114,5 +116,7 @@ public interface Constants {
 	public static final String VERIFY_MARCHANT_TEMPLATE = "http://52.11.37.48/register/verifyMerchant?identifier=%s&id=%s";
 	
 	public static final String OLD_PASSPHRASE = "oldPassphrase";
-
+	public static final String SERVICE_IDS_PARAM = "serviceIds";
+	public static final String SERVICE_TYPE_IDS_PARAM = "serviceTypeIds";
+	public static final String CATEGORY_IDS_PARAM = "categoryIds";
 }

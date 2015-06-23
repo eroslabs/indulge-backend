@@ -62,11 +62,11 @@
 		<c:choose>
 			<c:when test="${deals ne null and  not empty deals}">
 							<c:forEach var="deal" items="${deals}" varStatus="status"> 
-							<c:if test="${deal.validTill > now}">
+							<c:if test="${deal.validTill > now and deal.status}">
 								<div class="col-lg-6 col-md-6 col-sm-8 white-bg" style="margin-left:6%; border:1px solid; margin-top:20px;">
 									<div class="row" style="border-bottom:1px solid; color:white; background-color:#b4978d">
 										<div style="width:50%; float:left; border-right:1px solid; padding:15px;text-align:center;">
-											INR <c:choose> <c:when test="${deal.percentOff ne null and deal.percentOff ne ''}">${deal.percentOff}%</c:when><c:otherwise>${deal.flatOff}/-</c:otherwise></c:choose>
+											<c:choose> <c:when test="${deal.percentOff ne null and deal.percentOff ne ''}">${deal.percentOff}%</c:when><c:otherwise>INR ${deal.flatOff}/-</c:otherwise></c:choose>
 										</div>
 										<div style="width:50%; float:right; text-align:center; padding:15px;">
 											<s:eval expression="T(com.eros.utils.CalculationUtils).getDateDiff(deal.validTill)" var="dateDiff" />
@@ -97,7 +97,7 @@
 										</div>
 									</div>
 									<div class="row">
-										<a href="killDeal?dealId=${deal.id}">
+										<a href="killDeal?dealId=${deal.id}" onclick="return confirm('Are you sure, you want to kill this deal?');">
 										<div class="col-md-12 col-md-push-6 col-sm-16 col-sm-push-4 col-xs-20 col-xs-push-2" style="border:1px solid; padding:10px; text-align:center; margin-top:5px; border-radius:5px">
 											Kill Deal Early
 										</div>
@@ -128,11 +128,11 @@
 		<div class="row row15">
 			<c:if test="${deals ne null and  not empty deals}">
 							<c:forEach var="deal" items="${deals}" varStatus="status"> 
-								<c:if test="${deal.validTill < now and deal.status}">
+								<c:if test="${deal.validTill < now or not deal.status}">
 								<div class="col-lg-6 col-md-6 col-sm-8" style="margin-left:6%; border:1px solid; margin-top:20px;">
 									<div class="row" style="border-bottom:1px solid; color:white; background-color:#b4978d">
 										<div style="width:30%; float:left; border-right:1px solid; padding:15px;text-align:center;">
-											<c:choose> <c:when test="${deal.percentOff ne null and deal.percentOff ne ''}">${deal.percentOff}%</c:when><c:otherwise>${deal.flatOff}/-</c:otherwise></c:choose>
+											<c:choose> <c:when test="${deal.percentOff ne null and deal.percentOff ne ''}">${deal.percentOff}%</c:when><c:otherwise>INR ${deal.flatOff}/-</c:otherwise></c:choose>
 										</div>
 										<div style="width:70%; float:right; text-align:center; padding:15px;">
 											Inactive since <fmt:formatDate pattern="dd MMM yy" value="${deal.validTill }" />! 
@@ -161,9 +161,6 @@
 										<div style="width:50%; float:right; text-align:center">
 									<fmt:formatDate pattern="dd MMM yy" value="${deal.validFrom }" /> - <fmt:formatDate pattern="dd MMM yy" value="${deal.validTill }" /> 
 										</div>
-									</div>
-									<div class="row">
-										${deal.status}
 									</div>
 									<div class="row">
 										<a href="killDeal?dealId=${deal.id}">

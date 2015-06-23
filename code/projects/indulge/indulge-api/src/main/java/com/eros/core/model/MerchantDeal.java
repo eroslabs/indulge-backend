@@ -45,6 +45,7 @@ public class MerchantDeal extends BaseModel {
 	private Integer redemption;
 	private Integer confirmed;
 	private Boolean recurring;
+	private Boolean categoryBased;
 	private List<MerchantDealService> services;
 	private List<Integer> categoryIds;
 	private Boolean status;
@@ -63,12 +64,12 @@ public class MerchantDeal extends BaseModel {
     private Integer luxuryRating;
 	@GeoPointField
 	private GeoPoint geo;
-	@Field(type = FieldType.Boolean, index = FieldIndex.no, store = true)
+	@Field(type = FieldType.Double, index = FieldIndex.no, store = true)
 	private Double lat;
-	@Field(type = FieldType.Boolean, index = FieldIndex.no, store = true)
+	@Field(type = FieldType.Double, index = FieldIndex.no, store = true)
 	private Double lng;
 	private String country;
-	@Field(type = FieldType.Integer, index = FieldIndex.no, store = true)
+	@Field(type = FieldType.Boolean, index = FieldIndex.no, store = true)
 	private Integer homeService;
 	@Field(type = FieldType.String, index = FieldIndex.no, store = true)
 	private String phone;
@@ -127,6 +128,20 @@ public class MerchantDeal extends BaseModel {
 	}
 
 	/**
+	 * @return the categoryBased
+	 */
+	public Boolean getCategoryBased() {
+		return categoryBased;
+	}
+
+	/**
+	 * @param categoryBased the categoryBased to set
+	 */
+	public void setCategoryBased(Boolean categoryBased) {
+		this.categoryBased = categoryBased;
+	}
+
+	/**
 	 * @return the services
 	 */
 	public List<MerchantDealService> getServices() {
@@ -148,7 +163,9 @@ public class MerchantDeal extends BaseModel {
 		if (services != null) {
 			Set<Integer> cats = new HashSet<Integer>();
 			for (MerchantDealService service : services) {
-				cats.add(service.getCategoryId());
+				if(service != null){
+					cats.add(service.getCategoryId());
+				}
 			}
 			categoryIds = new ArrayList<Integer>();
 			categoryIds.addAll(cats);

@@ -5,6 +5,8 @@
 package com.eros.utils;
 
 import java.text.ParseException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -39,5 +41,13 @@ public class CalculationUtils {
 			}
 			return returnStr.toString();
 		} return null;
+	}
+	
+	
+	public static Integer getSize(Collection<?> list){
+		if(list == null || list.isEmpty()){
+			
+			return 0;
+		}else{ return list.size();}
 	}
 }

@@ -112,7 +112,7 @@ public interface MerchantCustomService extends Constants{
 	 * @throws Exception
 	 */
 	public String saveForgotPasswordRequest(String email, Integer i) throws Exception;
-	public Boolean ifMerchantExist(String email, String phone);
+	public Merchant ifMerchantExist(String email, String phone);
 	/**
 	 * @param name
 	 * @return
@@ -155,4 +155,15 @@ public interface MerchantCustomService extends Constants{
 	 * @param merchantId 
 	 */
 	public void deleteImage(Integer imageId, Integer merchantId)  throws Exception;
+	/**
+	 * @param id
+	 * @param id2
+	 */
+	public void deleteMenuImage(Integer imageId, Integer merchantId)throws Exception;
+	/**
+	 * @param merchantIdentifier
+	 * @return
+	 */
+	public List<Merchant> getChainInfo(String merchantIdentifier);
+	
 }

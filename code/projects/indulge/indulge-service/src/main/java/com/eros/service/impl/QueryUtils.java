@@ -137,7 +137,7 @@ public class QueryUtils implements SearchConstants{
 		}
 		if (filter.getLuxury() != null ) {
 			filterBuilderList.add(boolFilter().must(
-					termFilter(LUXURY_FIELD, filter.getHomeService())));
+					termFilter(LUXURY_FIELD, filter.getLuxury())));
 		}
 		if (filter.getServices() != null && filter.getServices().length >0) {
 			filterBuilderList.add(termsFilter(SERVICES_ID_FIELD, filter.getServices()));

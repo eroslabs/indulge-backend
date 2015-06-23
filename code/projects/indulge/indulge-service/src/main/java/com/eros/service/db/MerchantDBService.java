@@ -94,6 +94,8 @@ public interface MerchantDBService {
 	 * @param contextMerchant
 	 */
 	public void cleanSchedule(Merchant contextMerchant);
+	
+	public void deleteServices(Merchant contextMerchant);
 	/**
 	 * @param id
 	 * @return
@@ -153,5 +155,15 @@ public interface MerchantDBService {
 	 * @return
 	 */
 	public Integer disableImage(Map<String, Object> param);
+	/**
+	 * @param param
+	 * @return
+	 */
+	public Integer disableMenuImage(Map<String, Object> param);
+	/**
+	 * @param merchantIdentifier
+	 * @return
+	 */
+	public List<Merchant> fetchChainIds(String merchantIdentifier);
 	
 }

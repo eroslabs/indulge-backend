@@ -1,14 +1,15 @@
-<meta charset="utf-8">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <% response.setHeader("Cache-Control", "no-cache,no-store,private,must-revalidate,max-stale=0,post-check=0,pre-check=0"); // HTTP 1.1.
 response.setHeader("Pragma", "no-cache");
 response.setDateHeader("Expires", 0);
 %>
- <link href="${pageContext.servletContext.contextPath }/css/bootstrap.min.css" rel="stylesheet" >
+
+<meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate,max-stale=0,post-check=0,pre-check=0" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="${pageContext.servletContext.contextPath }/css/bootstrap.min.css" rel="stylesheet" >
 
 <link href='http://fonts.googleapis.com/css?family=Raleway:400,500,500,200,600,500' rel='stylesheet' type='text/css'>
 <link href="${pageContext.servletContext.contextPath }/css/merchant-min.css" rel="stylesheet" />

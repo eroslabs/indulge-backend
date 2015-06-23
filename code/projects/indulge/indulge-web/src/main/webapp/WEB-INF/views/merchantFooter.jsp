@@ -15,8 +15,8 @@
                <div class="col-sm-5 col-xs-12">
                   <ul class="list-unstyled footer-new">
                   	<li class="brown-text" style="font-size: 12px;">Quick Links</li>
-                     <li class="white-text">How it works</li>
-                     <li class="white-text">Benefits</li>
+                     <li><a href="${pageContext.servletContext.contextPath }/#how_it_works" class="white-text">How it works</a></li>
+                     <li><a href="${pageContext.servletContext.contextPath }/#benefits" class="white-text">Benefits</a></li>
                      <li class="white-text">Pricing</li>
                      <li class="white-text">FAQ's</li>
                      <li class="white-text">Privacy Policy</li>

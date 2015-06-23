@@ -49,7 +49,7 @@
 		<div class="col-xs-22 col-sm-14 col-md-12 col-lg-10 col-xs-push-1 col-sm-push-5 col-md-push-6 col-lg-push-7">
     		<div class="row font-type sign-up font-size-24 location-header">Enter New Password</div>
     		
-    		<form:form method="GET" action="changePassword" modelAttribute="merchant" class="form-horizontal " style="margin-bottom:20px; margin-top:20px" >
+    		<form:form method="POST" action="changePassword" modelAttribute="merchant" class="form-horizontal " style="margin-bottom:20px; margin-top:20px" >
     			<div class="form-group">
                 <label class="sr-only">Email address / Registered Phone</label>
                 <input type="text" autofocus="" required="" readonly="readonly" placeholder="Email or Phone no." class="form-control sign-in-username sign-in-place font-size-20" name='identifier' value='${identifier }' >

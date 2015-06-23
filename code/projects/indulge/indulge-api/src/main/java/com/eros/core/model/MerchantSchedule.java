@@ -138,8 +138,10 @@ public class MerchantSchedule extends BaseModel{
 		if(StringUtils.isNotBlank(openingTime)){
 			String[] arr = openingTime.split(":");
 			Integer hr = Integer.parseInt(arr[0]);
-			if(hr > 12){
-				hr=hr-12;
+			if(hr >= 12){
+				if(hr > 12){
+					hr=hr-12;
+				}
 				sb.append(hr).append(":").append(arr[1]).append( " PM");
 			}else{
 				sb.append(hr).append(":").append(arr[1]).append( " AM");
@@ -155,8 +157,10 @@ public class MerchantSchedule extends BaseModel{
 		if(StringUtils.isNotBlank(closingTime)){
 			String[] arr = closingTime.split(":");
 			Integer hr = Integer.parseInt(arr[0]);
-			if(hr > 12){
-				hr=hr-12;
+			if(hr >= 12){
+				if(hr > 12){
+					hr=hr-12;
+				}
 				sb.append(hr).append(":").append(arr[1]).append( " PM");
 			}else{
 				sb.append(hr).append(":").append(arr[1]).append( " AM");

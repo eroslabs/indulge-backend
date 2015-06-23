@@ -33,9 +33,9 @@ public class Merchant extends BaseModel {
     private String email; 	 	
     private String passPhrase; 	
     private String city;	
-    @Field(type = FieldType.Boolean, index = FieldIndex.not_analyzed,store=true)
+    @Field(type = FieldType.Double, index = FieldIndex.not_analyzed,store=true)
     private Double lat;	
-    @Field(type = FieldType.Boolean, index = FieldIndex.not_analyzed,store=true)
+    @Field(type = FieldType.Double, index = FieldIndex.not_analyzed,store=true)
     private Double lng;
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed,store=true)
     private String image;
@@ -81,6 +81,7 @@ public class Merchant extends BaseModel {
     private Integer luxuryRating;
     private String finalWeekSchedule;
     private String refer;
+    private String role;
     private List<Integer> categoryIds;
     
 	/**
@@ -250,6 +251,18 @@ public class Merchant extends BaseModel {
 	 */
 	public void setAddress(String address) {
 		this.address = address;
+	}
+	/**
+	 * @return the role
+	 */
+	public String getRole() {
+		return role;
+	}
+	/**
+	 * @param role the role to set
+	 */
+	public void setRole(String role) {
+		this.role = role;
 	}
 	/**
 	 * @return the refer

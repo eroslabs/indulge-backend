@@ -16,7 +16,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li class="header-stats"><a href="${pageContext.servletContext.contextPath }/merchant/reviews" class="header2"><span class="glyphicon glyphicon-home"></span><span> Stats</span></a></li>
         <li class="header-info"><a href="${pageContext.servletContext.contextPath }/merchant/home" class="header2"><span class="icon-user"></span> <span>Basic Info</span></a></li>
-        <li class="header-services"><a href="${pageContext.servletContext.contextPath }/merchant/inputDigitalMenu" class="header2"><i class="icon-list-ol"></i> <span>Services</span></a></li>
+        <li class="header-services"><a href="${pageContext.servletContext.contextPath }/merchant/inputDigitalMenu" class="header2"><span class="glyphicon glyphicon-home"></span> <span>Services</span></a></li>
         <li class="header-deals"><a href="${pageContext.servletContext.contextPath }/merchant/listDeals" class="header2"><span class="icon-tag"></span> <span>Deals</span></a></li>
         <!-- <li class="header-account" style="border:none;"><a data-toggle="modal" data-target="#myModalAcc" href="" class="header2"><span class="icon-user"></span> <span>Account</span></a></li> -->
         <li class="header-account dropdown" style="border:none;">
@@ -49,7 +49,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li class="header-stats" style="border:none;"><a href="${pageContext.servletContext.contextPath }/merchant/reviews" class="header2"><span class="glyphicon glyphicon-home"></span><span> Stats</span></a></li>
         <li class="header-info" style="border:none;"><a href="${pageContext.servletContext.contextPath }/merchant/home" class="header2"><span class="glyphicon glyphicon-home"></span> <span>Basic Info</span></a></li>
-        <li class="header-services" style="border:none;"><a href="${pageContext.servletContext.contextPath }/merchant/inputDigitalMenu" class="header2"><i class="icon-list-ol"></i> <span>Services</span></a></li>
+        <li class="header-services" style="border:none;"><a href="${pageContext.servletContext.contextPath }/merchant/inputDigitalMenu" class="header2"><span class="glyphicon glyphicon-home"></span> <span>Services</span></a></li>
         <li class="header-deals"  style="border:none;"><a href="${pageContext.servletContext.contextPath }/merchant/listDeals" class="header2"><span class="glyphicon glyphicon-home"></span> <span>Deals</span></a></li>
         <li class="header-account dropdown" style="border:none;">
           <a id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true" href="" class="header2"><span class="icon-user"></span> <span>Account</span></a>

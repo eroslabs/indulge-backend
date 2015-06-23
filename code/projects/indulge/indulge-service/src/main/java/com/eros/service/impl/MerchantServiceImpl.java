@@ -50,6 +50,16 @@ import com.eros.service.util.TinyUrlUtility;
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 public class MerchantServiceImpl implements MerchantCustomService {
 
+	/**
+	 * 
+	 */
+	
+
+	/**
+	 * 
+	 */
+	
+
 	private static final Logger LOG = LoggerFactory
 			.getLogger(MerchantServiceImpl.class);
 
@@ -72,14 +82,14 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	@Value("${merchant.enable.sms}")
 	private Boolean MERCHANT_ENABLE_SMS;
 
-	public Boolean ifMerchantExist(String email, String phone) {
+	public Merchant ifMerchantExist(String email, String phone) {
 		HashMap<String, Object> param = new HashMap<String, Object>(3);
 		param.put(EMAIL, email);
 		param.put(PHONE, phone);
 		param.put(EXIST, null);
 		Merchant merchant = merchantDBService.merchantExist(param);
 
-		return (merchant == null ? false : true);
+		return merchant;
 	}
 
 	public Merchant getMerchantByEmail(String email) {
@@ -163,7 +173,11 @@ public class MerchantServiceImpl implements MerchantCustomService {
 			if (!file.exists()) {
 				file.mkdirs();
 			}
-			File uploadedFile = new File(file, fileName);
+			String name = RandomStringUtils.random(8, false, true);
+			if(StringUtils.isNotBlank(fileName) && fileName.indexOf(".") != -1){
+				name = name + fileName.substring(fileName.lastIndexOf("."));
+			}
+			File uploadedFile = new File(file, name);
 			if (!uploadedFile.exists()) {
 				uploadedFile.createNewFile();
 			}
@@ -173,7 +187,7 @@ public class MerchantServiceImpl implements MerchantCustomService {
 			stream.write(bytes);
 			stream.close();
 			return new StringBuilder().append(id).append(File.separator)
-					.append(fileName).toString();
+					.append(name).toString();
 
 		} catch (Exception e) {
 			LOG.error("Error in saving merchant image : " + MERCHANT_BASE_PATH
@@ -366,17 +380,17 @@ public class MerchantServiceImpl implements MerchantCustomService {
 			if (deal.getId() != null) {
 				HashMap<String, Object> params = new HashMap<String, Object>(3);
 				params.put(
-						"serviceIds",
+						SERVICE_IDS_PARAM,
 						serviceIds != null && serviceIds.size() > 0 ? serviceIds
 								: null);
-				params.put("serviceTypeIds", serviceTypeIds != null
+				params.put(SERVICE_TYPE_IDS_PARAM, serviceTypeIds != null
 						&& serviceTypeIds.size() > 0 ? serviceTypeIds : null);
 				params.put(
-						"categoryIds",
+						CATEGORY_IDS_PARAM,
 						categoryIds != null && categoryIds.size() > 0 ? categoryIds
 								: null);
-				params.put("dealId", deal.getId());
-				params.put("merchantId", deal.getMerchantId());
+				params.put(DEAL_ID, deal.getId());
+				params.put(MERCHANT_ID, deal.getMerchantId());
 				merchantDBService.saveDealServices(params);
 			}
 			return true;
@@ -476,9 +490,12 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	@Override
 	public Boolean saveServices(Merchant contextMerchant) throws Exception {
 		try {
-			Map<String, Object> param = new HashMap<String, Object>(1);
-			param.put("list", contextMerchant.getServices());
-			merchantDBService.saveServices(param);
+			if(contextMerchant.getServices() != null && contextMerchant.getServices().size() > 0){
+				merchantDBService.deleteServices(contextMerchant);
+				Map<String, Object> param = new HashMap<String, Object>(1);
+				param.put("list", contextMerchant.getServices());
+				merchantDBService.saveServices(param);
+			}
 			return true;
 		} catch (Exception e) {
 			LOG.error("Error in saving Services: ", e);
@@ -778,7 +795,7 @@ public class MerchantServiceImpl implements MerchantCustomService {
 		try {
 			Map<String, Object> param = new HashMap<String, Object>(3);
 			param.put(MERCHANT_ID, merchantId);
-			param.put("imageId", imageId);
+			param.put(IMAGE_ID, imageId);
 			Integer i = merchantDBService.disableImage(param);
 			if (i <= 0) {
 				throw new Exception("Error in disabling Image" + imageId);
@@ -789,4 +806,39 @@ public class MerchantServiceImpl implements MerchantCustomService {
 		}
 		
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.eros.service.MerchantCustomService#deleteImage(java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public void deleteMenuImage(Integer imageId, Integer merchantId) throws Exception {
+		try {
+			Map<String, Object> param = new HashMap<String, Object>(3);
+			param.put(MERCHANT_ID, merchantId);
+			param.put(IMAGE_ID, imageId);
+			Integer i = merchantDBService.disableMenuImage(param);
+			if (i <= 0) {
+				throw new Exception("Error in removing Image" + imageId);
+			}
+		} catch (Exception e) {
+			LOG.error("Error in disabling image : ", e);
+			throw new Exception("Error in disabling image", e);
+		}
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.eros.service.MerchantCustomService#getChainInfo(java.lang.String)
+	 */
+	@Override
+	public List<Merchant> getChainInfo(String merchantIdentifier) {
+		List<Merchant> chainList = null;
+		try{
+			chainList = merchantDBService.fetchChainIds(merchantIdentifier);
+		} catch (Exception e) {
+			//ignoring since it will be called everytime.
+		}
+		return chainList;
+	}
+
 }

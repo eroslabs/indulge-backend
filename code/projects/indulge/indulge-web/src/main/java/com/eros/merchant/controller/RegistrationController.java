@@ -24,12 +24,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.eros.constants.WebConstants;
 import com.eros.core.BaseController;
 import com.eros.core.model.Merchant;
 import com.eros.core.model.MerchantImage;
 import com.eros.core.model.MerchantSchedule;
 import com.eros.core.model.State;
+import com.eros.service.security.UserRole;
 
 /**
  * 
@@ -80,9 +80,9 @@ public class RegistrationController extends BaseController{
 				throw new Exception("Merchant Info invalid");
 			}
 
-			Boolean exist = merchantService
+			Merchant oldMerchant = merchantService
 					.ifMerchantExist(merchant.getEmail(), merchant.getPhone());
-			if (exist != null && exist) {
+			if (oldMerchant != null && !oldMerchant.getRole().equalsIgnoreCase(UserRole.ROLE_OWNER.toString())) {
 				LOGGER.error(
 						"Merchant already exist: "
 								+ merchant.getEmail() + merchant.getPhone());
@@ -90,6 +90,11 @@ public class RegistrationController extends BaseController{
 						"Error:: Merchant already exist with entered email/phone");
 				redirectAttributes.addFlashAttribute("merchant", merchant);
 				return "redirect:/register/input";
+			}else if(oldMerchant != null && oldMerchant.getRole().equalsIgnoreCase(UserRole.ROLE_OWNER.toString()))
+			{
+				merchant.setRole(UserRole.ROLE_OWNER.toString());
+			}else{
+				merchant.setRole(UserRole.ROLE_USER.toString());
 			}
 			merchantService.registerMerchant(merchant);
 			merchant = merchantService.getMerchantByEmail(StringUtils
@@ -160,7 +165,7 @@ public class RegistrationController extends BaseController{
 			final RedirectAttributes redirectAttributes, HttpSession session,
 			Principal principal, ModelMap modelMap) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		if (file != null && !file.isEmpty()) {
 			try {
 				byte[] bytes = file.getBytes();
@@ -211,7 +216,7 @@ public class RegistrationController extends BaseController{
 	@RequestMapping(value = "/inputAddress")
 	public String inputAddress(ModelMap modelMap, HttpServletRequest request) {
 		Merchant merchant = (Merchant) request.getSession().getAttribute(
-				WebConstants.MERCHANT_ATTRIBUTE);
+				MERCHANT_ATTRIBUTE);
 		String id = (String) modelMap.get(MERCHANT_ID);
 		if (merchant == null && StringUtils.isNotBlank(id)) {
 			merchant = merchantService.getMerchantByEmail(merchant.getEmail());
@@ -236,7 +241,7 @@ public class RegistrationController extends BaseController{
 			final RedirectAttributes redirectAttributes, HttpSession session,
 			ModelMap modelMap) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		Boolean clear = true;
 		try {
 			contextMerchant.setAddress(merchant.getAddress());
@@ -280,7 +285,7 @@ public class RegistrationController extends BaseController{
 	@RequestMapping(value = "/inputContact")
 	public String inputContact(ModelMap modelMap, HttpServletRequest request) {
 		Merchant merchant = (Merchant) request.getSession().getAttribute(
-				WebConstants.MERCHANT_ATTRIBUTE);
+				MERCHANT_ATTRIBUTE);
 		String id = (String) modelMap.get(MERCHANT_ID);
 		if (merchant == null && StringUtils.isNotBlank(id)) {
 			merchant = merchantService.getMerchantByEmailOrPhone(id);
@@ -310,7 +315,7 @@ public class RegistrationController extends BaseController{
 			final RedirectAttributes redirectAttributes, HttpSession session,
 			ModelMap modelMap) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		if (StringUtils.isBlank(phone1) && StringUtils.isBlank(phone2)
 				&& StringUtils.isBlank(phone3)) {
 			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
@@ -369,7 +374,7 @@ public class RegistrationController extends BaseController{
 	@RequestMapping(value = "/inputSchedule")
 	public String inputSchedule(ModelMap modelMap, HttpServletRequest request) {
 		Merchant merchant = (Merchant) request.getSession().getAttribute(
-				WebConstants.MERCHANT_ATTRIBUTE);
+				MERCHANT_ATTRIBUTE);
 		String id = (String) modelMap.get(MERCHANT_ID);
 		if (merchant == null && StringUtils.isNotBlank(id)) {
 			merchant = merchantService.getMerchantByEmailOrPhone(id);
@@ -404,7 +409,7 @@ public class RegistrationController extends BaseController{
 			return "redirect:/register/inputSchedule";
 		}
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		Boolean clear = true;
 		List<MerchantSchedule> merchantSchedule =  new ArrayList<MerchantSchedule>();
 		try {
@@ -449,7 +454,7 @@ public class RegistrationController extends BaseController{
 	@RequestMapping(value = "/inputPhoto")
 	public String inputPhoto(ModelMap modelMap, HttpSession session) {
 		Merchant merchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		String id = (String) modelMap.get(MERCHANT_ID);
 		if (merchant == null && StringUtils.isNotBlank(id)) {
 			merchant = merchantService.getMerchantByEmailOrPhone(id);
@@ -475,7 +480,7 @@ public class RegistrationController extends BaseController{
 			final RedirectAttributes redirectAttributes, HttpSession session,
 			ModelMap modelMap) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		Boolean clear = true;
 		try {
 			if (files != null && files.length > 0) {
@@ -596,7 +601,7 @@ public class RegistrationController extends BaseController{
 					+ email, e);
 			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 					"Error in sending password change request.");
-			return "triggerForgot";
+			return "redirect:/merchant/login";
 		}
 
 		redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE,

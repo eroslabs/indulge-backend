@@ -60,7 +60,7 @@ public interface SearchConstants {
 	/**
 	 * 
 	 */
-	public static final String SERVICES_ID_FIELD = "services.id";
+	public static final String SERVICES_ID_FIELD = "services.serviceId";
 	/**
 	 * 
 	 */

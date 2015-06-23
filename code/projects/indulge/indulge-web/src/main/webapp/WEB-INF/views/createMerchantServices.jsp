@@ -1,6 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib  prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<% response.setHeader("Cache-Control", "no-cache,no-store,private,must-revalidate,max-stale=0,post-check=0,pre-check=0"); // HTTP 1.1.
+response.setHeader("Pragma", "no-cache"); 
+response.setDateHeader("Expires", 0);
+%>
 <!DOCTYPE html>
 <html lang="en">
    <head>
@@ -8,7 +13,7 @@
    </head>
    <body style="background-color: #f0f0f0">
       <jsp:include page="../views/postmerchantHeader.jsp" />
-<div id="loading">
+	<div id="loading">
 		<img
 			src="${pageContext.servletContext.contextPath }/images/ajax-loader.gif"
 			id="loading-image" />
@@ -123,19 +128,19 @@
                   </c:forEach>
                   </select>
                   </div>
-                  <div class="col-md-4 col-sm-7 col-xs-12"
+                  <div class="col-md-4 col-sm-7 col-xs-24"
                      style="padding: 0px 20px 0px 5px; margin-top: 5px;">
                   <div class="btn-group" id="weekdays" data-toggle="buttons"
                      style="width: 100%">
-                  <label class="btn btn-default"
+                  <label class="btn btn-default day-pill"
                      style="width: 30%; padding: 0px; text-align: center; height: 40px; line-height: 40px; font-size:12px; vertical-align: middle"
                      onclick="selectmale(this,${category.id})"> <input
                      type="checkbox" value="0">M
-                  </label> <label class="btn btn-default"
+                  </label> <label class="btn btn-default day-pill"
                      style="width: 30%; padding: 0px; text-align: center; height: 40px; line-height: 40px; font-size:12px; vertical-align: middle"
                      onclick="selectfemale(this,${category.id})"> <input
                      type="checkbox" value="1">F
-                  </label> <label class="btn btn-default"
+                  </label> <label class="btn btn-default day-pill"
                      style="width: 40%; padding: 0px; text-align: center; height: 40px; line-height: 40px; font-size:12px; vertical-align: middle"
                      onclick="selectboth(this,${category.id})"> <input
                      type="checkbox" value="2">Unisex
@@ -143,19 +148,19 @@
                      id="selectedGender_${category.id}" type="hidden">
                   </div>
                   </div>
-                  <div class="col-md-5 col-sm-7 col-xs-12"
+                  <div class="col-md-5 col-sm-7 col-xs-24"
                      style="padding: 0px 20px 0px 5px; margin-top: 5px;">
                   <div class="btn-group" id="weekdays" data-toggle="buttons"
                      style="width: 100%">
-                  <label class="btn btn-default"
+                  <label class="btn btn-default day-pill"
                      style="width: 35%;  padding: 7px; text-align: center; height: 40px; line-height: 13px; font-size: 12px; vertical-align: middle"
                      onclick="selectMerchant(this,${category.id})"> <input
-                     type="checkbox" value="0">Merchant<br>Home
-                  </label> <label class="btn btn-default"
+                     type="checkbox" value="0">Merchant<br>Venue
+                  </label> <label class="btn btn-default day-pill"
                      style="width: 35%;  padding: 7px; text-align: center; height: 40px; line-height: 13px; font-size: 12px; vertical-align: middle"
                      onclick="selectHome(this,${category.id})"> <input
-                     type="checkbox" value="1">Home<br> Venue
-                  </label> <label class="btn btn-default"
+                     type="checkbox" value="1">Client<br/>Home
+                  </label> <label class="btn btn-default day-pill"
                      style="width: 30%;  padding: 12px; text-align: center; height: 40px; line-height: 13px; font-size: 12px; vertical-align: middle"
                      onclick="selectbothlocation(this,${category.id})">
                   <input type="checkbox" value="2">Both
@@ -202,22 +207,22 @@
                   </select>
                   </div>
                   <div style="padding: 0px 20px 0px 5px; margin-top: 5px;"
-                     class="col-md-4 col-sm-7 col-xs-12 light-opacity">
+                     class="col-md-4 col-sm-7 col-xs-24 light-opacity">
                   <div style="width: 100%" data-toggle="buttons"
                      id="weekdays" class="btn-group">
                   <label onclick="selectmale(this,1)"
                   style="width: 30%; padding: 0px; text-align: center; height: 40px; line-height: 40px; font-size:12px; vertical-align: middle"
-                  class="btn btn-default <c:if test="${merService.gender == 0}">active </c:if>">
+                  class="btn btn-default day-pill <c:if test="${merService.gender == 0}">active </c:if>">
                   <input type="checkbox" value="0"
                   <c:if test="${merService.gender == 0}">checked </c:if>>M
                   </label> <label onclick="selectfemale(this,1)"
                   style="width: 30%; padding: 0px; text-align: center; height: 40px; line-height: 40px; font-size:12px; vertical-align: middle"
-                  class="btn btn-default <c:if test="${merService.gender == 1}">active </c:if>">
+                  class="btn btn-default day-pill <c:if test="${merService.gender == 1}">active </c:if>">
                   <input type="checkbox" value="1"
                   <c:if test="${merService.gender == 1}">checked </c:if>>F
                   </label> <label onclick="selectboth(this,1)"
                   style="width: 40%; padding: 0px; text-align: center; height: 40px; line-height: 40px; font-size:12px; vertical-align: middle"
-                  class="btn btn-default <c:if test="${merService.gender == 2}">active </c:if>">
+                  class="btn btn-default day-pill <c:if test="${merService.gender == 2}">active </c:if>">
                   <input type="checkbox" value="2"
                   <c:if test="${merService.gender == 2}">checked </c:if>>Unisex
                   </label> <input type="hidden" id="selectedGender_1"
@@ -225,23 +230,23 @@
                   </div>
                   </div>
                   <div style="padding: 0px 20px 0px 5px; margin-top: 5px;"
-                     class="col-md-5 col-sm-7 col-xs-12 light-opacity">
+                     class="col-md-5 col-sm-7 col-xs-24 light-opacity">
                   <div style="width: 100%" data-toggle="buttons"
                      id="weekdays" class="btn-group">
                   <label onclick="selectMerchant(this,1)"
                   style="width: 35%; padding: 7px; text-align: center; height: 40px; line-height: 13px; font-size: 12px; vertical-align: middle"
-                  class="btn btn-default <c:if test="${merService.homeService == 0}">active </c:if>">
+                  class="btn btn-default day-pill <c:if test="${merService.homeService == 0}">active </c:if>">
                   <input type="checkbox" value="0"
                   <c:if test="${merService.homeService == 0}">checked </c:if>>Merchant<br>Home
                   </label> <label onclick="selectHome(this,1)"
                   style="width: 35%; padding: 7px; text-align: center; height: 40px; line-height: 13px; font-size: 12px; vertical-align: middle"
-                  class="btn btn-default <c:if test="${merService.homeService == 1}">active </c:if>">
+                  class="btn btn-default day-pill <c:if test="${merService.homeService == 1}">active </c:if>">
                   <input type="checkbox" value="1"
                   <c:if test="${merService.homeService == 1}">checked </c:if>>Home<br>
                   Venue
                   </label> <label onclick="selectbothlocation(this,1)"
                   style="width: 30%; padding: 12px; text-align: center; height: 40px; line-height: 13px; font-size: 12px; vertical-align: middle"
-                  class="btn btn-default <c:if test="${merService.homeService == 2}">active </c:if>">
+                  class="btn btn-default day-pill <c:if test="${merService.homeService == 2}">active </c:if>">
                   <input type="checkbox" value="2"
                   <c:if test="${merService.homeService == 2}">checked </c:if>>Both
                   </label> <input type="hidden" id="selectedHomeService_1"
@@ -254,7 +259,7 @@
                   <input type="text" placeholder="Add Price"
                      class="form-input signup-field"
                      style="width: 100%; height: 40px" id="selectedPrice"
-                     name="selectedPrice" value="${merService.price }">
+                     name="selectedPrice" value="<fmt:formatNumber value="${merService.price }" maxFractionDigits="0"/>">
                   </div>
                   <a onclick="deleteme(this);" href="#" class="col-md-2"><span class="glyphicon glyphicon-remove" style="padding: 15px 0px; color:#B4978D;"></span></a>
                   
@@ -298,19 +303,19 @@
                   </c:forEach>
                   </select>
                   </div>
-                  <div class="col-md-4 col-sm-7 col-xs-12"
+                  <div class="col-md-4 col-sm-7 col-xs-24"
                      style="padding: 0px 20px 0px 5px; margin-top: 5px;">
                   <div class="btn-group" id="weekdays" data-toggle="buttons"
                      style="width: 100%">
-                  <label class="btn btn-default"
+                  <label class="btn btn-default day-pill"
                      style="width: 30%; padding: 0px; text-align: center; height: 40px; line-height: 40px; font-size:12px; vertical-align: middle"
                      onclick="selectmale(this,${category.id})"> <input
                      type="checkbox" value="0">M
-                  </label> <label class="btn btn-default"
+                  </label> <label class="btn btn-default day-pill"
                      style="width: 30%; padding: 0px; text-align: center; height: 40px; line-height: 40px; font-size:12px; vertical-align: middle"
                      onclick="selectfemale(this,${category.id})"> <input
                      type="checkbox" value="1">F
-                  </label> <label class="btn btn-default"
+                  </label> <label class="btn btn-default day-pill"
                      style="width: 40%; padding: 0px; text-align: center; height: 40px; line-height: 40px; font-size:12px; vertical-align: middle"
                      onclick="selectboth(this,${category.id})"> <input
                      type="checkbox" value="2">Unisex
@@ -318,19 +323,19 @@
                      id="selectedGender_${category.id}" type="hidden">
                   </div>
                   </div>
-                  <div class="col-md-5 col-sm-7 col-xs-12"
+                  <div class="col-md-5 col-sm-7 col-xs-24"
                      style="padding: 0px 20px 0px 5px; margin-top: 5px;">
                   <div class="btn-group" id="weekdays" data-toggle="buttons"
                      style="width: 100%">
-                  <label class="btn btn-default"
+                  <label class="btn btn-default day-pill"
                      style="width: 35%;  padding: 7px; text-align: center; height: 40px; line-height: 13px; font-size: 12px; vertical-align: middle"
                      onclick="selectMerchant(this,${category.id})"> <input
-                     type="checkbox" value="0">Merchant<br>Home
-                  </label> <label class="btn btn-default"
+                     type="checkbox" value="0">Merchant<br>Venue
+                  </label> <label class="btn btn-default day-pill"
                      style="width: 35%; padding: 7px; text-align: center; height: 40px; line-height: 13px; font-size: 12px; vertical-align: middle"
                      onclick="selectHome(this,${category.id})"> <input
-                     type="checkbox" value="1">Home<br> Venue
-                  </label> <label class="btn btn-default"
+                     type="checkbox" value="1">Client<br>Home
+                  </label> <label class="btn btn-default day-pill"
                      style="width: 30%;  padding: 12px; text-align: center; height: 40px; line-height: 13px; font-size: 12px;vertical-align: middle"
                      onclick="selectbothlocation(this,${category.id})">
                   <input type="checkbox" value="2">Both
@@ -354,15 +359,18 @@
                   </div>
                   </c:if>
                </div>
+		<input type="submit" class="row row15 midbrownbg-color" style="position: fixed;right: 0px;top: 250px;border-radius: 0px; margin: 20px; color: white; height: 40px" value="Save Services">
             </form:form>
          </div>
       </div>
       <script type="text/javascript">
-      $('#loading').hide();
+	var changes = false;
+	$('#loading').hide();
 		function showLoader() {
 			$('#loading').show();
 		}
          function validateForm(){
+		changes = false;
          	var p = document.getElementsByName("selectedPrice");
          	var c = document.getElementsByName('selectedId');
          	var t = document.getElementsByName('selectedType');
@@ -373,7 +381,7 @@
          	for (i = 0; i < p.length; i++) {
          		 if (p[i].value != "0") {
          		        if(c[i].value != '0' && t[i].value != '' && g[i].value != '' && s[i].value != ''){
-         		        	showLoader();
+					showLoader();
          		        	return true;
          		        }
          	}}
@@ -401,6 +409,7 @@
       </script>
       <script type="text/javascript">
          function clone(id){
+		changes = true;
          	var error = 0;
          	var message="Invalid Values for ";
          	$("#initial_"+id).find("#servicedrop_"+id).each(function(){
@@ -439,7 +448,6 @@
          		
          		d=document.createElement('div');
          		$("#initial_"+id).children().css('opacity','0.6').appendTo(d);
-         		$(d).find(':input').prop("disabled",true);
 
          		$(d).append('<a onclick="deleteme(this);" href="#" class="col-md-2"><span class="glyphicon glyphicon-remove" style="padding: 15px 0px; color:#B4978D;"></span></a>');
          		$("#append_"+id).append(d);
@@ -448,7 +456,9 @@
          
          }
          function deleteme(event){
+        	 if(confirm('Are you sure you want to delete?')){
          	$(event).parent("div").remove();
+        	 }
          }
       </script>
       <script type="text/javascript">
@@ -491,6 +501,9 @@
                               $(this).removeClass("active");
                            });
          }
+	$(window).bind("beforeunload",function(event) {
+	    	    if(changes) {return "Click SAVE button at the BOTTOM to save all services.";}
+	    	});
          
       </script>
    </body>

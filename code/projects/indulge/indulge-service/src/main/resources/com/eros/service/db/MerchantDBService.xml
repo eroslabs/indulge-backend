@@ -201,7 +201,7 @@
 	</resultMap>
 
 	<select id="merchantExist" parameterType="HashMap" resultType="com.eros.core.model.Merchant">
-	select id from merchant where 
+	select id,role from merchant where 
 		<if test="email != null">
 			 email = #{email}
 		</if>
@@ -211,6 +211,7 @@
 		</if>
 			 phone = #{phone}
 		</if>
+		limit 1
 	</select>
 	<select id="loadMerchantByUsernameOrPhone" parameterType="HashMap" resultType="HashMap">
 		select email,passphrase,phone,role from merchant where (email = #{user} or phone=#{user}) 
@@ -220,7 +221,8 @@
 		<if test="verified != null">
 			and verified = true
 		</if>
-	
+		
+		limit 1;
 	</select>
 	<select id="fetchMerchantReviews" parameterType="Hashmap"
 		resultMap="reviews">
@@ -280,7 +282,7 @@
 	</select>
 	<select id="fetchMenu" resultType="com.eros.core.model.DigitalMenuImage">
 		select id,image,type,status
-		from digital_menu_image where merchant_id = #{id} 		
+		from digital_menu_image where merchant_id = #{id} and status=1 		
 	</select>
 	<select id="selectMerchantServices" resultType="com.eros.core.model.MerchantService">
 		SELECT m.id AS
@@ -305,7 +307,7 @@
 		deal_id = #{id}
 	</select>
 	<select id="selectDigitalMenuImage" resultType="com.eros.core.model.DigitalMenuImage">
-		select id,image,status,type from digital_menu_image where merchant_id=#{id}
+		select id,image,status,type from digital_menu_image where merchant_id=#{id} and status=1
 	</select>
 
 	<select id="fetchAllServiceCategories" resultMap="serviceCatgory">
@@ -352,18 +354,21 @@
 			WHERE
 			id = ${value} limit 1; 
 		</select>
-	<select id="fetchTotalMerchantReviews" parameterType="Integer"
-		resultType="Integer">
+	<select id="fetchTotalMerchantReviews" parameterType="Integer"	resultType="Integer">
 		select count(*) from user_reviews where
 		merchant_id=#{value}
 	</select>
 
+	<select id="fetchChainIds" parameterType="String" resultMap="merchant">
+		SELECT  m.id, m.name,m.locality,m.address FROM	merchant m where m.verified=1 and ( m.email = '${value}' or m.phone='${value}' ) ;
+	</select>
+	
 	<insert id="saveDeal" parameterType="com.eros.core.model.MerchantDeal"
 		useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO
-		merchant_deal(merchant_id,valid_from,valid_till,flat_off,percent_off,weekdays_schedule,recurring,created_date)
+		merchant_deal(merchant_id,valid_from,valid_till,flat_off,percent_off,weekdays_schedule,recurring,category_based,created_date)
 		VALUES
-		(#{merchantId},#{validFrom},#{validTill},#{flatOff},#{percentOff},#{days},#{recurring},CURRENT_TIMESTAMP)
+		(#{merchantId},#{validFrom},#{validTill},#{flatOff},#{percentOff},#{days},#{recurring},#{categoryBased},CURRENT_TIMESTAMP)
 		<selectKey keyProperty="id" resultType="Integer" order="AFTER">
 	            SELECT LAST_INSERT_ID();
 	        </selectKey>
@@ -409,20 +414,20 @@
 	
 	<insert id="saveMerchantMenu">
 		INSERT INTO
-		digital_menu_image(merchant_id,image,created_date)
+		digital_menu_image(merchant_id,image,status,created_date)
 		VALUES
 		<foreach item="element" index="index" collection="list" open="("
 			separator="),(" close=")">
-			#{element.merchantId}, #{element.image},
+			#{element.merchantId}, #{element.image},1,
 			CURRENT_TIMESTAMP
 		</foreach>
 	</insert>
 	<insert id="registerMerchant" parameterType="com.eros.core.model.Merchant"
 		useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO
-		merchant(name,email,passphrase,phone,locality,city,state,country,merchant_type,uploaded_by,created_date)
+		merchant(name,email,passphrase,phone,locality,city,state,country,merchant_type,uploaded_by,role,created_date)
 		VALUES
-		(#{name},#{email},MD5(#{passPhrase}),#{phone},#{locality},#{city},#{state},#{country},#{merchantType},#{refer},CURRENT_TIMESTAMP)
+		(#{name},#{email},MD5(#{passPhrase}),#{phone},#{locality},#{city},#{state},#{country},#{merchantType},#{refer},#{role},CURRENT_TIMESTAMP)
 	</insert>
 	<insert id="saveServices" >
 		INSERT INTO
@@ -483,6 +488,11 @@
 		status= 0
 		where id=#{imageId} and merchant_id=#{merchantId}
 	</update>
+	<update id="disableMenuImage" parameterType="Hashmap">
+		update digital_menu_image set
+		status= 0
+		where id=#{imageId} and merchant_id=#{merchantId}
+	</update>
 	<update id="killDeal" parameterType="Hashmap">
 		update merchant_deal set status=0 where id=#{dealId} and merchant_id=#{merchantId}
 	</update>
@@ -534,6 +544,12 @@
 		<if test="pincode != null">
 			, pincode = #{pincode}
 		</if>
+		<if test="genderSupport != null">
+			, gender_support = #{genderSupport}
+		</if>
+		<if test="homeService != null">
+			, home_service = #{homeService}
+		</if>
 		<if test="country != null">
 			, country = #{country}
 		</if>
@@ -547,5 +563,8 @@
 	</delete>
 	<delete id="cleanSchedule" parameterType="com.eros.core.model.Merchant">
 	delete from merchant_schedule where merchant_id=#{id}
+	</delete>
+	<delete id="deleteServices" parameterType="com.eros.core.model.Merchant">
+	delete from merchant_service where merchant_id=#{id}
 	</delete>
 </mapper>

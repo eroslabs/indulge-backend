@@ -30,7 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.eros.constants.WebConstants;
 import com.eros.core.BaseController;
 import com.eros.core.model.DealRequest;
 import com.eros.core.model.DigitalMenuImage;
@@ -43,6 +42,7 @@ import com.eros.core.model.MerchantService;
 import com.eros.core.model.Reviews;
 import com.eros.core.model.ServiceCategory;
 import com.eros.core.model.security.SecurityUser;
+import com.eros.service.security.UserRole;
 
 /**
  * 
@@ -65,6 +65,7 @@ public class MerchantController extends BaseController {
 
 	/**
 	 * Redirects to Super admin Home if Super admin logs in else merchant home
+	 * 
 	 * @param modelMap
 	 * @param principle
 	 * @param request
@@ -80,18 +81,40 @@ public class MerchantController extends BaseController {
 				.getPrincipal()).getPhone();
 		String merchantIdentifier = StringUtils.isNotBlank(merchantEmail) ? merchantEmail
 				: merchantPhone;
-		boolean fAdmin = request.isUserInRole("ROLE_ADMIN");
+		if(request.getSession().getAttribute(MERCHANT_CHAIN_ATTRIBUTE) != null){
+			merchant = (Merchant) request.getSession()
+					.getAttribute(MERCHANT_ATTRIBUTE);
+			if(merchant != null){
+				modelMap.put(MERCHANT, merchant);
+				return "merchantHome";	
+			}
+		}
+		boolean fAdmin = request.isUserInRole(UserRole.ROLE_ADMIN.toString());
 		if (fAdmin) {
 			return "redirect:/admin/home";
 		}
 
 		try {
-
-			merchant = merchantService
-					.getMerchantByEmailOrPhone(merchantIdentifier);
-			request.getSession().setAttribute(WebConstants.MERCHANT_ATTRIBUTE,
-					merchant);
-			modelMap.put(MERCHANT, merchant);
+//			Handling for chains
+			boolean chainOwner = request.isUserInRole(UserRole.ROLE_OWNER.toString());
+			List<Merchant> chainList = null;
+			if(chainOwner){
+			chainList = merchantService
+					.getChainInfo(merchantIdentifier);
+			}
+			if (chainList == null || chainList.size() <= 1) {
+				merchant = merchantService
+						.getMerchantByEmailOrPhone(merchantIdentifier);
+				request.getSession().setAttribute(
+						MERCHANT_ATTRIBUTE, merchant);
+				modelMap.put(MERCHANT, merchant);
+			}else{
+				modelMap.put(MERCHANT_CHAIN, chainList);
+				request.getSession().setAttribute(
+						MERCHANT_CHAIN_ATTRIBUTE, true);
+				return "selectMerchant";
+			}
+			
 		} catch (Exception e) {
 			MERCHANT_LOGGER.error("Error in loading merchant : principle"
 					+ principle.getName(), e);
@@ -103,9 +126,11 @@ public class MerchantController extends BaseController {
 		return "merchantHome";
 	}
 
-	
+
+
 	/**
-	 * This is for super admin to visit merchant profile
+	 * This is for super admin/chain owner to visit merchant profile
+	 * 
 	 * @param modelMap
 	 * @param principle
 	 * @param request
@@ -117,12 +142,11 @@ public class MerchantController extends BaseController {
 			ModelMap modelMap,
 			Principal principle,
 			HttpServletRequest request,
-			@RequestParam(value = "id", required = true) String merchantIdentifier) {
+			@RequestParam(value = "id", required = true) Integer merchantIdentifier) {
 		Merchant merchant = null;
 		try {
-			merchant = merchantService
-					.getMerchantByEmailOrPhone(merchantIdentifier);
-			request.getSession().setAttribute(WebConstants.MERCHANT_ATTRIBUTE,
+			merchant = merchantService.getMerchantById(merchantIdentifier);
+			request.getSession().setAttribute(MERCHANT_ATTRIBUTE,
 					merchant);
 			modelMap.put(MERCHANT, merchant);
 		} catch (Exception e) {
@@ -131,7 +155,7 @@ public class MerchantController extends BaseController {
 
 		}
 		if (merchant == null) {
-			return "redirect:/merchant/createProfile";
+			return "redirect:/merchant/login";
 		}
 		return "merchantHome";
 	}
@@ -139,7 +163,7 @@ public class MerchantController extends BaseController {
 	@RequestMapping(value = "/inputLocation")
 	public String create(ModelMap modelMap, HttpServletRequest request) {
 		Merchant merchant = (Merchant) request.getSession().getAttribute(
-				WebConstants.MERCHANT_ATTRIBUTE);
+				MERCHANT_ATTRIBUTE);
 		modelMap.put(MERCHANT, merchant);
 		return "inputLocation";
 	}
@@ -151,7 +175,7 @@ public class MerchantController extends BaseController {
 			final RedirectAttributes redirectAttributes, HttpSession session,
 			Principal principal) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		if (file != null && !file.isEmpty()) {
 			try {
 				byte[] bytes = file.getBytes();
@@ -163,8 +187,8 @@ public class MerchantController extends BaseController {
 				MERCHANT_LOGGER.error(
 						"Merchant Profile image : Error while saving uploaded file "
 								+ file.getOriginalFilename(), e);
-				redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
-						"Error:: " + e.getMessage());
+				redirectAttributes.addFlashAttribute(ERROR_MESSAGE, "Error:: "
+						+ e.getMessage());
 				return "redirect:/merchant/inputLocation";
 			}
 
@@ -181,13 +205,13 @@ public class MerchantController extends BaseController {
 					"Merchant location: Error while saving location data "
 							+ file.getOriginalFilename(), e);
 
-			redirectAttributes.addFlashAttribute(ERROR_MESSAGE, "Error:: "
-					+ e.getMessage());
+			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
+					"Error:: " + e.getMessage());
 			return "redirect:/merchant/inputLocation";
 		}
 		redirectAttributes.addFlashAttribute("success_message",
 				"Profile image saved successfully");
-		session.setAttribute(WebConstants.MERCHANT_ATTRIBUTE, contextMerchant);
+		session.setAttribute(MERCHANT_ATTRIBUTE, contextMerchant);
 		return "redirect:/merchant/home";
 
 	}
@@ -195,7 +219,7 @@ public class MerchantController extends BaseController {
 	@RequestMapping(value = "/inputAddress")
 	public String inputAddress(ModelMap modelMap, HttpServletRequest request) {
 		Merchant merchant = (Merchant) request.getSession().getAttribute(
-				WebConstants.MERCHANT_ATTRIBUTE);
+				MERCHANT_ATTRIBUTE);
 		modelMap.put(MERCHANT, merchant);
 		return "inputAddress";
 	}
@@ -205,7 +229,7 @@ public class MerchantController extends BaseController {
 			@ModelAttribute(MERCHANT) com.eros.core.model.Merchant merchant,
 			final RedirectAttributes redirectAttributes, HttpSession session) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		Boolean clear = true;
 		try {
 			contextMerchant.setAddress(merchant.getAddress());
@@ -217,6 +241,8 @@ public class MerchantController extends BaseController {
 			contextMerchant.setLandmark(merchant.getLandmark());
 			contextMerchant.setCcAccepted(merchant.getCcAccepted());
 			contextMerchant.setAcFacility(merchant.getAcFacility());
+			contextMerchant.setGenderSupport(merchant.getGenderSupport());
+			contextMerchant.setHomeService(merchant.getHomeService());
 			clear = merchantService.saveAddress(contextMerchant);
 
 		} catch (Throwable e) {
@@ -231,7 +257,7 @@ public class MerchantController extends BaseController {
 		}
 		redirectAttributes.addFlashAttribute("success_message",
 				"Address Information Saved Successfully");
-		session.setAttribute(WebConstants.MERCHANT_ATTRIBUTE, contextMerchant);
+		session.setAttribute(MERCHANT_ATTRIBUTE, contextMerchant);
 		return "redirect:/merchant/home";
 
 	}
@@ -239,7 +265,7 @@ public class MerchantController extends BaseController {
 	@RequestMapping(value = "/inputContact")
 	public String inputContact(ModelMap modelMap, HttpServletRequest request) {
 		Merchant merchant = (Merchant) request.getSession().getAttribute(
-				WebConstants.MERCHANT_ATTRIBUTE);
+				MERCHANT_ATTRIBUTE);
 		modelMap.put(MERCHANT, merchant);
 		return "inputContact";
 	}
@@ -251,12 +277,12 @@ public class MerchantController extends BaseController {
 			@ModelAttribute(MERCHANT) com.eros.core.model.Merchant merchant,
 			final RedirectAttributes redirectAttributes, HttpSession session) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		if (StringUtils.isBlank(phone1) && StringUtils.isBlank(phone2)
 				&& StringUtils.isBlank(phone3)) {
 			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 					"Invalid phone numbers");
-			return "redirect:/merchant/inputContact";
+			return "redirect:/merchant/home";
 		}
 		if ((StringUtils.isNotBlank(phone1) && !phone1.matches(PHONE_REGEX))
 				|| (StringUtils.isNotBlank(phone2) && !phone2
@@ -265,7 +291,7 @@ public class MerchantController extends BaseController {
 						.matches(PHONE_REGEX))) {
 			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 					"Invalid phone numbers");
-			return "redirect:/merchant/inputContact";
+			return "redirect:/merchant/home";
 		}
 		Boolean clear = true;
 		try {
@@ -290,11 +316,11 @@ public class MerchantController extends BaseController {
 		if (!clear) {
 			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 					"Error'in saving address information");
-			return "redirect:/merchant/inputContact";
+			return "redirect:/merchant/home";
 		}
 		redirectAttributes.addFlashAttribute("success_message",
 				"Your Contact Information Saved Successfully");
-		session.setAttribute(WebConstants.MERCHANT_ATTRIBUTE, contextMerchant);
+		session.setAttribute(MERCHANT_ATTRIBUTE, contextMerchant);
 		return "redirect:/merchant/home";
 
 	}
@@ -302,7 +328,7 @@ public class MerchantController extends BaseController {
 	@RequestMapping(value = "/inputSchedule")
 	public String inputSchedule(ModelMap modelMap, HttpServletRequest request) {
 		Merchant merchant = (Merchant) request.getSession().getAttribute(
-				WebConstants.MERCHANT_ATTRIBUTE);
+				MERCHANT_ATTRIBUTE);
 		List<MerchantSchedule> schedule = merchant.getSchedule();
 		if (schedule == null) {
 			schedule = Collections.singletonList(new MerchantSchedule());
@@ -313,17 +339,17 @@ public class MerchantController extends BaseController {
 	}
 
 	@RequestMapping(value = "/saveSchedule", method = RequestMethod.POST)
-	public String saveSchedule(
-			@ModelAttribute("merchant") Merchant merchant,
+	public String saveSchedule(@ModelAttribute("merchant") Merchant merchant,
 			final RedirectAttributes redirectAttributes, HttpSession session) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
-		if(merchant == null || merchant.getSchedule() == null || merchant.getSchedule().size()<= 0){
+				.getAttribute(MERCHANT_ATTRIBUTE);
+		if (merchant == null || merchant.getSchedule() == null
+				|| merchant.getSchedule().size() <= 0) {
 			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 					"Invalid schedule information");
 			return "redirect:/merchant/home";
 		}
-		
+
 		List<MerchantSchedule> merchantSchedule = merchant.getSchedule();
 		Boolean clear = true;
 		try {
@@ -345,7 +371,7 @@ public class MerchantController extends BaseController {
 		}
 		redirectAttributes.addFlashAttribute("success_message",
 				"Your Schedule Saved Successfully");
-		session.setAttribute(WebConstants.MERCHANT_ATTRIBUTE, contextMerchant);
+		session.setAttribute(MERCHANT_ATTRIBUTE, contextMerchant);
 		return "redirect:/merchant/home";
 
 	}
@@ -353,7 +379,7 @@ public class MerchantController extends BaseController {
 	@RequestMapping(value = "/inputIssue")
 	public String inputIssue(ModelMap modelMap, HttpServletRequest request) {
 		Merchant merchant = (Merchant) request.getSession().getAttribute(
-				WebConstants.MERCHANT_ATTRIBUTE);
+				MERCHANT_ATTRIBUTE);
 		modelMap.put(MERCHANT, merchant);
 		modelMap.put("issue", new Issue());
 		return "inputIssue";
@@ -363,7 +389,7 @@ public class MerchantController extends BaseController {
 	public String saveIssue(@ModelAttribute("issue") Issue issue,
 			final RedirectAttributes redirectAttributes, HttpSession session) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		if (issue == null || StringUtils.isBlank(issue.getSubject())) {
 			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 					"Invalid error reported");
@@ -384,7 +410,7 @@ public class MerchantController extends BaseController {
 		}
 		redirectAttributes.addFlashAttribute("success_message",
 				"Your problem is reported successfully");
-		session.setAttribute(WebConstants.MERCHANT_ATTRIBUTE, contextMerchant);
+		session.setAttribute(MERCHANT_ATTRIBUTE, contextMerchant);
 		return "redirect:/merchant/home";
 
 	}
@@ -392,7 +418,7 @@ public class MerchantController extends BaseController {
 	@RequestMapping(value = "/inputPhoto")
 	public String inputPhoto(ModelMap modelMap, HttpSession session) {
 		Merchant merchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		modelMap.put(MERCHANT, merchant);
 		return "inputPhoto";
 
@@ -406,10 +432,11 @@ public class MerchantController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/deleteImage", method = RequestMethod.GET)
-	public  void deleteImage(@RequestParam("imageId") Integer id, HttpSession session,HttpServletResponse response) {
+	public void deleteImage(@RequestParam("imageId") Integer id,
+			HttpSession session, HttpServletResponse response) {
 		String responseStr = ERROR;
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		try {
 			if (id == null || contextMerchant == null) {
 				throw new Exception("Invalid parameters for change password");
@@ -417,28 +444,62 @@ public class MerchantController extends BaseController {
 			merchantService.deleteImage(id, contextMerchant.getId());
 			responseStr = "success";
 		} catch (Exception e) {
-				MERCHANT_LOGGER.error("Error in deleting image :::"+id, e);
+			MERCHANT_LOGGER.error("Error in deleting image :::" + id, e);
 		}
-		 PrintWriter out = null;
-		 try {       
-		        out = response.getWriter();
-		        out.println(responseStr);
-		        
-		    } catch (IOException ex) { 
-		        MERCHANT_LOGGER.error("error in writing deleimage response");
-		    }finally{
-		    	out.close();
-		    }
+		PrintWriter out = null;
+		try {
+			out = response.getWriter();
+			out.println(responseStr);
+
+		} catch (IOException ex) {
+			MERCHANT_LOGGER.error("error in writing deleimage response");
+		} finally {
+			out.close();
+		}
 
 	}
 
-	
+	/**
+	 * 
+	 * @param email
+	 * @param requestId
+	 * @param passphrase
+	 * @return
+	 */
+	@RequestMapping(value = "/deleteMenuImage", method = RequestMethod.GET)
+	public void deleteMenuImage(@RequestParam("imageId") Integer id,
+			HttpSession session, HttpServletResponse response) {
+		String responseStr = ERROR;
+		Merchant contextMerchant = (Merchant) session
+				.getAttribute(MERCHANT_ATTRIBUTE);
+		try {
+			if (id == null || contextMerchant == null) {
+				throw new Exception("Invalid parameters for delete image");
+			}
+			merchantService.deleteMenuImage(id, contextMerchant.getId());
+			responseStr = "success";
+		} catch (Exception e) {
+			MERCHANT_LOGGER.error("Error in deleting image :::" + id, e);
+		}
+		PrintWriter out = null;
+		try {
+			out = response.getWriter();
+			out.println(responseStr);
+
+		} catch (IOException ex) {
+			MERCHANT_LOGGER.error("error in writing delete image response");
+		} finally {
+			out.close();
+		}
+
+	}
+
 	@RequestMapping(value = "/savePhoto", method = RequestMethod.POST)
 	public String savePhoto(@RequestParam("files") MultipartFile[] files,
 			@ModelAttribute(MERCHANT) com.eros.core.model.Merchant merchant,
 			final RedirectAttributes redirectAttributes, HttpSession session) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		Boolean clear = true;
 		try {
 			if (files != null && files.length > 0) {
@@ -446,7 +507,7 @@ public class MerchantController extends BaseController {
 
 					if (files[i] != null && !files[i].isEmpty()) {
 						try {
-							if(files[i].getSize() <=0){
+							if (files[i].getSize() <= 0) {
 								continue;
 							}
 							byte[] bytes = files[i].getBytes();
@@ -471,8 +532,7 @@ public class MerchantController extends BaseController {
 							MERCHANT_LOGGER
 									.error("Merchant Location : Error while saving uploaded file "
 											+ files[i].getOriginalFilename(), e);
-							redirectAttributes.addFlashAttribute(
-									ERROR_MESSAGE,
+							redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 									"Error:: " + e.getMessage());
 							return "redirect:/merchant/home";
 						}
@@ -492,7 +552,7 @@ public class MerchantController extends BaseController {
 		}
 		redirectAttributes.addFlashAttribute("success_message",
 				"Merchant Image Saved Successfully");
-		session.setAttribute(WebConstants.MERCHANT_ATTRIBUTE, contextMerchant);
+		session.setAttribute(MERCHANT_ATTRIBUTE, contextMerchant);
 		return "redirect:/merchant/home";
 
 	}
@@ -500,7 +560,7 @@ public class MerchantController extends BaseController {
 	@RequestMapping(value = "/inputDigitalMenu")
 	public String inputDigitalMenu(ModelMap modelMap, HttpSession session) {
 		Merchant merchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		modelMap.put(MERCHANT, merchant);
 		return "inputDigitalMenu";
 
@@ -512,7 +572,7 @@ public class MerchantController extends BaseController {
 			@ModelAttribute(MERCHANT) Merchant merchant,
 			final RedirectAttributes redirectAttributes, HttpSession session) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		contextMerchant.setSeparateRateCard(merchant.getSeparateRateCard());
 		contextMerchant.setServiceRadius(merchant.getServiceRadius());
 		contextMerchant.setHomeService(merchant.getHomeService());
@@ -523,7 +583,7 @@ public class MerchantController extends BaseController {
 
 				try {
 					for (MultipartFile multipartFile : file) {
-						if(multipartFile.getSize() <=0){
+						if (multipartFile.getSize() <= 0) {
 							continue;
 						}
 						byte[] bytes = multipartFile.getBytes();
@@ -538,11 +598,12 @@ public class MerchantController extends BaseController {
 							filePaths.add(image);
 						}
 					}
-					if(filePaths != null && filePaths.size() > 0){
+					if (filePaths != null && filePaths.size() > 0) {
 						contextMerchant.setMenus(filePaths);
-						clear = merchantService.saveDigitalMenus(contextMerchant);
+						merchant.setMenus(filePaths);
 					}
-
+					merchant.setId(contextMerchant.getId());
+					clear = merchantService.saveDigitalMenus(merchant);
 				} catch (Exception e) {
 					MERCHANT_LOGGER.error(
 							"Merchant Location : Error while saving uploaded Menus "
@@ -566,7 +627,7 @@ public class MerchantController extends BaseController {
 		}
 		redirectAttributes.addFlashAttribute("success_message",
 				"Merchant Digital Menu Saved Successfully");
-		session.setAttribute(WebConstants.MERCHANT_ATTRIBUTE, contextMerchant);
+		session.setAttribute(MERCHANT_ATTRIBUTE, contextMerchant);
 		return "redirect:/merchant/home";
 
 	}
@@ -576,7 +637,7 @@ public class MerchantController extends BaseController {
 			@RequestParam(value = "start", defaultValue = "0") int start,
 			@RequestParam(value = "rows", defaultValue = "10") int rows) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		Reviews reviews = null;
 		if (contextMerchant != null) {
 			reviews = merchantService.fetchReviews(contextMerchant.getId(),
@@ -593,8 +654,9 @@ public class MerchantController extends BaseController {
 			@RequestParam(value = "start", required = false) Integer start,
 			@RequestParam(value = "rows", required = false) Integer rows,
 			@RequestParam(value = "coupon", required = false) String coupon) {
+
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		List<MerchantDeal> deals = merchantService.fetchDeals(
 				contextMerchant.getId(), coupon, start, rows);
 		List<ServiceCategory> categories = merchantService.fetchAllServices();
@@ -608,7 +670,7 @@ public class MerchantController extends BaseController {
 	public String killDeals(ModelMap modelMap, HttpSession session,
 			@RequestParam(value = "dealId") Integer dealId) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		merchantService.killDeal(contextMerchant.getId(), dealId);
 		return "redirect:/merchant/listDeals";
 
@@ -619,7 +681,7 @@ public class MerchantController extends BaseController {
 			@RequestParam(value = "start", defaultValue = "0") int start,
 			@RequestParam(value = "rows", defaultValue = "10") int rows) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		List<DealRequest> dealRequests = merchantService
 				.fetchDealRequest(contextMerchant);
 		modelMap.put("requests", dealRequests);
@@ -632,7 +694,7 @@ public class MerchantController extends BaseController {
 	public String inputDeal(ModelMap modelMap, HttpSession session) {
 		List<ServiceCategory> categories = merchantService.fetchAllServices();
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		List<MerchantService> services = merchantService
 				.fetchMerchantServices(contextMerchant.getId());
 		if (services != null && services.size() > 0) {
@@ -666,7 +728,7 @@ public class MerchantController extends BaseController {
 			@ModelAttribute MerchantDeal deal,
 			final RedirectAttributes redirectAttributes, HttpSession session) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		if (categoryIds == null && serviceIds == null && serviceTypeIds == null) {
 			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 					"No services Selected for this deal");
@@ -679,6 +741,7 @@ public class MerchantController extends BaseController {
 				serviceIds = null;
 				serviceTypeIds = null;
 			}
+			deal.setCategoryBased(true);
 		}
 		if (serviceIds != null) {
 			serviceIds.removeAll(Collections.singleton(null));
@@ -711,7 +774,7 @@ public class MerchantController extends BaseController {
 	@RequestMapping(value = "/inputServices")
 	public String inputServices(ModelMap modelMap, HttpSession session) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		List<ServiceCategory> categories = merchantService.fetchAllServices();
 		modelMap.put("categories", categories);
 		modelMap.put(MERCHANT, contextMerchant);
@@ -728,38 +791,45 @@ public class MerchantController extends BaseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/changePassword", method = RequestMethod.POST)
-	public String changePasword(@RequestParam("oldPassphrase") String oldPassphrase,
-			@RequestParam("passphrase") String passphrase,final RedirectAttributes redirectAttributes, HttpSession session) {
+	public String changePasword(
+			@RequestParam("oldPassphrase") String oldPassphrase,
+			@RequestParam("passphrase") String passphrase,
+			final RedirectAttributes redirectAttributes, HttpSession session) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
-		
+				.getAttribute(MERCHANT_ATTRIBUTE);
+
 		Map<String, Object> map = new HashMap<String, Object>();
 
 		try {
-			if ( StringUtils.isBlank(oldPassphrase)
+			if (StringUtils.isBlank(oldPassphrase)
 					|| StringUtils.isBlank(passphrase)) {
 				throw new Exception("Invalid parameters for change password");
 			}
-			if ( !oldPassphrase.equals(passphrase)) {
-				merchantService.updatePassword(StringUtils.isBlank(contextMerchant.getEmail()) ? contextMerchant.getPhone() : contextMerchant.getEmail(), oldPassphrase, passphrase);
-				redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE,"Password updated successfully");
-			}else{
-				redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE,"Both old/new passwords are same");
+			if (!oldPassphrase.equals(passphrase)) {
+				merchantService
+						.updatePassword(StringUtils.isBlank(contextMerchant
+								.getEmail()) ? contextMerchant.getPhone()
+								: contextMerchant.getEmail(), oldPassphrase,
+								passphrase );
+				redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE,
+						"Password updated successfully");
+			} else {
+				redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE,
+						"Both old/new passwords are same");
 			}
 
 		} catch (Exception e) {
 			MERCHANT_LOGGER.error(
-					"Error while resetting new password for merchant " , e);
+					"Error while resetting new password for merchant ", e);
 			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 					"Error:: " + e.getMessage());
 			return "redirect:/merchant/home";
 		}
-		
+
 		return "redirect:/merchant/home";
 
 	}
 
-	
 	@RequestMapping(value = "/saveMerchantServices", method = RequestMethod.POST)
 	public String saveMerchantServices(
 			@RequestParam("categoryId") String[] categoryId,
@@ -770,7 +840,7 @@ public class MerchantController extends BaseController {
 			@RequestParam("selectedPrice") String[] selectedPrice,
 			final RedirectAttributes redirectAttributes, HttpSession session) {
 		Merchant contextMerchant = (Merchant) session
-				.getAttribute(WebConstants.MERCHANT_ATTRIBUTE);
+				.getAttribute(MERCHANT_ATTRIBUTE);
 		if (selectedType == null || selectedPrice == null || selectedId == null) {
 			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 					"Error in saving service information, Invalid selection.");

@@ -236,13 +236,14 @@ public class SearchController extends BaseController {
 			@RequestParam(value = "page", required = false) Integer page,
 			@RequestParam(value = "limit", required = false) Integer limit,
 			@RequestParam(value = "lr", required = false) Integer lr,
+			@RequestParam(value = "services", required = false) Integer[] services,
 			@RequestParam(value = "sort", required = false) String sort,
 			@RequestParam(value = "dir", required = false) String dir) {
 		Boolean success = true;
 		StopWatch watch = new StopWatch();
 		watch.start();
 		Filter filter = RequestUtils.generateFilter(s, lat, lon, page, limit,
-				dir, sort, IndexType.INDULGE, IndexType.DEAL,false,lr);
+				dir, sort, IndexType.INDULGE, IndexType.DEAL,false,lr,services);
 		Map<String, Object> map = new HashMap<String, Object>();
 		SearchResponse response = null;
 		try {

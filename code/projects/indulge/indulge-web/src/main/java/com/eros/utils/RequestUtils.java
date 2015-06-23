@@ -102,9 +102,9 @@ public class RequestUtils {
 	 */
 	public static Filter generateFilter(String s, String lat, String lon,
 			Integer page, Integer limit, String dir, String sort,
-			IndexType index, IndexType type, Boolean autoSuggest, Integer lr) {
+			IndexType index, IndexType type, Boolean autoSuggest, Integer lr,Integer[] services) {
 		
-		return generateFilter(s, null, null, null, null, null, lat, lon, page, limit, dir, sort, index, type,autoSuggest,lr);
+		return generateFilter(s, null, null, services, null, null, lat, lon, page, limit, dir, sort, index, type,autoSuggest,lr);
 	}
 	/**
 	 * @param s

@@ -27,6 +27,8 @@ public class BaseController {
 		// TODO Auto-generated constructor stub
 	}
 
+	protected final static String MERCHANT_ATTRIBUTE = "com.eros.core.model.merchant";
+	protected final static String MERCHANT_CHAIN_ATTRIBUTE = "com.eros.core.model.merchant.chain";
 	/**
 	 * 
 	 */
@@ -57,6 +59,7 @@ public class BaseController {
 	protected static final String IDENTIFIER = "identifier";
 
 	protected static final String MERCHANT = "merchant";
+	protected static final String MERCHANT_CHAIN = "merchant_chain";
 	/**
 	 * 
 	 */

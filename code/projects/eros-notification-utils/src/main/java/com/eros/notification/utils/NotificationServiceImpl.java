@@ -4,7 +4,6 @@
  */
 package com.eros.notification.utils;
 
-import java.awt.TrayIcon.MessageType;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
