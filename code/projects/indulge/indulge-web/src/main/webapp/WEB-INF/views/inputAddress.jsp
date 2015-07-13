@@ -64,7 +64,7 @@
 		  				</div>
 		  				<div class="form-group">
 			  				<div class="col-xs-16 address-radio">
-			  				Credit Card Accepted
+			  				Credit/Debit Card Accepted
 			  				</div>
 			  				<div class="col-xs-8">
 				  				<label>
@@ -142,5 +142,6 @@
 			
 		});
 	</script>
+	<jsp:include page="../views/includeScript.jsp" />
 </body>
 </html>

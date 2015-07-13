@@ -98,15 +98,15 @@
 	
 			jQuery("#phone1").validate({
 				expression: "if ((jQuery.trim(VAL)).length == 11 && jQuery.isNumeric(VAL)  ) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Contact number should be of 10 numeric digits"
+		        message: "Contact number should be of 11 numeric digits"
 		    });
 			jQuery("#phone2").validate({
 				expression: "if (((jQuery.trim(VAL)).length == 11 && jQuery.isNumeric(VAL)) || jQuery.trim(VAL)).length == 0   ) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Contact number should be of 10 numeric digits"
+		        message: "Contact number should be of 11 numeric digits"
 		    });
 			jQuery("#phone3").validate({
 				expression: "if(((jQuery.trim(VAL)).length == 11 && jQuery.isNumeric(VAL)) || jQuery.trim(VAL)).length == 0   ) return true; else {$('div#uploading').hide(); return false;}",
-		        message: "Contact number should be of 10 numeric digits"
+		        message: "Contact number should be of 11 numeric digits"
 		    });
 			
 		});

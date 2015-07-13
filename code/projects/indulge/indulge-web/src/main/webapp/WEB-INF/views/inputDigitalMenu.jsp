@@ -2,13 +2,28 @@
 	pageEncoding="utf-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <jsp:include page="../views/globalhead.jsp" />
+<style>
+.modal-dialog{
+    overflow-y: initial !important;
+}
+.modal-body{
+    height: 85%;
+    overflow-y: auto;
+}
+</style>
 </head>
 <body style="background-color: #fff">
 	<jsp:include page="../views/postmerchantHeader.jsp" />
+	<div id="loading">
+                <img
+                        src="${pageContext.servletContext.contextPath }/images/ajax-loader.gif"
+                        id="loading-image" />
+        </div>
 	<div class="container">
 		<!-- Nav tabs -->
 		<div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 formRightBody">
@@ -70,7 +85,7 @@
 					<div class="col-sm-8" style="padding-top: 20px">
 						<center>
 							<input type="submit" value="Save Changes"
-								class="btn btn-lg btn-green" style="width: 100%;">
+								class="btn btn-lg btn-green" onclick="return showLoader();" style="width: 100%;">
 						</center>
 					</div>
 				</div>
@@ -98,19 +113,16 @@
 						</div>
 						<output id="list"></output>
 						<c:forEach var="menu" items="${merchant.menus}" varStatus="state">
-							<c:forEach var="banner" items="${menu.image}" varStatus="status">
 
 								<div class="col-md-8 col-lg-6 col-sm-12 col-xs-24"
 									style="overflow: hidden">
 									<a href="#" onclick="return deleteImage(${menu.id} , this);"
 										class="white-text font-size-16"
 										style="position: relative; left: 43px; top: 28px;"><i
-										class="icon-trash"></i> Delete</a> <img
-										src="${pageContext.servletContext.contextPath}/images/merchant/${menu.image}"
-										style="height: 150px; width: 150px">
+										class="icon-trash"></i> Delete</a> <a href="${pageContext.servletContext.contextPath}/images/merchant/${menu.image}" target="_blank"> <img src="${pageContext.servletContext.contextPath}/images/merchant/${menu.image}"
+										style="height: 150px; width: 150px"></a>
 								</div>
 
-							</c:forEach>
 						</c:forEach>
 					</div>
 					<br>
@@ -182,7 +194,7 @@
 									<i class="icon-female"></i>
 								</c:if>
 							</div>
-							<div class="col-sm-3">INR ${service.price}/-</div>
+							<div class="col-sm-3">INR <fmt:formatNumber value="${service.price }" maxFractionDigits="0"/>/-</div>
 						</div>
 					</c:forEach>
 					<c:forEach var="service" items="${merchant.services}"
@@ -294,6 +306,11 @@
 	-->
 
 	<script>
+$('#loading').hide();
+                function showLoader() {
+                        $('#loading').show();
+			return true;
+                }
   function handleFileSelect(evt) {
     var files = evt.target.files; // FileList object
 

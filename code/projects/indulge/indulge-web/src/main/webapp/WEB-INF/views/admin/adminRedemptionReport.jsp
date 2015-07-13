@@ -27,8 +27,6 @@
 <script
 	src="${pageContext.servletContext.contextPath }/js/bootstrap.min.js"></script>
 
-
-</head>
 <style type="text/css">
 .table {
 	font-size: 12px;
@@ -38,6 +36,7 @@ body {
 	background-color: #f0f0f0;
 }
 </style>
+</head>
 
 <body>
 	<div class="container-fluid">
@@ -51,7 +50,7 @@ body {
 				<div class="lh10">&nbsp;</div>
 				<div class="alert alert-success col-xs-22 col-sm-14 col-md-push-6 ">${success_message}</div>
 			</c:if>
-			<h3 align="center">Merchant Home</h3>
+			<h3 align="center">Deals Redemption Status</h3>
 			<jsp:include page="genericListing.jsp" />
 		</div>
 	</div>

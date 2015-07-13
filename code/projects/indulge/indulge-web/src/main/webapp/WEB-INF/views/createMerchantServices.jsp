@@ -259,7 +259,7 @@ response.setDateHeader("Expires", 0);
                   <input type="text" placeholder="Add Price"
                      class="form-input signup-field"
                      style="width: 100%; height: 40px" id="selectedPrice"
-                     name="selectedPrice" value="<fmt:formatNumber value="${merService.price }" maxFractionDigits="0"/>">
+                     name="selectedPrice" value="<fmt:formatNumber value="${merService.price }" pattern="##"  maxFractionDigits="0"/>">
                   </div>
                   <a onclick="deleteme(this);" href="#" class="col-md-2"><span class="glyphicon glyphicon-remove" style="padding: 15px 0px; color:#B4978D;"></span></a>
                   
@@ -456,9 +456,9 @@ response.setDateHeader("Expires", 0);
          
          }
          function deleteme(event){
-        	 if(confirm('Are you sure you want to delete?')){
+		if(confirm('Are you sure you want to delete?')){
          	$(event).parent("div").remove();
-        	 }
+		}
          }
       </script>
       <script type="text/javascript">

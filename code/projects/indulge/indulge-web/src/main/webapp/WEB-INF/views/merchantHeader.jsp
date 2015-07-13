@@ -14,16 +14,16 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li><a class="text-uppercase"  href="${pageContext.servletContext.contextPath }/#how_it_works">How it Works</a></li>
-        <li><a class="text-uppercase"  href="${pageContext.servletContext.contextPath }/#benefits">Benefits</a></li>
-        <li><a class="text-uppercase"  href="${pageContext.servletContext.contextPath }/html/pricing.html">Pricing</a></li>
+        <li><a class="text-uppercase"  href="#how_it_works">How it Works</a></li>
+        <li><a class="text-uppercase"  href="#benefits">Benefits</a></li>
+        <li><a class="text-uppercase"  href="/html/pricing.html">Pricing</a></li>
       </ul>
       
 
       <ul class="nav navbar-nav navbar-right nomargin">
         <li><a class="text-uppercase"  href="${pageContext.servletContext.contextPath }/html/faq.html">FAQ's</a></li>
         <li><a class="text-uppercase"  href="${pageContext.servletContext.contextPath }/merchant/login">Login</a></li>
-        <li><a href="#" class="btn btn-green nav-link">jOIN US</a></li>
+        <li><a href="#" class="btn btn-green nav-link">Join Us</a></li>
         
       </ul>
     </div><!-- /.navbar-collapse -->

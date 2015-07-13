@@ -39,6 +39,7 @@ public class Filter implements Serializable {
 	private Integer limit;
 	private String search;
 	private String sortField;
+	private String city;
 	private SortOrder direction;
 	private static List<String> sortFields = new ArrayList<String>(2);
 	private Boolean autoSuggest;
@@ -206,6 +207,9 @@ public class Filter implements Serializable {
 	 *            the search to set
 	 */
 	public void setSearch(String search) {
+		if(StringUtils.isNotBlank(search)){
+			search = search.toLowerCase();
+		}
 		this.search = search;
 	}
 
@@ -224,13 +228,7 @@ public class Filter implements Serializable {
 	public void setSortField(String sortField) {
 		if (StringUtils.isNotBlank(sortField) && sortFields.contains(sortField)) {
 			this.sortField = sortField;
-		} else if (StringUtils.isBlank(sortField)) {
-			this.sortField = QueryUtils.RATING_FIELD;
-		} else {
-			LOGGER.error("**************************Invalid Sort field being passed Please check urgently : "
-					+ sortField);
-			this.sortField = sortFields.get(0);
-		}
+		} 
 	}
 
 	/**
@@ -238,6 +236,23 @@ public class Filter implements Serializable {
 	 */
 	public SortOrder getDirection() {
 		return direction;
+	}
+
+	/**
+	 * @return the city
+	 */
+	public String getCity() {
+		return city;
+	}
+
+	/**
+	 * @param city the city to set
+	 */
+	public void setCity(String city) {
+		if(StringUtils.isNotBlank(city)){
+			city = city.toLowerCase();
+		}
+		this.city = city;
 	}
 
 	/**
@@ -337,10 +352,6 @@ public class Filter implements Serializable {
 		if (priceFrom != null) {
 			buffer.append(" + priceFrom :");
 			buffer.append(priceFrom);
-		}
-		if (services != null) {
-			buffer.append(" + services :");
-			buffer.append(services);
 		}
 		if (point != null) {
 			buffer.append(" + Geo point :");

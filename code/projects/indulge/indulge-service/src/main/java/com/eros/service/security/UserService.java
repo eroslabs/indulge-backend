@@ -49,7 +49,7 @@ public class UserService implements UserDetailsService {
        
         List<Role> authorities = new ArrayList< Role>();
         authorities.add(new Role(user.get("role").toString()));
-    	SecurityUser userDetails = new SecurityUser(user.get("email").toString(), user.get("passphrase").toString(), user.get("phone").toString(), authorities);
+    	SecurityUser userDetails = new SecurityUser(user.get("email") == null ? null : user.get("email").toString(), user.get("passphrase").toString(), user.get("phone") == null? null :user.get("phone").toString(), authorities);
         return userDetails;
     }
 

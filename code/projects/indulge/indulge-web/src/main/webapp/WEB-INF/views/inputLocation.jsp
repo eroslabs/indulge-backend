@@ -36,7 +36,7 @@
 				</c:if>
 			</div>
     		<form:form method="POST" action="saveLocation" modelAttribute="merchant" enctype="multipart/form-data" onsubmit="return validateForm();" class="form-horizontal midbrownbg-color" style="margin-bottom:20px; margin-top:20px" >
-	    		<div class="row font-size-20 location-head font-type">
+			<div class="row font-size-20 location-head font-type">
 	    			${merchant.name}
 	    		</div>
 	    		<div class="row location-file-upload">
@@ -69,7 +69,7 @@
                		<div class="form-group row15">
                			<div class="input-group" style="width:80%">
 	               			<input id="address" class="form-control signup-form geocode-text" type="textbox" placeholder="Enter Location & click Find Location" value="${merchant.locality} ${merchant.city}">
-	               			<input type="button" onclick="codeAddress()" value="Find Location" class="geocode-button" title="click to select location">
+	               			<input type="button" onclick="codeAddress()" value="Find Location" class="geocode-button" style="font-size:13px;" title="click to select location">
 	      					
       					</div>
       					<input id="lat" class="form-control" type="hidden" name="lat">
@@ -261,5 +261,6 @@
 
 		google.maps.event.addDomListener(window, 'load', initialize);
 	</script>
+<jsp:include page="../views/includeScript.jsp" />
 </body>
 </html>

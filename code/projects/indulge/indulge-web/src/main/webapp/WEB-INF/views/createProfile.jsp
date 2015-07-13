@@ -182,5 +182,6 @@
 	</script>
 	<script
 		src="${pageContext.servletContext.contextPath }/js/bootstrap.js"></script>
+	<jsp:include page="../views/includeScript.jsp" />
 </body>
 </html>

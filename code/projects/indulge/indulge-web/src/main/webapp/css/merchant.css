@@ -670,3 +670,14 @@ img {image-orientation: from-image;}
   left: 50%;
   z-index: 100;
 }
+
+.circle
+    {
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    color:#fff;
+ text-align:center;
+    background:#1fbbad;
+    line-height:30px;
+    }

@@ -79,9 +79,9 @@ public interface MerchantCustomService extends Constants{
 	public List<DealRequest> fetchDealRequest(Merchant contextMerchant);
 	/**
 	 * @param contextMerchant
-	 * @return
+	 * @return Merchant
 	 */
-	public Boolean saveServices(Merchant contextMerchant) throws Exception;
+	public Merchant saveServices(Merchant contextMerchant) throws Exception;
 	/**
 	 * @param contextMerchant
 	 * @return

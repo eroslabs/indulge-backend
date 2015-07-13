@@ -8,7 +8,7 @@
 <script
 	src="${pageContext.servletContext.contextPath }/js/jquery.nouislider.all.min.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<link href="${pageContext.servletContext.contextPath }/css/new.css"
+<link href="${pageContext.servletContext.contextPath }/css/new-min.css"
 	rel="stylesheet">
 <link
 	href="${pageContext.servletContext.contextPath }/css/jquery.nouislider.css"
@@ -152,6 +152,10 @@
 							</div>
 						</div>
 						<div class="form-group ptb-10">
+							<label class="col-sm-14 control-label" style="float:right;"><div class="circle">or</div></label>
+							
+						</div>
+						<div class="form-group ptb-10">
 							<label class="col-sm-7 control-label">Percent Off (in %)*</label>
 							<div class="col-sm-15">
 								<input id="percentOff" class="form-control signup-field"
@@ -247,8 +251,8 @@
 								<div class="row row15" id="upper-value">11:00 PM</div>
 							</div>
 						</div>
-						<input type="hidden" id="openingtime" value="10:00">
-						<input type="hidden" id="closingtime" value="20:00">
+						<input type="hidden" id="openingtime" value="07:00">
+						<input type="hidden" id="closingtime" value="23:00">
 						<div class="col-md-18 col-md-push-3 ptb-10" id="slide"
 							style="margin-bottom: 25px;">
 							<div id="behaviour" style="margin-bottom: 40px;"></div>
@@ -531,7 +535,7 @@ $(function() {
 			<c:forEach var="serviceType" items="${services}"
 				varStatus="serviceStatus">
 				<c:if test="${service.id==serviceType.serviceId}">
-					{key: "${serviceType.id}" , value:"${serviceType.name}" },
+					{key: "${serviceType.id}" , value:"${serviceType.name}${serviceType.gender == 0 ? '- Male':''} ${serviceType.gender == 1 ? '- Female':''} ${serviceType.homeService == 1 ? '- At Home':''}"},
 					</c:if>
 			</c:forEach>
 		</c:if>
@@ -570,7 +574,6 @@ $(function() {
           $( "#browser2inp" ).val( ui.item.value );
           var keyVal = ui.item.value;
           if(keyVal.indexOf('All') != -1){
-        	  alert(ui.item.key);
         	  $( "#service2" ).val( ui.item.key);
           }else{
           	$( "#servicetype2" ).val( ui.item.key);
@@ -588,7 +591,6 @@ $(function() {
         select: function( event, ui ) {
           $( "#browser3inp" ).val( ui.item.value );
           var keyVal = ui.item.value;
-          alert(keyVal);
           if(keyVal.indexOf('All') != -1){
         	  
         	  $( "#service3" ).val( ui.item.key);

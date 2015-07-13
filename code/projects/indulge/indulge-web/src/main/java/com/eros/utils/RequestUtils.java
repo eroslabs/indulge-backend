@@ -56,10 +56,10 @@ public class RequestUtils {
 	 * @param indulge 
 	 * @return
 	 */
-	public static Filter generateFilter(String s, Integer hs, Integer gs,
+	public static Filter generateFilter(String search, Integer hs, Integer gs,
 			Integer[] services, Float pf, Float pt, String lat, String lon,
 			Integer page, Integer limit, String dir,String sort, IndexType index,
-			IndexType type,Boolean autoSuggest,Integer lr) {
+			IndexType type,Boolean autoSuggest,Integer luxuryRating,String city) {
 		if(index == null || type == null){
 			throw new IllegalArgumentException("Index/type cannot be null");
 		}
@@ -76,8 +76,9 @@ public class RequestUtils {
 		filter.setPriceFrom(pf);
 		filter.setServices(services);
 		filter.setPriceTo(pt);
-		filter.setSearch(s);
-		filter.setLuxury(lr);
+		filter.setSearch(search);
+		filter.setCity(city);
+		filter.setLuxury(luxuryRating);
 		if(lat !=null && lon!= null){
 			try{
 			filter.setPoint(new GeoPoint(Double.parseDouble(lat),Double.parseDouble(lon)));
@@ -102,20 +103,21 @@ public class RequestUtils {
 	 */
 	public static Filter generateFilter(String s, String lat, String lon,
 			Integer page, Integer limit, String dir, String sort,
-			IndexType index, IndexType type, Boolean autoSuggest, Integer lr,Integer[] services) {
+			IndexType index, IndexType type, Boolean autoSuggest, Integer luxuryRating,Integer[] services, String city) {
 		
-		return generateFilter(s, null, null, services, null, null, lat, lon, page, limit, dir, sort, index, type,autoSuggest,lr);
+		return generateFilter(s, null, null, services, null, null, lat, lon, page, limit, dir, sort, index, type,autoSuggest,luxuryRating, city);
 	}
 	/**
 	 * @param s
+	 * @param c 
 	 * @param indulge
 	 * @param merchant
 	 * @param b
 	 * @return
 	 */
-	public static Filter generateFilter(String s, IndexType index,
+	public static Filter generateFilter(String search, String city, IndexType index,
 			IndexType type, boolean autoSuggest) {
-		return generateFilter(s, null, null, null, null, null, null, null, null, null, null, null, index, type,autoSuggest,null);
+		return generateFilter(search, null, null, null, null, null, null, null, null, null, null, null, index, type,autoSuggest,null,city);
 	}
 	/**
 	 * @param user
@@ -137,7 +139,7 @@ public class RequestUtils {
 			user.setMobile(userMap.get("mobile") != null ? userMap.get("mobile").toString() : null);
 			user.setPassphrase(userMap.get("passphrase") != null ? userMap.get("passphrase").toString() :null);
 			try{
-				Date dob = formatter.parse(userMap.get("dob") != null ? userMap.get("dob").toString() : null);
+				Date dob = formatter.parse(userMap.get("dob").toString());
 				user.setDob(dob);
 				return user;
 			}catch (Exception e) {

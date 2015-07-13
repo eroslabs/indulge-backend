@@ -38,6 +38,10 @@ public interface AdminService {
 	 * 
 	 */
 	void uploadAllActiveMerchants();
+	/**
+	 * 
+	 * @param id
+	 */
 	public void addToCache(Integer id);
 
 	/**
@@ -57,4 +61,25 @@ public interface AdminService {
 	 * @param rating
 	 */
 	void setMerchantLuxuryRating(Integer id, Integer rating);
+	
+	/**
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	public List<HashMap<String, String>> getRedemptionReport() throws Exception ;
+
+	/**
+	 * @param page
+	 * @param limit
+	 * @return
+	 */
+	public SearchResponse fetchDeals(Integer page, Integer limit);
+
+	/**
+	 * @param page
+	 * @param limit
+	 * @return
+	 */
+	SearchResponse fetchErrors(Integer page, Integer limit);
 }

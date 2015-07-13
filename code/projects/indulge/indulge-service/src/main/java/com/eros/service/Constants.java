@@ -108,12 +108,12 @@ public interface Constants {
 	/**
 	 * 
 	 */
-	public static final String FORGOT_PASSWORD_URL_TEMPLATE = "http://52.11.37.48/register/inputPassword?identifier=%s&requestId=%s";
+	public static final String FORGOT_PASSWORD_URL_TEMPLATE = "http://justindulge.in/register/inputPassword?identifier=%s&requestId=%s";
 
 	/**
 	 * 
 	 */
-	public static final String VERIFY_MARCHANT_TEMPLATE = "http://52.11.37.48/register/verifyMerchant?identifier=%s&id=%s";
+	public static final String VERIFY_MARCHANT_TEMPLATE = "http://justindulge.in/register/verifyMerchant?identifier=%s&id=%s";
 	
 	public static final String OLD_PASSPHRASE = "oldPassphrase";
 	public static final String SERVICE_IDS_PARAM = "serviceIds";

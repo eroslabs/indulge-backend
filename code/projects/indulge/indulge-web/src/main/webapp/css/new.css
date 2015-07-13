@@ -82,3 +82,4 @@ ol.progress-meter li.doing:before {
   color: white;
   background-color: #735E56;
 }
+.ui-datepicker{z-index:100!important;}

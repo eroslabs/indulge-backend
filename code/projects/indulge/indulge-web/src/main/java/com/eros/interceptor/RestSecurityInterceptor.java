@@ -37,8 +37,7 @@ public class RestSecurityInterceptor extends HandlerInterceptorAdapter{
 	 	    public boolean preHandle(HttpServletRequest request,
 	      HttpServletResponse response, Object handler)
 	         throws Exception {
-	 	    	try{
- 	 	    	String auth = request.getHeader(AUTH2);
+	 	    	String auth = request.getHeader(AUTH2);
 	 	    	String token = request.getParameter(TOKEN2);
 	 	    	if(StringUtils.isEmpty(auth) || StringUtils.isEmpty(token)){
 	 	    		throw new IllegalAccessException("Incorrect headers either auth or token null");
@@ -55,9 +54,6 @@ public class RestSecurityInterceptor extends HandlerInterceptorAdapter{
 	 	    	}
 	 	    	ServletContext context = request.getSession().getServletContext();
 	 	    	context.setAttribute("USER_LOGGED_IN_EMAIL", email);
-	 	    	}catch (Exception e) {
-					e.printStackTrace();
-				}
 	 	        return true;
 	 	    }
 	 	     

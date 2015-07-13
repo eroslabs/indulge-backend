@@ -33,7 +33,9 @@ public class TinyUrlUtility {
 		}
 		return tinyUrl;
 		}finally{
-			in.close();
+			if(in != null){
+				in.close();
+			}
 		}
 
 		

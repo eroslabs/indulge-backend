@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +15,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import net.fortuna.ical4j.model.parameter.Cn;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -81,12 +84,12 @@ public class MerchantController extends BaseController {
 				.getPrincipal()).getPhone();
 		String merchantIdentifier = StringUtils.isNotBlank(merchantEmail) ? merchantEmail
 				: merchantPhone;
-		if(request.getSession().getAttribute(MERCHANT_CHAIN_ATTRIBUTE) != null){
-			merchant = (Merchant) request.getSession()
-					.getAttribute(MERCHANT_ATTRIBUTE);
-			if(merchant != null){
+		if (request.getSession().getAttribute(MERCHANT_CHAIN_ATTRIBUTE) != null) {
+			merchant = (Merchant) request.getSession().getAttribute(
+					MERCHANT_ATTRIBUTE);
+			if (merchant != null) {
 				modelMap.put(MERCHANT, merchant);
-				return "merchantHome";	
+				return "merchantHome";
 			}
 		}
 		boolean fAdmin = request.isUserInRole(UserRole.ROLE_ADMIN.toString());
@@ -95,26 +98,25 @@ public class MerchantController extends BaseController {
 		}
 
 		try {
-//			Handling for chains
-			boolean chainOwner = request.isUserInRole(UserRole.ROLE_OWNER.toString());
+			// Handling for chains
+			boolean chainOwner = request.isUserInRole(UserRole.ROLE_OWNER
+					.toString());
 			List<Merchant> chainList = null;
-			if(chainOwner){
-			chainList = merchantService
-					.getChainInfo(merchantIdentifier);
+			if (chainOwner) {
+				chainList = merchantService.getChainInfo(merchantIdentifier);
 			}
 			if (chainList == null || chainList.size() <= 1) {
 				merchant = merchantService
 						.getMerchantByEmailOrPhone(merchantIdentifier);
-				request.getSession().setAttribute(
-						MERCHANT_ATTRIBUTE, merchant);
+				request.getSession().setAttribute(MERCHANT_ATTRIBUTE, merchant);
 				modelMap.put(MERCHANT, merchant);
-			}else{
+			} else {
 				modelMap.put(MERCHANT_CHAIN, chainList);
-				request.getSession().setAttribute(
-						MERCHANT_CHAIN_ATTRIBUTE, true);
+				request.getSession().setAttribute(MERCHANT_CHAIN_ATTRIBUTE,
+						true);
 				return "selectMerchant";
 			}
-			
+
 		} catch (Exception e) {
 			MERCHANT_LOGGER.error("Error in loading merchant : principle"
 					+ principle.getName(), e);
@@ -125,8 +127,6 @@ public class MerchantController extends BaseController {
 		}
 		return "merchantHome";
 	}
-
-
 
 	/**
 	 * This is for super admin/chain owner to visit merchant profile
@@ -146,8 +146,7 @@ public class MerchantController extends BaseController {
 		Merchant merchant = null;
 		try {
 			merchant = merchantService.getMerchantById(merchantIdentifier);
-			request.getSession().setAttribute(MERCHANT_ATTRIBUTE,
-					merchant);
+			request.getSession().setAttribute(MERCHANT_ATTRIBUTE, merchant);
 			modelMap.put(MERCHANT, merchant);
 		} catch (Exception e) {
 			MERCHANT_LOGGER.error("Error in loading merchant : principle"
@@ -417,8 +416,7 @@ public class MerchantController extends BaseController {
 
 	@RequestMapping(value = "/inputPhoto")
 	public String inputPhoto(ModelMap modelMap, HttpSession session) {
-		Merchant merchant = (Merchant) session
-				.getAttribute(MERCHANT_ATTRIBUTE);
+		Merchant merchant = (Merchant) session.getAttribute(MERCHANT_ATTRIBUTE);
 		modelMap.put(MERCHANT, merchant);
 		return "inputPhoto";
 
@@ -454,7 +452,9 @@ public class MerchantController extends BaseController {
 		} catch (IOException ex) {
 			MERCHANT_LOGGER.error("error in writing deleimage response");
 		} finally {
-			out.close();
+			if (out != null) {
+				out.close();
+			}
 		}
 
 	}
@@ -489,7 +489,9 @@ public class MerchantController extends BaseController {
 		} catch (IOException ex) {
 			MERCHANT_LOGGER.error("error in writing delete image response");
 		} finally {
-			out.close();
+			if (out != null) {
+				out.close();
+			}
 		}
 
 	}
@@ -548,10 +550,11 @@ public class MerchantController extends BaseController {
 		if (!clear) {
 			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 					"Error'in saving image information");
-
+			return "redirect:/merchant/home";
 		}
 		redirectAttributes.addFlashAttribute("success_message",
 				"Merchant Image Saved Successfully");
+
 		session.setAttribute(MERCHANT_ATTRIBUTE, contextMerchant);
 		return "redirect:/merchant/home";
 
@@ -559,8 +562,7 @@ public class MerchantController extends BaseController {
 
 	@RequestMapping(value = "/inputDigitalMenu")
 	public String inputDigitalMenu(ModelMap modelMap, HttpSession session) {
-		Merchant merchant = (Merchant) session
-				.getAttribute(MERCHANT_ATTRIBUTE);
+		Merchant merchant = (Merchant) session.getAttribute(MERCHANT_ATTRIBUTE);
 		modelMap.put(MERCHANT, merchant);
 		return "inputDigitalMenu";
 
@@ -599,11 +601,12 @@ public class MerchantController extends BaseController {
 						}
 					}
 					if (filePaths != null && filePaths.size() > 0) {
-						contextMerchant.setMenus(filePaths);
 						merchant.setMenus(filePaths);
 					}
 					merchant.setId(contextMerchant.getId());
 					clear = merchantService.saveDigitalMenus(merchant);
+					contextMerchant = merchantService
+							.getMerchantById(contextMerchant.getId());
 				} catch (Exception e) {
 					MERCHANT_LOGGER.error(
 							"Merchant Location : Error while saving uploaded Menus "
@@ -623,12 +626,13 @@ public class MerchantController extends BaseController {
 		if (!clear) {
 			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 					"Error'in saving image information");
-
+			return "redirect:/merchant/inputDigitalMenu";
 		}
 		redirectAttributes.addFlashAttribute("success_message",
 				"Merchant Digital Menu Saved Successfully");
+
 		session.setAttribute(MERCHANT_ATTRIBUTE, contextMerchant);
-		return "redirect:/merchant/home";
+		return "redirect:/merchant/inputDigitalMenu";
 
 	}
 
@@ -798,8 +802,6 @@ public class MerchantController extends BaseController {
 		Merchant contextMerchant = (Merchant) session
 				.getAttribute(MERCHANT_ATTRIBUTE);
 
-		Map<String, Object> map = new HashMap<String, Object>();
-
 		try {
 			if (StringUtils.isBlank(oldPassphrase)
 					|| StringUtils.isBlank(passphrase)) {
@@ -810,7 +812,7 @@ public class MerchantController extends BaseController {
 						.updatePassword(StringUtils.isBlank(contextMerchant
 								.getEmail()) ? contextMerchant.getPhone()
 								: contextMerchant.getEmail(), oldPassphrase,
-								passphrase );
+								passphrase);
 				redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE,
 						"Password updated successfully");
 			} else {
@@ -841,12 +843,16 @@ public class MerchantController extends BaseController {
 			final RedirectAttributes redirectAttributes, HttpSession session) {
 		Merchant contextMerchant = (Merchant) session
 				.getAttribute(MERCHANT_ATTRIBUTE);
+		if(contextMerchant == null){
+			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
+					"Missing merchant info please login again.");
+			return "redirect:/merchant/login";
+		}
 		if (selectedType == null || selectedPrice == null || selectedId == null) {
 			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 					"Error in saving service information, Invalid selection.");
-			return "redirect:/merchant/inputServices";
+			return "redirect:/merchant/inputDigitalMenu";
 		}
-		Boolean clear = true;
 		List<MerchantService> services = new ArrayList<MerchantService>();
 		try {
 			for (int i = 0; i < selectedPrice.length; i++) {
@@ -865,27 +871,40 @@ public class MerchantController extends BaseController {
 					merchantService.setHomeService(Integer
 							.parseInt(selectedHomeService[i]));
 					merchantService.setMerchantId(contextMerchant.getId());
+//					checking for existing services.
+					if(contextMerchant.getServices() != null && !contextMerchant.getServices().isEmpty()){
+					for (MerchantService oldService : contextMerchant.getServices()) {
+						if(merchantService.getCategoryId() == oldService.getCategoryId() 
+								&& Integer.compare(merchantService.getServiceId(),oldService.getServiceId())==0 
+								&& Integer.compare(merchantService.getServiceTypeId(),oldService.getServiceTypeId()) == 0 
+								&& merchantService.getGender() == oldService.getGender()
+								&& Float.compare(merchantService.getPrice(),oldService.getPrice()) == 0
+								&& merchantService.getHomeService() == oldService.getHomeService()){
+							merchantService.setId(oldService.getId());
+							continue;
+						}
+					}
+					}
 					services.add(merchantService);
 				} catch (Exception e) {
 					// ignore extra input boxes
 				}
 
 			}
+			
 			contextMerchant.setServices(services);
-			clear = merchantService.saveServices(contextMerchant);
+			contextMerchant = merchantService.saveServices(contextMerchant);
+			session.setAttribute(
+					MERCHANT_ATTRIBUTE, contextMerchant);
 		} catch (Exception e) {
 			MERCHANT_LOGGER.error(
 					"Merchant Address: Error while saving Service data ", e);
 			return "redirect:/merchant/inputServices";
 		}
-		if (!clear) {
-			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
-					"Error'in saving service information");
-			return "redirect:/merchant/inputServices";
-		}
+		
 		redirectAttributes.addFlashAttribute("success_message",
 				"Merchant Services Saved Successfully");
-		return "redirect:/merchant/home";
+		return "redirect:/merchant/inputDigitalMenu";
 
 	}
 

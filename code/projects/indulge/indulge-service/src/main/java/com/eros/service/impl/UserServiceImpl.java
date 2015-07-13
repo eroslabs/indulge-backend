@@ -208,7 +208,7 @@ public class UserServiceImpl implements UserService {
 		} catch (Exception e) {
 			throw new Exception("Error in confirming Deal Id " + dealId, e);
 		}
-		return null;
+		return false;
 	}
 
 	/*

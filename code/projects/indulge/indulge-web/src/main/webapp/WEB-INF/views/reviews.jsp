@@ -41,7 +41,7 @@
                   <c:forEach var="redemption" items="${merchant.deals}" varStatus="status">
                     <c:set var="count" value="${count + redemption.redemption}" scope="page"/>
                   </c:forEach>
-                  <h2>${count}</h2>
+                  <h3>${count}</h3>
                 </div>
                 <div class="row row15 font-size-20">
                   Deal Usage 

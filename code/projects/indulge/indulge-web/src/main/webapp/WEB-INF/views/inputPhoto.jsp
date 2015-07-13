@@ -161,7 +161,7 @@
 		document.getElementById('file').addEventListener('change',
 				handleFileSelect, false);
 	</script>
-
+	<jsp:include page="../views/includeScript.jsp" />
 
 </body>
 </html>

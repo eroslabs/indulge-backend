@@ -67,6 +67,8 @@ public class MerchantServiceImpl implements MerchantCustomService {
 
 	private static final int MAX_REVIEWS = 3;
 
+	private static final Object BLANK_SCHEDULE = "0000000";
+
 	@Autowired
 	protected MerchantDBService merchantDBService;
 
@@ -84,6 +86,10 @@ public class MerchantServiceImpl implements MerchantCustomService {
 
 	public Merchant ifMerchantExist(String email, String phone) {
 		HashMap<String, Object> param = new HashMap<String, Object>(3);
+		// blank is being passed
+		if(StringUtils.isBlank(email)){
+			email=null;
+		}
 		param.put(EMAIL, email);
 		param.put(PHONE, phone);
 		param.put(EXIST, null);
@@ -269,7 +275,7 @@ public class MerchantServiceImpl implements MerchantCustomService {
 					&& contextMerchant.getSchedule().size() > 0) {
 				for (Iterator<MerchantSchedule> it = contextMerchant.getSchedule().iterator(); it.hasNext();) {
 					MerchantSchedule schedule = it.next();
-				    if (StringUtils.isBlank(schedule.getOpeningTime()) || StringUtils.isBlank(schedule.getClosingTime()) || StringUtils.isBlank(schedule.getWeekSchedule())) { 
+				    if (StringUtils.isBlank(schedule.getOpeningTime()) || StringUtils.isBlank(schedule.getClosingTime()) || StringUtils.isBlank(schedule.getWeekSchedule()) || schedule.getWeekSchedule().trim().equals(BLANK_SCHEDULE)) { 
 				        it.remove(); 
 				    }
 				}
@@ -488,7 +494,7 @@ public class MerchantServiceImpl implements MerchantCustomService {
 	 * .Merchant)
 	 */
 	@Override
-	public Boolean saveServices(Merchant contextMerchant) throws Exception {
+	public Merchant saveServices(Merchant contextMerchant) throws Exception {
 		try {
 			if(contextMerchant.getServices() != null && contextMerchant.getServices().size() > 0){
 				merchantDBService.deleteServices(contextMerchant);
@@ -496,7 +502,8 @@ public class MerchantServiceImpl implements MerchantCustomService {
 				param.put("list", contextMerchant.getServices());
 				merchantDBService.saveServices(param);
 			}
-			return true;
+			contextMerchant = getMerchantById(contextMerchant.getId());
+			return contextMerchant;
 		} catch (Exception e) {
 			LOG.error("Error in saving Services: ", e);
 			throw new Exception("Error in saving merchant services", e);

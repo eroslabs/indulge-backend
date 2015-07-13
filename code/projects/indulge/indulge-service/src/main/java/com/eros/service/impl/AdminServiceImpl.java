@@ -30,6 +30,7 @@ import org.w3c.dom.NodeList;
 
 import com.eros.core.model.Merchant;
 import com.eros.core.model.MerchantDeal;
+import com.eros.core.model.ReportedError;
 import com.eros.service.AdminService;
 import com.eros.service.MerchantCustomService;
 import com.eros.service.db.AdminDBService;
@@ -74,6 +75,18 @@ public class AdminServiceImpl implements AdminService {
 	public List<HashMap<String, String>> getMerchantsSummary() throws Exception {
 		List<HashMap<String, String>> stats = adminDBService
 				.fetchMerchantsStatus();
+		return stats;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.eros.service.AdminService#getMerchantsSummary()
+	 */
+	@Override
+	public List<HashMap<String, String>> getRedemptionReport() throws Exception {
+		List<HashMap<String, String>> stats = adminDBService
+				.fetchRedemptionReport();
 		return stats;
 	}
 
@@ -183,6 +196,13 @@ public class AdminServiceImpl implements AdminService {
 			try {
 				Merchant merchant = merchantService.getMerchantById(integer);
 				if (merchant != null) {
+					if(merchant.getLat() == null || merchant.getLat() <= 0){
+						try{
+							updateLatLng(merchant);
+						}catch (Exception e) {
+							LOG.error("error in fetching Lat Long for merchant" + e.getMessage());
+						}
+					}
 					merchantRepository.index(merchant);
 					try {
 					    Thread.sleep(1000);                 //1000 milliseconds is one second.
@@ -242,19 +262,28 @@ public class AdminServiceImpl implements AdminService {
 		for (Integer integer : id) {
 			Merchant merchant = merchantService.getMerchantById(integer);
 			
-			if(merchant != null && StringUtils.isNotBlank(merchant.getAddress()) ){
-				GeoPoint point = connectGoogleAPI(merchant.getAddress());
-				if(point != null){
-					merchant.setLat(point.getLat());
-					merchant.setLng(point.getLon());
-					adminDBService.saveLatLng(merchant);
-				}
-			}
+			updateLatLng(merchant);
+			
 			//for google API
 			try {
 			    Thread.sleep(1000);
 			} catch(InterruptedException ex) {
 			    Thread.currentThread().interrupt();
+			}
+		}
+		
+	}
+
+	/**
+	 * @param merchant
+	 */
+	private void updateLatLng(Merchant merchant) {
+		if(merchant != null && StringUtils.isNotBlank(merchant.getAddress()) ){
+			GeoPoint point = connectGoogleAPI(merchant.getAddress());
+			if(point != null){
+				merchant.setLat(point.getLat());
+				merchant.setLng(point.getLon());
+				adminDBService.saveLatLng(merchant);
 			}
 		}
 		
@@ -306,7 +335,9 @@ public class AdminServiceImpl implements AdminService {
 		}catch (Exception e) {
 			LOG.error("Error in extracking lat/long from google API " +GOOGLE_KEY ,e);
 		}finally{
-			con.disconnect();
+			if(con != null){
+				con.disconnect();
+			}
 		}
 		return null;
 	}
@@ -347,5 +378,47 @@ public class AdminServiceImpl implements AdminService {
 			e.printStackTrace();
 		}
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see com.eros.service.AdminService#fetchDeals(java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public SearchResponse fetchDeals(Integer page, Integer limit) {
+		Map<String, Object> param = new HashMap<String, Object>();
+		if(page == null) {
+			page=0;
+		}
+		if(limit == null) {
+			limit=50;
+		}
+		param.put("page", page);
+		param.put("limit", limit);
+		List<HashMap<String, String>> deals = adminDBService
+				.fetchDeals(param);
+		SearchResponse res = new SearchResponse();
+		res.setResponse(deals);
+		return res;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.eros.service.AdminService#fetchErrors(java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public SearchResponse fetchErrors(Integer page, Integer limit) {
+		Map<String, Object> param = new HashMap<String, Object>();
+		if(page == null) {
+			page=0;
+		}
+		if(limit == null) {
+			limit=50;
+		}
+		param.put("page", page);
+		param.put("limit", limit);
+		List<ReportedError> deals = adminDBService
+				.fetchErrors(param);
+		SearchResponse res = new SearchResponse();
+		res.setResponse(deals);
+		return res;
 	}
 }

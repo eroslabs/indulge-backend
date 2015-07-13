@@ -25,8 +25,8 @@
                <div class="col-sm-5 col-xs-12">
                   <ul class="list-unstyled footer-new">
                      <li class="brown-text" style="font-size: 12px;">Talk To us</li>
-                     <li class="white-text">+11- 6565656565</li>
-                     <li class="white-text" style="padding:0;">support@indulge.in</li>
+                     <li class="white-text">+91-9953835229 </li>
+                     <li class="white-text" style="padding:0;">business@justindulge.in</li>
                      <li>
                      	<ul class="list-inline" style="padding-top: 20px;">
                      		<li><img src="${pageContext.servletContext.contextPath }/images/fb.png" alt="Indulge"/></li>

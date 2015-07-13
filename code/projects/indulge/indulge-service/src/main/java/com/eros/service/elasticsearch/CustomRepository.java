@@ -78,7 +78,7 @@ public SearchResponse search(Filter filter) throws Exception {
 					.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
 					.setQuery(queryBuilder)
 					.setPostFilter(andBuilder)
-					.setFrom(filter.getPage()).setSize(filter.getLimit())
+					.setFrom(filter.getPage())//.setSize(filter.getLimit())
 					.addSort(sortBuilder)
 					.setExplain(false).execute().actionGet();
 
@@ -108,7 +108,7 @@ public SearchResponse search(Filter filter) throws Exception {
  * @return
  */
 private SearchResponse searchAutoSuggest(Filter filter) throws Exception{
-	HashMap<String,QueryBuilder> queryBuilder = QueryUtils.buildSuggestQuery(filter.getSearch());
+	HashMap<String,QueryBuilder> queryBuilder = QueryUtils.buildSuggestQuery(filter);
 	org.elasticsearch.action.search.SearchResponse response = null;
 	SearchResponse returnResponse = new SearchResponse();
 	try {

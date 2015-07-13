@@ -34,6 +34,10 @@ img {
 </style>
 </head>
 <body style="background-color: #f0f0f0; color: #656565;">
+<div id="loading">
+<img src="${pageContext.servletContext.contextPath }/images/ajax-loader.gif"
+	id="loading-image" />
+</div>
 	<jsp:include page="../views/postmerchantHeader.jsp" />
 	<div class="row row15" id="merchant-home-body"
 		style="margin-bottom: 10px">
@@ -61,11 +65,9 @@ img {
 				style="margin-left: 15px; background-color: #B4978D">
 				<center>
 					<div class="col-md-5 col-sm-8 col-xs-12">
-						<img
-							src="
-                     <c:if test="${merchant.image ne null and merchant.image != ''}" >../images/merchant/${merchant.image}</c:if>
-                     "
-							style="height: 90px; width: 90px; margin-top: 20px; margin-bottom: 15px;">
+						<c:if test="${merchant.image ne null and merchant.image != ''}" ><img
+							src="../images/merchant/${merchant.image}"
+							style="height: 90px; width: 90px; margin-top: 20px; margin-bottom: 15px;"></c:if>
 					</div>
 				</center>
 				<div class="col-md-10 col-sm-10 white-text"
@@ -124,6 +126,10 @@ img {
 			<div class="merchant-home">
 				<table class="font-size-16 font-type" style="width: 80%">
 					<tr>
+                                                <td width="50%" valign="top">Email</td>
+                                                <td width="50%">${merchant.email}</td>
+                                        </tr>
+					<tr>
 						<td width="50%" valign="top">Address</td>
 						<td width="50%">${merchant.address}</td>
 					</tr>
@@ -148,16 +154,22 @@ img {
 						<td width="50%">${merchant.pincode}</td>
 					</tr>
 					<tr>
-						<td width="50%" height="30px">Accept Debit Cards</td>
-						<td width="50%"><c:if test="${merchant.ccAccepted}"> Yes</c:if>
-							<c:if test="${merchant.ccAccepted eq null}"> Not Specified</c:if>
-							<c:if test="${not merchant.ccAccepted}"> No</c:if></td>
+						<td width="50%" height="30px">Credit/Debit Card Accepted</td>
+						<td width="50%"><c:choose>
+						<c:when test="${merchant.ccAccepted eq null}"> Not Specified</c:when>
+							<c:when test="${merchant.ccAccepted}"> Yes</c:when>
+							<c:otherwise> No</c:otherwise>
+						</c:choose></td>
 					</tr>
 					<tr>
 						<td width="50%" height="30px">Have Air Conditioning</td>
-						<td width="50%"><c:if test="${merchant.acFacility}"> Yes</c:if>
-							<c:if test="${merchant.acFacility eq null}"> Not Specified</c:if>
-							<c:if test="${not merchant.acFacility}"> No</c:if></td>
+						<td width="50%">
+						<c:choose>
+							<c:when test="${merchant.acFacility eq null}"> Not Specified</c:when>
+							<c:when test="${merchant.acFacility}"> Yes</c:when>
+							<c:otherwise> No</c:otherwise>
+						</c:choose>
+						</td>
 					</tr>
 					<tr>
 						<td width="50%" height="30px">Gender</td>
@@ -169,9 +181,13 @@ img {
 					</tr>
 					<tr>
 						<td width="50%" height="30px">Home Service</td>
-						<td width="50%"><c:if test="${merchant.homeService}"> Yes</c:if>
-							<c:if test="${merchant.homeService eq null}"> Not Specified</c:if>
-							<c:if test="${not merchant.homeService}"> No</c:if></td>
+						<td width="50%">
+						<c:choose>
+							<c:when test="${merchant.homeService eq null}"> Not Specified</c:when>
+							<c:when test="${merchant.homeService}"> Yes</c:when>
+							<c:otherwise> No</c:otherwise>
+						</c:choose>
+						</td>
 					</tr>
 				</table>
 			</div>
@@ -185,6 +201,7 @@ img {
 			</div>
 			<div class="merchant-home">
 				<table class="font-size-16 font-type" style="width: 80%">
+
 					<c:if
 						test="${merchant.phones ne null and  not empty merchant.phones}">
 						<c:forEach var="phoneItem" items="${merchant.phones}"
@@ -530,8 +547,7 @@ img {
 							</div>
 						</div>
 						<div class="form-group" style="margin-bottom: 5px;">
-							<label class="col-sm-6 control-label font-type font-size-16">Card
-								Accepted</label>
+							<label class="col-sm-6 control-label font-type font-size-16">Credit/Debit Card Accepted</label>
 							<div class="col-sm-18">
 								<label> <input type="radio" name="ccAccepted" value="1"
 									<c:if test="${merchant.ccAccepted ne null && merchant.ccAccepted}">checked</c:if>>
@@ -690,8 +706,9 @@ img {
 
 									</div>
 									<div class="col-sm-10">
+										<c:if test="${merchant.image ne null and merchant.image != ''}" >
 										<img
-											src="${pageContext.servletContext.contextPath}/images/merchant/${merchant.image}">
+											src="${pageContext.servletContext.contextPath}/images/merchant/${merchant.image}"> </c:if>
 									</div>
 									<output id="list"></output>
 									<div class="col-md-6" style="overflow: hidden"></div>
@@ -785,7 +802,7 @@ img {
 					<div class="modal-footer nopadding"
 						style="background-color: #1fbbad; color: #fff;">
 						<center>
-							<input type="submit" value="Save"
+							<input type="submit" value="Save" onclick="return validatePhone();"
 								class="signup-button font-size-16 font-type">
 						</center>
 					</div>
@@ -794,6 +811,20 @@ img {
 		</div>
 	</div>
 	<script type="text/javascript">
+	function validatePhone(){
+		var p1=jQuery("#phone1").val();
+		var p2=jQuery("#phone2").val();
+		var p3=jQuery("#phone3").val();
+		if(p1.trim() == '' && p2.trim() == '' && p3.trim() == ''){
+		alert("Please enter atleast one phone");
+		return false;
+		}
+		if((p1.length != 11 && p1.length > 0 ) || (p2.length != 11 && p2.length > 0) || (p3.length != 11 && p3.length > 0)){
+                alert("Phone number should be 11 digits long.");
+		return false;
+                }
+		return true;
+	}
          jQuery(document).ready(function(){
            jQuery("#file-upload-cont").hover(
              function(){
@@ -803,6 +834,7 @@ img {
              }
          
            );
+	  $('#loading').hide();
          });
       </script>
 	<script>

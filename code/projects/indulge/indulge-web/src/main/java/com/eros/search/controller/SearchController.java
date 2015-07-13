@@ -39,11 +39,6 @@ public class SearchController extends BaseController {
 
 	protected static Log LOGGER = LogFactory.getLog(SearchController.class);
 
-	@Resource(name = "searchService")
-	protected SearchService searchService;
-	@Resource(name = "merchantService")
-	protected MerchantCustomService merchantService;
-
 	@RequestMapping(value = "/loadStates", method = RequestMethod.GET)
 	public @ResponseBody Map loadStates() {
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -121,25 +116,26 @@ public class SearchController extends BaseController {
 	@RequestMapping(value = "/searchMerchant", method = RequestMethod.GET)
 	public @ResponseBody
 	Map search(
-			@RequestParam(value = "s", required = false) String s,
-			@RequestParam(value = "hs", required = false) Integer hs,
-			@RequestParam(value = "gs", required = false) Integer gs,
+			@RequestParam(value = "s", required = false) String search,
+			@RequestParam(value = "hs", required = false) Integer homeService,
+			@RequestParam(value = "gs", required = false) Integer genderSupport,
 			@RequestParam(value = "services", required = false) Integer[] services,
-			@RequestParam(value = "pf", required = false, defaultValue = "0") Float pf,
-			@RequestParam(value = "pt", required = false) Float pt,
+			@RequestParam(value = "pf", required = false, defaultValue = "0") Float priceFrom,
+			@RequestParam(value = "pt", required = false) Float priceTo,
 			@RequestParam(value = "lat", required = false) String lat,
 			@RequestParam(value = "lon", required = false) String lon,
 			@RequestParam(value = "lr", required = false) Integer lr,
 			@RequestParam(value = "page", required = false) Integer page,
 			@RequestParam(value = "limit", required = false) Integer limit,
 			@RequestParam(value = "sort", required = false) String sort,
-			@RequestParam(value = "dir", required = false) String dir) {
+			@RequestParam(value = "dir", required = false) String direction,
+			@RequestParam(value = "dir", required = false) String city) {
 		Boolean success = true;
 		StopWatch watch = new StopWatch();
 		watch.start();
-		Filter filter = RequestUtils.generateFilter(s, hs, gs, services, pf,
-				pt, lat, lon, page, limit, dir, sort, IndexType.INDULGE,
-				IndexType.MERCHANT,false,lr);
+		Filter filter = RequestUtils.generateFilter(search, homeService, genderSupport, services, priceFrom,
+				priceTo, lat, lon, page, limit, direction, sort, IndexType.INDULGE,
+				IndexType.MERCHANT,false,lr,city);
 		Map<String, Object> map = new HashMap<String, Object>();
 		SearchResponse response = null;
 		try {
@@ -174,9 +170,10 @@ public class SearchController extends BaseController {
 	 */
 	@RequestMapping(value = "/suggestMerchant", method = RequestMethod.GET)
 	public @ResponseBody Map search(
-			@RequestParam(value = "s", required = true) String s) {
+			@RequestParam(value = "s", required = true) String s,
+			@RequestParam(value = "c", required = false) String c) {
 		Boolean success = true;
-		Filter filter = RequestUtils.generateFilter(s,IndexType.INDULGE,
+		Filter filter = RequestUtils.generateFilter(s,c,IndexType.INDULGE,
 				IndexType.MERCHANT,true);
 		Map<String, Object> map = new HashMap<String, Object>();
 		SearchResponse response = null;
@@ -230,20 +227,21 @@ public class SearchController extends BaseController {
 	 */
 	@RequestMapping(value = "/searchDeals", method = RequestMethod.GET)
 	public @ResponseBody
-	Map searchDeals(@RequestParam(value = "s", required = false) String s,
+	Map searchDeals(@RequestParam(value = "s", required = false) String search,
 			@RequestParam(value = "lat", required = false) String lat,
 			@RequestParam(value = "lon", required = false) String lon,
 			@RequestParam(value = "page", required = false) Integer page,
 			@RequestParam(value = "limit", required = false) Integer limit,
-			@RequestParam(value = "lr", required = false) Integer lr,
+			@RequestParam(value = "lr", required = false) Integer luxuryRating,
 			@RequestParam(value = "services", required = false) Integer[] services,
 			@RequestParam(value = "sort", required = false) String sort,
-			@RequestParam(value = "dir", required = false) String dir) {
+			@RequestParam(value = "dir", required = false) String dir,
+			@RequestParam(value = "c", required = false) String city) {
 		Boolean success = true;
 		StopWatch watch = new StopWatch();
 		watch.start();
-		Filter filter = RequestUtils.generateFilter(s, lat, lon, page, limit,
-				dir, sort, IndexType.INDULGE, IndexType.DEAL,false,lr,services);
+		Filter filter = RequestUtils.generateFilter(search, lat, lon, page, limit,
+				dir, sort, IndexType.INDULGE, IndexType.DEAL,false,luxuryRating,services,city);
 		Map<String, Object> map = new HashMap<String, Object>();
 		SearchResponse response = null;
 		try {
@@ -251,7 +249,7 @@ public class SearchController extends BaseController {
 			if(response !=null){
 				map.put(RESULT, response.getResponse());
 			}else{
-				map.put(RESULT, response.getResponse());
+				map.put(RESULT, response);
 			}
 		
 			map.put(STATUS, success);	
@@ -276,7 +274,7 @@ public class SearchController extends BaseController {
 	public @ResponseBody Map handleCustomException(Exception ex) {
 
 		Map returnMap = new HashMap<String, Object>();
-		returnMap.put(ERROR, ex);
+		returnMap.put(ERROR, ex.getMessage());
 		returnMap.put(STATUS, false);
 		return returnMap;
 

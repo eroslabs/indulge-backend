@@ -9,6 +9,8 @@ package com.eros.service.impl;
  *
  */
 public interface SearchConstants {
+	
+	public static final String VALID_TILL_DATE_FIELD = "validTill";
 	/**
 	 * 
 	 */
@@ -25,6 +27,8 @@ public interface SearchConstants {
 	 * 
 	 */
 	public static final String STATE_FIELD = "state";
+	
+	public static final String CITY_FIELD = "city";
 	/**
 	 * 
 	 */

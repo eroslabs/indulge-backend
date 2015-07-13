@@ -84,6 +84,8 @@
 			ofType="com.eros.core.model.City">
 			<id property="id" column="city_id" />
 			<result property="cityName" column="city_name" />
+			<result property="lat" column="lat" />
+			<result property="lng" column="lng" />
 			<result property="status" column="city_status" />
 			</collection>
 		
@@ -250,7 +252,7 @@
 	</select>
 	
 	<select id="fetchStates" resultMap="states">
-		SELECT s.id,s.state,s.status,c.id AS city_id,c.city AS city_name,c.status AS city_status FROM states s LEFT JOIN cities c ON c.state_id=s.id ORDER BY s.state ASC
+		SELECT s.id,s.state,s.status,c.id AS city_id,c.city AS city_name,c.lat,c.lng,c.status AS city_status FROM states s LEFT JOIN cities c ON c.state_id=s.id ORDER BY s.state ASC
 	</select>
 	
 	<select id="fetchDealWithMerchant" parameterType="Integer"
@@ -267,12 +269,15 @@
 		s.id AS service_id,s.name AS service_name,c.id as category_id,c.image as category  FROM deal_request r LEFT
 		JOIN
 		deal_service_request m ON m.request_id=r.id LEFT JOIN service s ON m.service_id=s.id LEFT JOIN service_category c ON m.category_id=c.id
-		LEFT JOIN user u ON r.user_id= u.id WHERE r.merchant_id=#{id} 
+		LEFT JOIN user u ON r.user_id= u.id  
 		<if test="locality != null">
-			or r.locality = #{locality}
+			WHERE r.merchant_id=#{id}
+			<if test="locality != null">
+				or r.locality = #{locality}
+			</if>
 		</if>
-		 order by
-		r.created_date desc limit 20
+		order by
+		r.created_date desc limit 50
 	</select>
 	<select id="fetchSchedule" resultType="com.eros.core.model.MerchantSchedule">
 		select id,opening_time as
@@ -289,7 +294,7 @@
 		id,m.price,m.status,m.service_type_id serviceTypeId,m.service_id serviceId,m.category_id categoryId ,m.gender,m.home_service homeService,concat(s.name," ",t.name) as name,s.name AS serviceName
 		, c.name AS categoryName,m.merchant_id merchantId,m.created_date createdDate FROM merchant_service m 
 		LEFT JOIN service_type t ON m.service_type_id = t.service_type_id LEFT JOIN service s ON
-		m.service_id=s.id LEFT JOIN service_category c ON s.service_category_id = c.id WHERE merchant_id = #{id}
+		m.service_id=s.id LEFT JOIN service_category c ON s.service_category_id = c.id WHERE merchant_id = #{id} order by c.name,s.name 
 	</select>
 	<select id="selectMerchantServiceForDeal" resultType="com.eros.core.model.MerchantDealService">
 		SELECT m.id AS
@@ -335,7 +340,7 @@
 	<select id="selectMerchantPhones" resultType="com.eros.core.model.MerchantPhone">
 		select
 		id,phone_number as phone,type,status from merchant_phone where
-		merchant_id = #{id}
+		merchant_id = #{id} order by created_date
 	</select>
 
 	<select id="fetchMerchant" parameterType="String" resultMap="merchant">
@@ -423,7 +428,7 @@
 		</foreach>
 	</insert>
 	<insert id="registerMerchant" parameterType="com.eros.core.model.Merchant"
-		useGeneratedKeys="true" keyProperty="id">
+		useGeneratedKeys="true" keyProperty="id" >
 		INSERT INTO
 		merchant(name,email,passphrase,phone,locality,city,state,country,merchant_type,uploaded_by,role,created_date)
 		VALUES
@@ -431,20 +436,20 @@
 	</insert>
 	<insert id="saveServices" >
 		INSERT INTO
-		merchant_service(merchant_id,category_id,service_id,service_type_id,price,gender,home_service,created_date)
+		merchant_service(id,merchant_id,category_id,service_id,service_type_id,price,gender,home_service,created_date)
 		VALUES
 		<foreach item="element" index="index" collection="list" open="("
 			separator="),(" close=")">
-			#{element.merchantId},#{element.categoryId}, #{element.serviceId}, #{element.serviceTypeId},#{element.price},#{element.gender},#{element.homeService},CURRENT_TIMESTAMP
+			#{element.id},#{element.merchantId},#{element.categoryId}, #{element.serviceId}, #{element.serviceTypeId},#{element.price},#{element.gender},#{element.homeService},CURRENT_TIMESTAMP
 		</foreach>
 	</insert>
 	<insert id="saveContact" parameterType="com.eros.core.model.Merchant">
-		INSERT INTO merchant_phone (merchant_id, phone_number, type)
+		INSERT INTO merchant_phone (merchant_id, phone_number, type,created_date)
 		VALUES
 		<foreach item="element" index="index" collection="phones"
 			open="(" separator="),(" close=")">
 			#{element.merchantId},
-			#{element.phone}, #{element.type}
+			#{element.phone}, #{element.type},CURRENT_TIMESTAMP
 		</foreach>
 	</insert>
 

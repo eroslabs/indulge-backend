@@ -46,5 +46,6 @@
         </div> 
         </c:forEach>
 		</div>
+	<jsp:include page="../views/includeScript.jsp" />
 </body>
 </html>

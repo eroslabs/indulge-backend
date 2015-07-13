@@ -9,8 +9,37 @@
 			LEFT JOIN merchant_deal d 
 			ON d.merchant_id= m.id where m.role != 'ROLE_ADMIN' GROUP BY m.status,city,merchant_type
 	</select>
+	<select id="fetchDeals" parameterType="Hashmap" resultType="Map">
+		select m.name as "Merchant",m.id as "id",d.created_date as "Date",redemption AS "Deal Redemption",d.valid_from AS "From",d.valid_till AS "To",d.percent_off AS "Off %",
+		d.flat_off AS "Off Flat",d.weekdays_schedule AS "Weekdays",d.recurring AS "Recurring",group_concat(c.coupon_code) AS "Coupons" 
+		from merchant_deal d left join merchant m on m.id=d.merchant_id left join 
+		deal_redemption c on c.deal_id=d.id  where d.status=1 group by d.id 
+		order by
+		c.created_date desc
+		<if test="start != null">
+		 limit #{start}
+		 </if>
+		 <if test="rows != null">
+		  ,#{rows}
+		 </if>		  
+	</select>
+	<select id="fetchErrors" parameterType="com.eros.core.model.ReportedError" resultType="Map">
+		select user_id as 'userId',merchant_id as 'merchantId',wrong_phone as 'wrongPhone',wrong_address as 'wrongAddress',closed_closed as 'closedClosed'
+		,wrong_pricing as 'wrongPricing',details,created_date as 'createdDate' from problems_reported order by created_date desc  
+		<if test="start != null">
+		 limit #{start}
+		 </if>
+		 <if test="rows != null">
+		  ,#{rows}
+		 </if>		  
+	</select>
+	
+	
+	<select id="fetchRedemptionReport" resultType="Map">
+			SELECT SUM(redemption) AS "Deal Redemption", SUM(confirmed) AS "Deal Confirmations",DATE(updated_date) as "Date" FROM merchant_deal where updated_date >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH) GROUP BY DATE(updated_date) order by updated_date desc 
+	</select>
 	<select id="listMerchant" parameterType="Hashmap" resultType="com.eros.core.model.Merchant">
-		select id,email,name,merchant_type as merchantType , city,phone,image,address,pincode,state,total_reviews as totalReviews,review_rating as rating,
+		select id,email,name,merchant_type as merchantType , lat,lng,phone,image,address,pincode,state,total_reviews as totalReviews,review_rating as rating,
 		status from merchant where 
 		<if test="s != null">
 			name like concat('%',#{s},'%') or email like concat('%',#{s},'%') or city like concat('%',#{s},'%')  

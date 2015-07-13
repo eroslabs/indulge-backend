@@ -249,16 +249,7 @@ public class UserController extends BaseController {
 
 	}
 
-	@ExceptionHandler(Exception.class)
-	public @ResponseBody
-	Map handleCustomException(Exception ex) {
 
-		Map returnMap = new HashMap<String, Object>();
-		returnMap.put(ERROR, ex);
-		returnMap.put(STATUS, false);
-		return returnMap;
-
-	}
 
 	/**
 	 * 
@@ -271,7 +262,6 @@ public class UserController extends BaseController {
 	public @ResponseBody
 	byte[] redeemDeal(@PathVariable("type") String type,
 			@PathVariable("id") Integer id) {
-		Map<String, Object> returnMap = new HashMap<String, Object>();
 		try {
 			byte[] imageBytes = userService.fetchResource(type, id);
 			return imageBytes;
@@ -327,4 +317,13 @@ public class UserController extends BaseController {
 
 	}
 
+	@ExceptionHandler(Exception.class)
+	public @ResponseBody Map handleCustomException(Exception ex) {
+
+		Map returnMap = new HashMap<String, Object>();
+		returnMap.put(ERROR, ex.getMessage());
+		returnMap.put(STATUS, false);
+		return returnMap;
+
+	}
 }

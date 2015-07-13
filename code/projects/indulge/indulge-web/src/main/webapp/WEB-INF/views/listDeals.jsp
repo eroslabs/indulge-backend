@@ -73,7 +73,7 @@
 											${dateDiff } days left!
 										</div>
 									</div>
-									<div class="row" style="padding:5px 0px;margin-bottom:5px;border-bottom:1px dashed #333;">
+									<div class="row" style="min-height:45px;padding:5px 0px;margin-bottom:5px;border-bottom:1px dashed #333;" title=" <c:forEach var="serviceType" items="${deal.services }" varStatus="status">${serviceType.name} ,</c:forEach>">
 										<c:forEach var="category" items="${categories}" varStatus="stats">
 											<c:forEach var="serviceCat" items="${deal.categoryIds }" varStatus="status">
 												<c:if test="${serviceCat == category.id}">
@@ -89,8 +89,7 @@
 									</div>
 									<div class="row">
 										<div style="width:50%; float:left; text-align:center">
-										<s:eval expression="T(com.eros.utils.CalculationUtils).getWeekDays(deal.days)" var="weekdays" />
-											${weekdays} <fmt:formatDate pattern="hh:mm" value="${deal.validFrom }" /> - <fmt:formatDate pattern="hh:mm a" value="${deal.validTill }" />
+										<s:eval expression="T(com.eros.utils.CalculationUtils).getWeekDays(deal.days,deal.validFrom,deal.validTill)" var="weekdays" />${weekdays}<br/> <fmt:formatDate pattern="hh:mm a" value="${deal.validFrom }" /> - <fmt:formatDate pattern="hh:mm a" value="${deal.validTill }" />
 										</div>
 										<div style="width:50%; float:right; text-align:center">
 									<fmt:formatDate pattern="dd MMM yy" value="${deal.validFrom }" /> - <fmt:formatDate pattern="dd MMM yy" value="${deal.validTill }" /> 
@@ -138,7 +137,7 @@
 											Inactive since <fmt:formatDate pattern="dd MMM yy" value="${deal.validTill }" />! 
 										</div>
 									</div>
-																		<div class="row" style="padding:5px 0px;margin-bottom:5px;border-bottom:1px dashed #333;">
+																		<div class="row" style="padding:5px 0px;margin-bottom:5px;border-bottom:1px dashed #333;min-height:30px;" title=" <c:forEach var="serviceType" items="${deal.services }" varStatus="status">${serviceType.name} ,</c:forEach>">
 										<c:forEach var="category" items="${categories}" varStatus="stats">
 											<c:forEach var="serviceCat" items="${deal.categoryIds }" varStatus="status">
 												<c:if test="${serviceCat == category.id}">
@@ -155,7 +154,7 @@
 									
 									<div class="row">
 										<div style="width:50%; float:left; text-align:center">
-										<s:eval expression="T(com.eros.utils.CalculationUtils).getWeekDays(deal.days)" var="weekdays" />
+										<s:eval expression="T(com.eros.utils.CalculationUtils).getWeekDays(deal.days,deal.validFrom,deal.validTill)" var="weekdays" />
 											${weekdays} <fmt:formatDate pattern="hh:mm" value="${deal.validFrom }" /> - <fmt:formatDate pattern="hh:mm a" value="${deal.validTill }" />
 										</div>
 										<div style="width:50%; float:right; text-align:center">

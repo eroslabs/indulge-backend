@@ -2,7 +2,10 @@
 <html>
 
  <head>
-    <jsp:include page="../views/globalhead.jsp"/>
+    <title>Indulge Merchant</title>
+   <jsp:include page="../views/globalhead.jsp"/>
+   <meta name="description" content="The premier platform for Spas, Salons and Individuals who provide beauty and wellness services and are looking to increase their reach. Unlimited real time deals! No hidden costs!">
+<meta name="keywords" content="More customers in Delhi, Post your deals, Grow your business in Delhi, Get listed for free, Delhi Spa, Gurgaon Spa, Delhi Salon, Gurgaon Salon"> 		
   </head>
 <body>
   <jsp:include page="../views/merchantHeader.jsp" />
@@ -154,5 +157,6 @@
       </center>
     </div>
     <jsp:include page="../views/merchantFooter.jsp" />
+    <jsp:include page="../views/includeScript.jsp" />
 </body>
 </html>
