@@ -102,10 +102,18 @@
 										class="form-control" placeholder="Password">
 								</div>
 								<div class="input-group">
-									<span class="input-group-addon"> <i class="icon-link"></i>
+									<span class="input-group-addon"> <i class="icon-hand-right"></i>
 									</span> <input id="refer" name="refer" type="text"
 										class="form-control" placeholder="Referred By"
 										value="${merchant.refer}">
+								</div>
+								<div class="input-group">
+									<span class="input-group-addon"> <i class="icon-link"></i>
+									</span> <select id="role" name="role"
+										class="form-control" placeholder="Chain">
+										<option value="ROLE_USER">Single Outlet</option>
+										<option value="ROLE_OWNER">Chain</option>
+									</select>
 								</div>
 							</center>
 						</div>

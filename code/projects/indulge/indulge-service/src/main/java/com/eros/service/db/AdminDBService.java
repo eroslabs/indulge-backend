@@ -29,7 +29,7 @@ public interface AdminDBService {
 	 * @param s
 	 * @return
 	 */
-	Integer countMerchant(String s);
+	Integer countMerchant(Map<String,Object> param);
 
 	/**
 	 * @param param
@@ -83,5 +83,10 @@ public interface AdminDBService {
 	 */
 	List<ReportedError> fetchErrors(Map<String, Object> param);
 
-   
+	/**
+	 * @param param
+	 * @return
+	 */
+	public Integer updateLogin(Map<String, Object> param);
+	   
    }

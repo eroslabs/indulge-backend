@@ -104,7 +104,7 @@ public class QueryUtils implements SearchConstants{
 				boolQueryBuilder = boolQuery().should(
 					queryString(ALL_REGEX + filter.getSearch() + ALL_REGEX)
 							.analyzeWildcard(true)
-							.field(NAME_FIELD, 2.0f)
+							.field(NAME_FIELD, 5.0f)
 							.field(ADDRESS_FIELD, 1.5f)
 							.field(SERVICES_NAME_FIELD,2.0f));
 			}
@@ -183,7 +183,7 @@ public class QueryUtils implements SearchConstants{
 		returnQueries.put(SERVICES_NAME_FIELD, serviceBuilder);
 		BoolQueryBuilder queryBuilder = boolQuery().should(
 					queryString(ALL_REGEX + filter.getSearch() + ALL_REGEX)
-					.analyzeWildcard(true).field(NAME_FIELD, 2.0f)
+					.analyzeWildcard(true).field(NAME_FIELD, 5.0f)
 					.field(ADDRESS_FIELD, 0.1f));
 		if(StringUtils.isNotBlank(filter.getCity())){
 			queryBuilder.must(termQuery(CITY_FIELD, filter.getCity()));

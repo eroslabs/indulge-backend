@@ -40,20 +40,59 @@
 	</select>
 	<select id="listMerchant" parameterType="Hashmap" resultType="com.eros.core.model.Merchant">
 		select id,email,name,merchant_type as merchantType , lat,lng,phone,image,address,pincode,state,total_reviews as totalReviews,review_rating as rating,
-		status from merchant where 
-		<if test="s != null">
-			name like concat('%',#{s},'%') or email like concat('%',#{s},'%') or city like concat('%',#{s},'%')  
+		status from merchant where id > 0  
+		<if test="name != null and name != ''">
+			and name like concat('%',#{name},'%')   
 		
 		</if>
-		<if test="status != null">
-			status =#{status}  
+		<if test="city != null and city != ''">
+			and city like concat('%',#{city},'%')  
+		
+		</if>
+		<if test="email != null and email != ''">
+			and email like concat('%',#{email},'%')  
+		
+		</if>
+		<if test="type != null and type != ''">
+			and merchant_type like concat('%',#{type},'%')  
+		
+		</if>
+		<if test="phone != null and phone != ''">
+			and phone like concat('%',#{phone},'%')  
+		
+		</if>
+		<if test="status != null and status != ''">
+			and status =#{status}  
 		</if>
 		
 		order by created_date desc limit #{page} , #{limit}
 		
 	</select>
-	<select id="countMerchant" parameterType="String" resultType="Integer">
-		select count(*) from merchant where name like concat('%',#{s},'%') or email like concat('%',#{s},'%') or city like concat('%',#{s},'%') 
+	<select id="countMerchant" parameterType="Hashmap" resultType="Integer">
+		select count(*) from merchant where id > 0  
+		<if test="name != null">
+			and name like concat('%',#{name},'%')   
+		
+		</if>
+		<if test="city != null">
+			and city like concat('%',#{city},'%')  
+		
+		</if>
+		<if test="email != null">
+			and email like concat('%',#{email},'%')  
+		
+		</if>
+		<if test="type != null">
+			and merchant_type like concat('%',#{type},'%')  
+		
+		</if>
+		<if test="phone != null">
+			and phone like concat('%',#{phone},'%')  
+		
+		</if>
+		<if test="status != null">
+			and status =#{status}  
+		</if> 
 		
 	</select>
 	<select id="getAllActiveMerchantsId" resultType="Integer">
@@ -68,6 +107,18 @@
 	<update id="saveLatLng" parameterType="com.eros.core.model.Merchant">
 		update merchant set lat=#{lat},lng=#{lng} where id =#{id}
 	</update>
-	
+	<update id="updateLogin" parameterType="Map">
+		update merchant set updated_date = CURRENT_TIMESTAMP  
+		<if test="email != null">
+			, email =#{email}  
+		</if> 
+		<if test="phone != null">
+			, phone =#{phone}  
+		</if>
+		<if test="role != null">
+			, role =#{role}  
+		</if>
+			where id =#{id}
+	</update>	
 	
 </mapper>

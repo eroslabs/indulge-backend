@@ -22,6 +22,7 @@ import org.elasticsearch.index.query.AndFilterBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,10 @@ import com.google.gson.JsonParseException;
 
 @Service("customRepository")
 public class CustomRepository {
+	/**
+	 * 
+	 */
+	private static final Integer MAX_RECORDS = 100;
 	private static final Logger LOGGER = LoggerFactory
 			.getLogger(CustomRepository.class);
 	private static final String autosuggestKey = "name";
@@ -78,7 +83,8 @@ public SearchResponse search(Filter filter) throws Exception {
 					.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
 					.setQuery(queryBuilder)
 					.setPostFilter(andBuilder)
-					.setFrom(filter.getPage())//.setSize(filter.getLimit())
+//					.setFrom(filter.getPage())
+					.setSize(MAX_RECORDS)
 					.addSort(sortBuilder)
 					.setExplain(false).execute().actionGet();
 
@@ -115,15 +121,17 @@ private SearchResponse searchAutoSuggest(Filter filter) throws Exception{
 		List<Object> list = new ArrayList<Object>();
 		for (String key : queryBuilder.keySet()) {
 			response = client.prepareSearch(filter.getIndex()).setTypes(filter.getType())
-					.setSearchType(SearchType.SCAN).addField(key)
+					.setSearchType(SearchType.DFS_QUERY_THEN_FETCH).addField(key)
 					.setQuery(queryBuilder.get(key)).setScroll(new TimeValue(60000))
 					.setFrom(filter.getPage()).setSize(key.equals(QueryUtils.NAME_FIELD) ? 10 : 2)
-					.setExplain(false).execute().actionGet();
+					.setExplain(false).addSort(SortBuilders.scoreSort()).execute().actionGet();
 			
-			response = client.prepareSearchScroll(response.getScrollId()).setScroll(new TimeValue(600000)).execute().actionGet();
 			    for (SearchHit hit : response.getHits()) {
 			    	if(hit.getFields() != null && hit.getFields().get(key) != null){
-			        list.add(hit.getFields().get(key).getValue());
+			    	 String val = hit.getFields().get(key).getValue();
+			    	 if(!list.contains(val)){
+			    		 list.add(val);
+			    	 }
 			    	}
 			    }
 				

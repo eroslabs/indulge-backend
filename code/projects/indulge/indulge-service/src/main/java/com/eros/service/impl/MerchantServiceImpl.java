@@ -398,6 +398,15 @@ public class MerchantServiceImpl implements MerchantCustomService {
 				params.put(DEAL_ID, deal.getId());
 				params.put(MERCHANT_ID, deal.getMerchantId());
 				merchantDBService.saveDealServices(params);
+//				delete and save all merchant deals to elastic cache
+				dealRepository.deleteByMerchantId(deal.getMerchantId());
+				List<MerchantDeal> deals = fetchDealWithMerchant(deal.getMerchantId());
+				if (deals != null && deals.size() > 0) { 
+					for (MerchantDeal merchantDeal : deals) {
+						dealRepository.index(merchantDeal);	
+					}
+					
+				}
 			}
 			return true;
 		} catch (Exception e) {

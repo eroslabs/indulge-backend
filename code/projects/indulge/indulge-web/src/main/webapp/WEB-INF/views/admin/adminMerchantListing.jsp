@@ -48,11 +48,11 @@ body {
 	<div class="col-xs-22 col-sm-22 col-md-push-1">
 		<div class="row row15" style="margin-bottom: 15px">
 			<center>
-				<h3>Showing merchants found</h3>
+				<h3>Showing Merchant Search Results</h3>
 				<a href="home">Back to home</a>
 			</center>
 		</div>
-		<form method="post" id="adminForm">
+		<form method="get" id="adminForm">
 			<input type="button"
 				class="signup-button font-size-16 font-type white-text"
 				onclick="setAction(0);" value="Activate All"> <input
@@ -66,13 +66,19 @@ body {
 				class="signup-button font-size-16 font-type white-text"
 				onclick="setAction(3);" value="Update Luxury Rating">
 			<c:set var="count" value="0" scope="page" />
+			<input type="hidden" name="city" value="${param.city }"/>
+			<input type="hidden" name="name" value="${param.name }"/>
+			<input type="hidden" name="locality" value="${param.locality }"/>
+			<input type="hidden" name="merchantType" value="${param.merchantType }"/>
+			<input type="hidden" name="email" value="${param.email }"/>
+			<input type="hidden" name="phone" value="${param.phone }"/>
 			<c:if
-				test="${result != null and results.total != null and result.total > 0}">
-				<span style="float: right;">Page :<select id="selectPaginate"
-					onchange="selectCurSort();">
+				test="${result != null and result.total != null and result.total > 0}">
+				<span style="float:right;">Page :<select name="page" id="selectPaginate"
+					onchange="setAction(4)">
 						<c:forEach var="page" begin="50" step="50" end="${result.total}"
 							varStatus="status">
-							<option value="s=<%=request.getParameter("s") %>&page=${count}">${status.index}</option>
+							<option value="${count}">${status.index}</option>
 							<c:set var="count" value="${count +1 }" scope="page" />
 						</c:forEach>
 
@@ -84,7 +90,7 @@ body {
 				<thead>
 
 					<tr>
-						<th>Select</th>
+						<th>Select <input type="checkbox" onClick="toggle(this)" /></th>
 						<th>Id</th>
 						<th>Email</th>
 						<th>Name</th>
@@ -133,9 +139,8 @@ body {
 										/<a target="_blank" onclick="window.location.reload();"
 										href="${pageContext.servletContext.contextPath }/admin/activateMerchant?id=${mer.id}">Activate</a>
 										/<a target="_blank" onclick="window.location.reload();"
-										href="${pageContext.servletContext.contextPath }/admin/refreshMerchant?id=${mer.id}">Activate</a></td>
-									<td><a target="_blank"
-										href="${pageContext.servletContext.contextPath }/merchant/homeFromAdmin?id=${mer.id}">view</a></td>
+										href="${pageContext.servletContext.contextPath }/admin/refreshMerchant?id=${mer.id}">Refresh</a></td>
+									<td><a target="_blank" href="${pageContext.servletContext.contextPath }/merchant/homeFromAdmin?id=${mer.id}">view</a>  | <a href="${pageContext.servletContext.contextPath }/admin/edit/${mer.id}">edit Login</a></td>
 									<td><a target="_blank"
 										href="${pageContext.servletContext.contextPath }/admin/fetchLatLong?id=${mer.id}">update
 											Lat/Lng</a></td>
@@ -167,15 +172,19 @@ body {
 			} else {
 				return;
 			}
+		} else if (act == 4) {
+			document.getElementById('adminForm').action = "searchMerchant";
 		}
 
 		document.forms["adminForm"].submit();
 
 	}
-	function selectCurSort() {
-		var match = window.location.href.split('?')[0];
-		var parm = $("#selectPaginate option:selected").val();
-		window.location = match + "?" + parm;
+	function toggle(source) {
+	  checkboxes = document.getElementsByName('id');
+	  for(var i=0, n=checkboxes.length;i<n;i++) {
+		    checkboxes[i].checked = source.checked;
+	  }
 	}
+	
 </script>
 </html>

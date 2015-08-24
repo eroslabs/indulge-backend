@@ -165,5 +165,16 @@ public interface MerchantDBService {
 	 * @return
 	 */
 	public List<Merchant> fetchChainIds(String merchantIdentifier);
+	/**
+	 * @param id
+	 * @return
+	 */
+	public MerchantDeal fetchDealWithDealId(Integer id);
+
+	/**
+	 * @param param
+	 * @return
+	 */
+	public Integer updateLogin(Map<String, Object> param);
 	
 }

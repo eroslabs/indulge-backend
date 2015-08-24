@@ -93,9 +93,10 @@ public class RegistrationController extends BaseController {
 								"Error:: Merchant already exist with entered email/phone");
 				redirectAttributes.addFlashAttribute("merchant", merchant);
 				return "redirect:/register/input";
-			} else if (oldMerchant != null
+			} else if ((oldMerchant != null
 					&& oldMerchant.getRole().equalsIgnoreCase(
-							UserRole.ROLE_OWNER.toString())) {
+							UserRole.ROLE_OWNER.toString())) || merchant.getRole().equalsIgnoreCase(
+									UserRole.ROLE_OWNER.toString()) ) {
 				merchant.setRole(UserRole.ROLE_OWNER.toString());
 			} else {
 				merchant.setRole(UserRole.ROLE_USER.toString());

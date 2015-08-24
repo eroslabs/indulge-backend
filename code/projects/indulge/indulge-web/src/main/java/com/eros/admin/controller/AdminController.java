@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.eros.core.BaseController;
 import com.eros.core.model.DealRequest;
+import com.eros.core.model.Merchant;
+import com.eros.core.model.State;
 import com.eros.service.search.SearchResponse;
 
 /**
@@ -52,6 +55,14 @@ public class AdminController extends BaseController {
 		return "admin/adminHome";
 	}
 
+	@RequestMapping(value = "/search")
+	public String search(ModelMap modelMap, Principal principle,
+			HttpServletRequest request) {
+		List<State> states = merchantService.fetchStates();
+		modelMap.put("states", states);
+		return "admin/search";
+	}
+
 	@RequestMapping(value = "/redemption")
 	public String redeemReport(ModelMap modelMap, Principal principle,
 			HttpServletRequest request) {
@@ -65,8 +76,9 @@ public class AdminController extends BaseController {
 
 		return "admin/adminRedemptionReport";
 	}
+
 	@RequestMapping(value = "/listDeactiveMerchants", method = RequestMethod.GET)
-	public String searchMerchants(ModelMap map,
+	public String listDeactiveMerchants(ModelMap map,
 			final RedirectAttributes redirectAttributes,
 			@RequestParam(value = "page", required = false) Integer page,
 			@RequestParam(value = "limit", required = false) Integer limit) {
@@ -161,44 +173,49 @@ public class AdminController extends BaseController {
 
 	}
 
-
-	@RequestMapping(value = "/searchMerchant", method = RequestMethod.GET)
-	public String searchMerchant(ModelMap map,
+	@RequestMapping(value = "/searchMerchant")
+	public String searchMerchant(
+			ModelMap map,
 			final RedirectAttributes redirectAttributes,
-			@RequestParam(value = "s", required = true) String s,
+			@RequestParam(value = "name", required = false) String name,
+			@RequestParam(value = "city", required = false) String city,
+			@RequestParam(value = "locality", required = false) String locality,
+			@RequestParam(value = "merchantType", required = false) String type,
+			@RequestParam(value = "email", required = false) String email,
+			@RequestParam(value = "phone", required = false) String phone,
 			@RequestParam(value = "page", required = false) Integer page,
 			@RequestParam(value = "limit", required = false) Integer limit) {
 		Boolean success = true;
 		SearchResponse response = null;
 		try {
-			response = adminService.searchMerchant(s, page, limit);
+			response = adminService.searchMerchant(name, city, locality, type,
+					email, phone, page, limit);
 		} catch (Exception e) {
-			LOGGER.error("Error in search ::" + s, e);
+			LOGGER.error("Error in search ::", e);
 			success = false;
 		}
 		map.put(RESULT, response);
 		if (!success) {
 			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
-					"Error:: in fetching merchant : " + s);
+					"Error:: in fetching merchant : ");
 			return "redirect:/admin/home";
 		}
 		return "admin/adminMerchantListing";
 	}
 
-	
-	
 	@RequestMapping(value = "/setLuxuryRating")
 	public String changeLuxuryRating(ModelMap modelMap,
 			@RequestParam(value = "id", required = true) List<Integer> id,
 			@RequestParam(value = "rating", required = true) Integer rating,
-			Principal principle, HttpServletRequest request,final RedirectAttributes redirectAttributes) {
-		
+			Principal principle, HttpServletRequest request,
+			final RedirectAttributes redirectAttributes) {
+
 		boolean success = false;
 		try {
 			for (Integer idInt : id) {
 				adminService.setMerchantLuxuryRating(idInt, rating);
 			}
-			success=true;
+			success = true;
 
 		} catch (Exception e) {
 			LOGGER.error("Error in retrieving Stats", e);
@@ -208,34 +225,35 @@ public class AdminController extends BaseController {
 		if (success) {
 			redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE,
 					"Merchants Luxury rating successfully updated");
-			
+
 		}
 		return "redirect:/admin/home";
-		
 
 	}
 
 	@RequestMapping(value = "/activateMerchant")
-	public String activate(ModelMap modelMap, @RequestParam(value="id") List<Integer> id,
-			Principal principle, HttpServletRequest request,final RedirectAttributes redirectAttributes) {
+	public String activate(ModelMap modelMap,
+			@RequestParam(value = "id") List<Integer> id, Principal principle,
+			HttpServletRequest request,
+			final RedirectAttributes redirectAttributes) {
 		boolean success = false;
 		try {
 			for (Integer idInt : id) {
-				adminService.changeMerchantStatus(idInt, true);	
+				adminService.changeMerchantStatus(idInt, true);
 			}
-			success=true;
+			success = true;
 		} catch (Exception e) {
 			LOGGER.error("Error in retrieving Stats", e);
-			
+
 			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
 					"Error:: in activating merchant : " + e.getMessage());
 		}
 		if (success) {
 			redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE,
 					"Merchant activated successfully");
-			
+
 		}
-		if(id.size() > 1){
+		if (id.size() > 1) {
 			return "redirect:/admin/home";
 		}
 		return "admin/thanks";
@@ -255,15 +273,58 @@ public class AdminController extends BaseController {
 		return "admin/thanks";
 	}
 
+	@RequestMapping(value = "/edit/{id}")
+	public String edit(ModelMap modelMap,
+			@PathVariable(value = "id") Integer id, Principal principle,
+			HttpServletRequest request) {
+		try {
+			if (id != null) {
+				Merchant merchant = adminService.getMerchantById(id);
+				if (merchant != null) {
+					modelMap.put("merchant", merchant);
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.error("Error in retrieving Stats", e);
+		}
+
+		return "admin/editMerchant";
+	}
+
+	@RequestMapping(value = "/editLogin")
+	public String editMerchant(ModelMap modelMap,
+			@RequestParam(value = "id") Integer id,
+			@RequestParam(value = "email") String email,
+			@RequestParam(value = "phone") String phone,
+			@RequestParam(value = "role") String role, Principal principle,
+			HttpServletRequest request,final RedirectAttributes redirectAttributes) {
+		try {
+			if (id != null) {
+				adminService.updateMerchantLogin(id, email, phone, role);
+
+			}
+		} catch (Exception e) {
+			LOGGER.error("Error in retrieving Stats", e);
+			redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
+					"Error while updating merchant");
+			return "redirect:admin/home";	
+		}
+		redirectAttributes.addFlashAttribute(ERROR_MESSAGE,
+				"Merchant info changed successfully");
+		return "redirect:home";
+	}
+
 	@RequestMapping(value = "/deactivateMerchant")
-	public String deactivate(ModelMap modelMap, @RequestParam("id") List<Integer> id,
-			Principal principle, HttpServletRequest request,final RedirectAttributes redirectAttributes) {
+	public String deactivate(ModelMap modelMap,
+			@RequestParam("id") List<Integer> id, Principal principle,
+			HttpServletRequest request,
+			final RedirectAttributes redirectAttributes) {
 		boolean success = false;
 		try {
 			for (Integer idInt : id) {
-			adminService.changeMerchantStatus(idInt, false);
+				adminService.changeMerchantStatus(idInt, false);
 			}
-			success=true;
+			success = true;
 
 		} catch (Exception e) {
 			LOGGER.error("Error in retrieving Stats", e);
@@ -273,9 +334,9 @@ public class AdminController extends BaseController {
 		if (success) {
 			redirectAttributes.addFlashAttribute(SUCCESS_MESSAGE,
 					"Merchants deactivated successfully");
-			
+
 		}
-		if(id.size() > 1){
+		if (id.size() > 1) {
 			return "redirect:/admin/home";
 		}
 		return "admin/thanks";

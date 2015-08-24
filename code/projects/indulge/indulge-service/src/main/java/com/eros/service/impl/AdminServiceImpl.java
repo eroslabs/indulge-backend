@@ -90,35 +90,6 @@ public class AdminServiceImpl implements AdminService {
 		return stats;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.eros.service.AdminService#searchMerchant(java.lang.String,
-	 * java.lang.Integer, java.lang.Integer)
-	 */
-	@Override
-	public SearchResponse searchMerchant(String s, Integer page, Integer limit) {
-		if (StringUtils.isBlank(s) || s.length() < 3) {
-			return null;
-		}
-		if (page == null) {
-			page = 0;
-		}
-		if (limit == null) {
-			limit = 50;
-		}
-		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("s", s);
-		param.put("page", page);
-		param.put("limit", limit);
-		List<Merchant> merchants = adminDBService.listMerchant(param);
-		Integer total = adminDBService.countMerchant(s);
-		SearchResponse res = new SearchResponse();
-		res.setTotal(total.longValue());
-		res.setResponse(merchants);
-
-		return res;
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -157,6 +128,22 @@ public class AdminServiceImpl implements AdminService {
 			LOG.error("Error in updating cache while enabling a merchant", e);
 		}
 
+	}
+	
+	@Override
+	public Merchant getMerchantById(Integer id){
+		Merchant merchant = merchantService.getMerchantById(id);
+		return merchant;
+	}
+	
+	@Override
+	public void updateMerchantLogin(Integer id,String email,String phone,String role){
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("id", id);
+		param.put("email", email);
+		param.put("phone", phone);
+		param.put("role", role);
+		adminDBService.updateLogin(param);
 	}
 
 	/**
@@ -420,5 +407,37 @@ public class AdminServiceImpl implements AdminService {
 		SearchResponse res = new SearchResponse();
 		res.setResponse(deals);
 		return res;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.eros.service.AdminService#searchMerchant(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public SearchResponse searchMerchant(String s, String city,
+			String locality, String type, String email, String phone,
+			Integer page, Integer limit) {
+
+			if (page == null) {
+				page = 0;
+			}
+			if (limit == null) {
+				limit = 50;
+			}
+			Map<String, Object> param = new HashMap<String, Object>();
+			param.put("name", s);
+			param.put("city", city);
+			param.put("locality", locality);
+			param.put("type", type);
+			param.put("email", email);
+			param.put("phone", phone);
+			param.put("page", page);
+			param.put("limit", limit);
+			List<Merchant> merchants = adminDBService.listMerchant(param);
+			Integer total = adminDBService.countMerchant(param);
+			SearchResponse res = new SearchResponse();
+			res.setTotal(total.longValue());
+			res.setResponse(merchants);
+
+			return res;
 	}
 }

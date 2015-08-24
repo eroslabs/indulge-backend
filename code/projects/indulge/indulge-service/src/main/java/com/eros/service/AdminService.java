@@ -7,6 +7,7 @@ package com.eros.service;
 import java.util.HashMap;
 import java.util.List;
 
+import com.eros.core.model.Merchant;
 import com.eros.service.search.SearchResponse;
 
 /**
@@ -22,11 +23,16 @@ public interface AdminService {
 
 	/**
 	 * @param s
+	 * @param phone 
+	 * @param email 
+	 * @param type 
+	 * @param locality 
+	 * @param city 
 	 * @param page
 	 * @param limit
 	 * @return
 	 */
-	SearchResponse searchMerchant(String s, Integer page, Integer limit);
+	SearchResponse searchMerchant(String s, String city, String locality, String type, String email, String phone, Integer page, Integer limit);
 
 	/**
 	 * @param id 
@@ -82,4 +88,8 @@ public interface AdminService {
 	 * @return
 	 */
 	SearchResponse fetchErrors(Integer page, Integer limit);
+	
+	public Merchant getMerchantById(Integer id);
+	
+	public void updateMerchantLogin(Integer id,String email,String phone,String role);
 }
